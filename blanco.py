@@ -51,9 +51,19 @@ USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 
 
-def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), mtype="mbox"):
+def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox")):
     """Parse sent messages mailbox for contact details"""
-    mbox = getattr(mailbox, mtype)(path, create=False)
+    if os.path.isdir("%s/new" % path):
+        mtype = "Maildir"
+    elif os.path.exists("%s/.mh_sequences"):
+        mtype = "MHMailbox"
+    elif os.path.isfile(path):
+        mtype = "mbox"
+    else:
+        raise ValueError("Unknown mailbox format")
+    # Use factory=None to work around the rfc822.Message default for Maildir.
+    mbox = getattr(mailbox, mtype)(path, factory=None, create=False)
+
     contacts = []
     for message in mbox:
         addresses = map(operator.itemgetter(1),
