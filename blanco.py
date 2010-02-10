@@ -86,6 +86,7 @@ class Person(object):
     """Simple contact class"""
 
     def __init__(self, name, address, frequency):
+        """Initialise a new ``Person`` object"""
         self.name = name
         self.address = address
         self.frequency = frequency
@@ -119,6 +120,8 @@ class People(list):
     """Group of ``Person``"""
 
     def __init__(self, people=None):
+        """Initialise a new ``People`` object"""
+        super(People, self).__init__()
         if people:
             self.extend(people)
 
