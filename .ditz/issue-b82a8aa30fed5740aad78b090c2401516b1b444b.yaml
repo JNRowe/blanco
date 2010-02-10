@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Use termstyle for fancy output.
+desc: ""
+type: :feature
+component: blanco
+release: 0.2.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-10 18:11:45.755880 Z
+references: []
+
+id: b82a8aa30fed5740aad78b090c2401516b1b444b
+log_events: 
+- - 2010-02-10 18:11:46.399769 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - ""
+- - 2010-02-10 18:11:53.151867 Z
+  - James Rowe <jnrowe@gmail.com>
+  - issue claimed
+  - ""
+claimer: James Rowe <jnrowe@gmail.com>
+git_branch: 
