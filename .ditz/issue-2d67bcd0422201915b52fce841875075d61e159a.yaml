@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Allow a user specified custom field for abook.
+desc: ""
+type: :feature
+component: blanco
+release: 
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-10 05:44:23.719998 Z
+references: []
+
+id: 2d67bcd0422201915b52fce841875075d61e159a
+log_events: 
+- - 2010-02-10 05:44:24.219884 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - ""
+- - 2010-02-10 05:44:34.799990 Z
+  - James Rowe <jnrowe@gmail.com>
+  - issue claimed
+  - ""
+claimer: James Rowe <jnrowe@gmail.com>
+git_branch: 
