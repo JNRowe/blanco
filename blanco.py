@@ -180,7 +180,7 @@ class People(list):
         >>> people.parse("test/blanco.conf")
         >>> people
         People([Person('Bill', 'test@example.com', 30),
-            Person('Joe', 'joe@emample.com', 30),
+            Person('Joe', 'joe@example.com', 30),
             Person('Steven', 'no@example.com', 365)])
         """
         config = configobj.ConfigObj(file)
