@@ -36,6 +36,7 @@ __doc__ += """.
 import datetime
 import mailbox
 import operator
+import optparse
 import os
 import re
 import sys
@@ -43,6 +44,12 @@ import sys
 from email import utils
 
 import configobj
+
+# Pull the first paragraph from the docstring
+USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
+# Replace script name with optparse's substitution var, and rebuild string
+USAGE = "\n".join(USAGE).replace("blanco", "%prog")
+
 
 def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), mtype="mbox"):
     """Parse sent messages mailbox for contact details"""
@@ -80,6 +87,30 @@ def parse_timedelta(delta):
     # days per day/week/month/year
     multiplier = (1, 7, 28, 365)
     return int(float(value) * multiplier[units])
+
+
+def process_command_line():
+    """Main command line interface"""
+    parser = optparse.OptionParser(usage="%prog [options...] <site>...",
+                                   version="%prog v" + __version__,
+                                   description=USAGE)
+
+    parser.set_defaults(addressbook=os.path.expanduser("~/.abook/addressbook"),
+                        mbox=os.path.expanduser("~/.sup/sent.mbox"))
+
+    parser.add_option("-a", "--addressbook", action="store",
+                      metavar="~/.abook/addressbook",
+                      help="Address book to read contacts from")
+    parser.add_option("-m", "--mbox", action="store",
+                      metavar="~/.sup/sent.mbox",
+                      help="Mailbox used to store sent mail")
+    parser.add_option("-v", "--verbose", action="store_true",
+                      dest="verbose", help="Produce verbose output")
+    parser.add_option("-q", "--quiet", action="store_false",
+                      dest="verbose",
+                      help="Output only matches and errors")
+
+    return parser.parse_args()
 
 
 class Person(object):
@@ -149,11 +180,14 @@ class People(list):
                                parse_timedelta(entry["custom4"])))
 
 
-def main(argv):
+def main():
     """Main script"""
+
+    options, args = process_command_line() # pylint: disable-msg=W0612
+
     people = People()
-    people.parse(argv[1])
-    sent = parse_sent(argv[2])
+    people.parse(options.addressbook)
+    sent = parse_sent(options.mbox)
     now = datetime.datetime.now()
     for person in people:
         if not person.address in sent:
@@ -163,4 +197,4 @@ def main(argv):
             print "Due for", person.name
 
 if __name__ == '__main__':
-    main(sys.argv)
+    sys.exit(main())
