@@ -11,6 +11,34 @@ abook_ and your sent mail is easily accessible that is.
 
 It is written in Python_ and licensed under the `GPL v3`_.
 
+Configuration
+-------------
+
+``blanco`` expects your abook_ entries to have a frequency value in
+``customfield4``.  The format is "<n> <units>", where ``n`` is a number and
+``units`` is a character from the set ``[dwmy]``.  For example, an entry with
+a frequency of ``3 m`` will be triggered if there hasn't been a mail sent to
+that address in three months.
+
+If you set ``customfield 4 Frequency`` in your ``~/.abook/abookrc`` the abook_
+interface will display "Frequency" in the interface when editing the custom
+fields.  You do *not* need to set this for ``blanco`` to work, but you must use
+``customfield4`` (see bug 2d6).
+
+Example
+-------
+
+``blanco`` expects you to give it the location of an abook_ addressbook file and
+the location of your sent mail in mbox format, and informs you if you're
+forgetting to contact somebody.
+
+..
+
+    $ ./blanco.py -a test/blanco.conf -m test/sent.mbox
+    Due for Joe
+    No record of a sent email for Steven
+    $
+
 Bugs
 ----
 
