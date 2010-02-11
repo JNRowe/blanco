@@ -5,8 +5,8 @@ type: :feature
 component: blanco
 release: 0.2.0
 reporter: James Rowe <jnrowe@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-02-10 05:44:23.719998 Z
 references: []
 
@@ -23,6 +23,13 @@ log_events:
 - - 2010-02-10 06:18:35.595913 Z
   - James Rowe <jnrowe@gmail.com>
   - assigned to release 0.2.0 from unassigned
+- - 2010-02-11 01:35:20.175875 Z
+  - James Rowe <jnrowe@gmail.com>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2010-02-11 01:41:41.447804 Z
+  - James Rowe <jnrowe@gmail.com>
+  - closed with disposition fixed
   - ""
 claimer: James Rowe <jnrowe@gmail.com>
 git_branch: 
