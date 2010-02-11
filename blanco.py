@@ -225,7 +225,7 @@ class People(list):
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
-            self.append(Person(entry["name"], entry["email"].split(","),
+            self.append(Person(entry["name"], entry["email"],
                                parse_timedelta(entry[field])))
 
 
