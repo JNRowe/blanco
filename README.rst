@@ -22,8 +22,8 @@ sent to that address in three months.
 
 If you set ``customfield 4 Frequency`` in your ``~/.abook/abookrc`` the abook_
 interface will display "Frequency" in the interface when editing the custom
-fields.  You do *not* need to set this for ``blanco`` to work, but you must use
-``customfield4`` (see bug 2d6).
+fields.  You do *not* need to set this for ``blanco`` to work, but it makes the
+purpose of the field clearer.
 
 .. [#] You can select a different field using the ``--field`` option to
        ``blanco``.
