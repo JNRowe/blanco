@@ -126,35 +126,43 @@ def process_command_line():
 class Person(object):
     """Simple contact class"""
 
-    def __init__(self, name, address, frequency):
+    def __init__(self, name, addresses, frequency):
         """Initialise a new ``Person`` object"""
         self.name = name
-        self.address = address
+        if isinstance(addresses, basestring):
+            self.addresses = [addresses, ]
+        else:
+            self.addresses = addresses
         self.frequency = frequency
 
     def __repr__(self):
         """
         >>> Person("James Rowe", "jnrowe@gmail.com", 200)
-        Person('James Rowe', 'jnrowe@gmail.com', 200)
+        Person('James Rowe', ['jnrowe@gmail.com'], 200)
         """
 
         return "%s(%r, %r, %r)" % (self.__class__.__name__, self.name,
-                                   self.address, self.frequency)
+                                   self.addresses, self.frequency)
 
     def __str__(self):
         """
         >>> print Person("James Rowe", "jnrowe@gmail.com", 200)
         James Rowe <jnrowe@gmail.com> (200 days)
+        >>> print Person("James Rowe",
+        ...              ["jnrowe@gmail.com", "jnrowe@example.com"], 200)
+        James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)
         """
-        return "%(name)s <%(address)s> (%(frequency)s days)" % self.__dict__
+        return "%s <%s> (%i days)" % (self.name, ", ".join(self.addresses),
+                                      self.frequency)
 
     def trigger(self, sent):
         """
         >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
-        >>> p.trigger(datetime.datetime(1942, 1, 1))
+        >>> p.trigger({"jnrowe@gmail.com": datetime.datetime(1942, 1, 1)})
         datetime.datetime(1942, 7, 20, 0, 0)
         """
-        return sent + datetime.timedelta(days=self.frequency)
+        matches = sorted([v for k, v in sent.items() if k in self.addresses])
+        return matches[-1] + datetime.timedelta(days=self.frequency)
 
 
 class People(list):
@@ -169,24 +177,24 @@ class People(list):
     def __repr__(self):
         """
         >>> People([Person("James Rowe", "jnrowe@gmail.com", 200), ])
-        People([Person('James Rowe', 'jnrowe@gmail.com', 200)])
+        People([Person('James Rowe', ['jnrowe@gmail.com'], 200)])
         """
 
         return "%s(%r)" % (self.__class__.__name__, self[:])
 
-    def parse(self, file):
+    def parse(self, addressbook):
         """
         >>> people = People()
         >>> people.parse("test/blanco.conf")
         >>> people
-        People([Person('Bill', 'test@example.com', 30),
-            Person('Joe', 'joe@example.com', 30),
-            Person('Steven', 'no@example.com', 365)])
+        People([Person('Bill', ['test@example.com'], 30),
+            Person('Joe', ['joe@example.com'], 30),
+            Person('Steven', ['no@example.com'], 365)])
         """
-        config = configobj.ConfigObj(file)
+        config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: "custom4" in x, config.values())
         for entry in reminder_entries:
-            self.append(Person(entry["name"], entry["email"],
+            self.append(Person(entry["name"], entry["email"].split(","),
                                parse_timedelta(entry["custom4"])))
 
 
@@ -200,10 +208,10 @@ def main():
     sent = parse_sent(options.mbox)
     now = datetime.datetime.now()
     for person in people:
-        if not person.address in sent:
+        if not any(address in sent for address in person.addresses):
             print "No record of a sent email for", person.name
             continue
-        if now > person.trigger(sent[person.address]):
+        if now > person.trigger(sent):
             print "Due for", person.name
 
 if __name__ == '__main__':
