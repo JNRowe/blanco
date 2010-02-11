@@ -44,6 +44,43 @@ forgetting to contact somebody.
     Due for Joe
     Due for Steven
 
+Without abook
+'''''''''''''
+
+``blanco`` can be used without abook_, as it only requires a ini_ formatted
+contacts file and access to a mailbox containing sent mail.  To create your own
+contacts file without abook follow the format below::
+
+    [0]
+    name=Bill
+    email=test@example.com
+    frequency=30d
+
+    [1]
+    name=Joe
+    email=joe@example.com
+    frequency=30d
+
+If you use the layout above you should specify ``--field=frequency`` when
+calling ``blanco``.
+
+Another alternative would be to use abook_ just to convert your current address
+book in to a suitable format.  Check the output of ``abook --formats`` for the
+file formats supported by your version of abook_.
+
+Contributors
+------------
+
+I'd like to thank the following people who have contributed to this repository.
+
+Ideas
+'''''
+
+* Morgan Lane
+
+If I've forgotten to include your name I wholeheartedly apologise.  Just drop me
+an mail_ and I'll update the list!
+
 Bugs
 ----
 
@@ -61,6 +98,7 @@ the problem, or even better a patch!
 .. _mail: jnrowe@gmail.com
 .. _issue: http://github.com/JNRowe/blanco/issues
 .. _ditz: http://ditz.rubyforge.org/
+.. _ini: http://www.cloanto.com/specs/ini/
 
 ..
     :vim: set ft=rst ts=4 sw=4 et:

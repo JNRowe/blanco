@@ -5,8 +5,8 @@ type: :feature
 component: blanco
 release: 0.2.0
 reporter: James Rowe <jnrowe@gmail.com>
-status: :unstarted
-disposition: 
+status: :closed
+disposition: :fixed
 creation_time: 2010-02-11 01:17:12.139899 Z
 references: []
 
@@ -22,5 +22,13 @@ log_events:
     
     This would be much easier once 2d6 is fixed, as the format could look a little
     cleaner.
+- - 2010-02-11 02:20:48.175872 Z
+  - James Rowe <jnrowe@gmail.com>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2010-02-11 02:58:45.907797 Z
+  - James Rowe <jnrowe@gmail.com>
+  - closed with disposition fixed
+  - ""
 claimer: 
-git_branch: 
+git_branch: bug-e86
