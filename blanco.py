@@ -70,6 +70,8 @@ USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), cc=False,
                bcc=False):
     """Parse sent messages mailbox for contact details"""
+    if not os.path.exists(path):
+        raise IOError("File not found")
     if os.path.isdir("%s/new" % path):
         mtype = "Maildir"
     elif os.path.exists("%s/.mh_sequences"):
