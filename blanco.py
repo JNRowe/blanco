@@ -67,7 +67,8 @@ USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 
 
-def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox")):
+def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), cc=False,
+               bcc=False):
     """Parse sent messages mailbox for contact details"""
     if os.path.isdir("%s/new" % path):
         mtype = "Maildir"
@@ -82,8 +83,12 @@ def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox")):
 
     contacts = []
     for message in mbox:
-        addresses = map(operator.itemgetter(1),
-                        utils.getaddresses(message.get_all("to")))
+        fields = message.get_all("to", [])
+        if cc:
+            fields.extend(message.get_all("cc", []))
+        if bcc:
+            fields.extend(message.get_all("bcc", []))
+        addresses = map(operator.itemgetter(1), utils.getaddresses(fields))
         date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
         contacts.extend([(address, date) for address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
@@ -130,6 +135,10 @@ def process_command_line():
     parser.add_option("-m", "--mbox", action="store",
                       metavar="~/.sup/sent.mbox",
                       help="Mailbox used to store sent mail")
+    parser.add_option("-c", "--cc", action="store_true",
+                      help="Include CC fields from sent mail")
+    parser.add_option("-b", "--bcc", action="store_true",
+                      help="Include BCC fields from sent mail")
     parser.add_option("-v", "--verbose", action="store_true",
                       dest="verbose", help="Produce verbose output")
     parser.add_option("-q", "--quiet", action="store_false",
@@ -213,7 +222,7 @@ def main():
 
     people = People()
     people.parse(options.addressbook)
-    sent = parse_sent(options.mbox)
+    sent = parse_sent(options.mbox, options.cc, options.bcc)
     now = datetime.datetime.now()
     for person in people:
         if not person.address in sent:
