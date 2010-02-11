@@ -1,0 +1,27 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Support parsing CC/BCC fields for contacts too.
+desc: ""
+type: :feature
+component: blanco
+release: 0.2.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-11 00:37:41.439889 Z
+references: []
+
+id: bdc2d73a722c44d815d56153a4dba349486a4915
+log_events: 
+- - 2010-02-11 00:37:57.492658 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - |-
+    This must be an option, I wouldn't consider a 20 person CC a real contact as it
+    is more likely a party invite.  It might be nice to know that there has been
+    some contact though.
+- - 2010-02-11 00:38:03.915875 Z
+  - James Rowe <jnrowe@gmail.com>
+  - issue claimed
+  - ""
+claimer: James Rowe <jnrowe@gmail.com>
+git_branch: 
