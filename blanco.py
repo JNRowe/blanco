@@ -45,6 +45,22 @@ from email import utils
 
 import configobj
 
+try:
+    import termstyle
+except ImportError:
+    termstyle = None # pylint: disable-msg=C0103
+
+# Select colours if terminal is a tty
+if termstyle:
+    # pylint: disable-msg=C0103
+    termstyle.auto()
+    success = termstyle.green
+    fail = termstyle.red
+    warn = termstyle.yellow
+else:
+    # pylint: disable-msg=C0103
+    success = fail = warn = str
+
 # Pull the first paragraph from the docstring
 USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 # Replace script name with optparse's substitution var, and rebuild string
@@ -201,7 +217,7 @@ def main():
     now = datetime.datetime.now()
     for person in people:
         if not person.address in sent:
-            print "No record of a sent email for", person.name
+            print fail("No record of a sent email for %s" % person.name)
             continue
         if now > person.trigger(sent[person.address]):
             print "Due for", person.name
