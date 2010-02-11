@@ -14,3 +14,12 @@ releases:
     - James Rowe <jnrowe@gmail.com>
     - created
     - ""
+- !ditz.rubyforge.org,2008-03-06/release 
+  name: 0.3.0
+  status: :unreleased
+  release_time: 
+  log_events: 
+  - - 2010-02-11 03:17:44.815784 Z
+    - James Rowe <jnrowe@gmail.com>
+    - created
+    - ""
