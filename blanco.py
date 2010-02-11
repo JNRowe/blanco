@@ -66,8 +66,10 @@ def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox")):
 
     contacts = []
     for message in mbox:
-        addresses = map(operator.itemgetter(1),
-                        utils.getaddresses(message.get_all("to")))
+        fields = message.get_all("to", [])
+        fields.extend(message.get_all("bcc", []))
+        fields.extend(message.get_all("cc", []))
+        addresses = map(operator.itemgetter(1), utils.getaddresses(fields))
         date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
         contacts.extend([(address, date) for address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
