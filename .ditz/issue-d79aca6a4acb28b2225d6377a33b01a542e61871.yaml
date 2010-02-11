@@ -1,0 +1,34 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Support multiple email addresses per person.
+desc: |-
+  abook supports multiple email addresses per person, and blanco should support
+  that usage too.
+type: :feature
+component: blanco
+release: 0.2.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-11 00:30:44.739900 Z
+references: []
+
+id: d79aca6a4acb28b2225d6377a33b01a542e61871
+log_events: 
+- - 2010-02-11 00:30:46.035769 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - ""
+- - 2010-02-11 00:30:50.335887 Z
+  - James Rowe <jnrowe@gmail.com>
+  - issue claimed
+  - ""
+- - 2010-02-11 00:34:55.151394 Z
+  - James Rowe <jnrowe@gmail.com>
+  - commented
+  - |-
+    It may be nice to support searching on primary email addresses only.  For
+    example, Rach has three addresses in my address book and the fact that I've
+    mailed her for work related topics is entirely unimportant for the keeping in
+    touch problem.
+claimer: James Rowe <jnrowe@gmail.com>
+git_branch: 
