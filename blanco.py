@@ -216,11 +216,11 @@ class People(list):
     def parse(self, addressbook, field):
         """
         >>> people = People()
-        >>> people.parse("test/blanco.conf")
+        >>> people.parse("test/blanco.conf", "custom4")
         >>> people
         People([Person('Bill', ['test@example.com'], 30),
             Person('Joe', ['joe@example.com'], 30),
-            Person('Steven', ['no@example.com'], 365)])
+            Person('Steven', ['steven@example.com'], 365)])
         """
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
