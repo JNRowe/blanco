@@ -96,7 +96,8 @@ def process_command_line():
                                    description=USAGE)
 
     parser.set_defaults(addressbook=os.path.expanduser("~/.abook/addressbook"),
-                        mbox=os.path.expanduser("~/.sup/sent.mbox"))
+                        mbox=os.path.expanduser("~/.sup/sent.mbox"),
+                        field="custom4")
 
     parser.add_option("-a", "--addressbook", action="store",
                       metavar="~/.abook/addressbook",
@@ -104,6 +105,9 @@ def process_command_line():
     parser.add_option("-m", "--mbox", action="store",
                       metavar="~/.sup/sent.mbox",
                       help="Mailbox used to store sent mail")
+    parser.add_option("-s", "--field", action="store",
+                      metavar="custom4",
+                      help="Abook field to use for frequency value")
     parser.add_option("-v", "--verbose", action="store_true",
                       dest="verbose", help="Produce verbose output")
     parser.add_option("-q", "--quiet", action="store_false",
@@ -164,7 +168,7 @@ class People(list):
 
         return "%s(%r)" % (self.__class__.__name__, self[:])
 
-    def parse(self, file):
+    def parse(self, file, field):
         """
         >>> people = People()
         >>> people.parse("test/blanco.conf")
@@ -174,10 +178,10 @@ class People(list):
             Person('Steven', 'no@example.com', 365)])
         """
         config = configobj.ConfigObj(file)
-        reminder_entries = filter(lambda x: "custom4" in x, config.values())
+        reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
             self.append(Person(entry["name"], entry["email"],
-                               parse_timedelta(entry["custom4"])))
+                               parse_timedelta(entry[field])))
 
 
 def main():
@@ -186,7 +190,7 @@ def main():
     options, args = process_command_line() # pylint: disable-msg=W0612
 
     people = People()
-    people.parse(options.addressbook)
+    people.parse(options.addressbook, options.field)
     sent = parse_sent(options.mbox)
     now = datetime.datetime.now()
     for person in people:
