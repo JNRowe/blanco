@@ -67,8 +67,7 @@ USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 
 
-def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), cc=False,
-               bcc=False):
+def parse_sent(path, cc=False, bcc=False, addresses=None):
     """Parse sent messages mailbox for contact details"""
     if not os.path.exists(path):
         raise IOError("File not found")
@@ -90,9 +89,10 @@ def parse_sent(path=os.path.expanduser("~/.sup/sent.mbox"), cc=False,
             fields.extend(message.get_all("cc", []))
         if bcc:
             fields.extend(message.get_all("bcc", []))
-        addresses = map(operator.itemgetter(1), utils.getaddresses(fields))
+        results = map(operator.itemgetter(1), utils.getaddresses(fields))
         date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
-        contacts.extend([(address, date) for address in addresses])
+        contacts.extend([(address, date) for address in results
+                         if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
@@ -213,6 +213,16 @@ class People(list):
 
         return "%s(%r)" % (self.__class__.__name__, self[:])
 
+    def addresses(self):
+        """
+        >>> p = People(
+        ... [Person("Bill", ["test@example.com", "new@example.com"], 30),
+        ...  Person("Joe", ["joe@example.com"], 30)])
+        >>> p.addresses()
+        ['test@example.com', 'new@example.com', 'joe@example.com']
+        """
+        return reduce(operator.add, map(operator.attrgetter("addresses"), self))
+
     def parse(self, addressbook, field):
         """
         >>> people = People()
@@ -236,7 +246,8 @@ def main():
 
     people = People()
     people.parse(options.addressbook, options.field)
-    sent = parse_sent(options.mbox, options.cc, options.bcc)
+    sent = parse_sent(options.mbox, options.cc, options.bcc, people.addresses())
+
     now = datetime.datetime.now()
     for person in people:
         if not any(address in sent for address in person.addresses):
