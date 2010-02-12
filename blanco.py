@@ -70,7 +70,20 @@ USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 
 
 def parse_sent(path, cc=False, bcc=False, addresses=None):
-    """Parse sent messages mailbox for contact details"""
+    """Parse sent messages mailbox for contact details
+
+    :type path: ``str``
+    :param path: Location of the sent mailbox
+    :type cc: ``bool``
+    :param cc: Whether to check CC fields for contacts
+    :type bcc: ``bool``
+    :param bcc: Whether to check BCC fields for contacts
+    :type addresses: ``list``
+    :param addresses: Addresses to look for in sent mail, all if not specified
+    :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+    :return: Keys of email address, and values of seen date
+    """
+
     if not os.path.exists(path):
         raise IOError("File not found")
     if os.path.isdir("%s/new" % path):
@@ -98,25 +111,32 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
-def parse_timedelta(delta):
-    """Parse human readable frequency
+def parse_duration(duration):
+    """Parse human readable duration
 
-    >>> parse_timedelta("1d")
+    >>> parse_duration("1d")
     1
-    >>> parse_timedelta("1 d")
+    >>> parse_duration("1 d")
     1
-    >>> parse_timedelta("0.5 y")
+    >>> parse_duration("0.5 y")
     182
-    >>> parse_timedelta("0.5 Y")
+    >>> parse_duration("0.5 Y")
     182
-    >>> parse_timedelta("1 k")
+    >>> parse_duration("1 k")
     Traceback (most recent call last):
         ...
-    ValueError: Invalid 'frequency' value
+    ValueError: Invalid 'duration' value
+
+    :type duration: ``str``
+    :param duration: Duration definition
+    :rtype: ``int``
+    :return: Number of days in ``duration``
+    :raise ValueError: Invalid value for ``duration``
     """
-    match = re.match("^(\d+(?:|\.\d+)) *([dwmy])$", delta, re.IGNORECASE)
+
+    match = re.match("^(\d+(?:|\.\d+)) *([dwmy])$", duration, re.IGNORECASE)
     if not match:
-        raise ValueError("Invalid 'frequency' value")
+        raise ValueError("Invalid 'duration' value")
     value, units = match.groups()
     units = "dwmy".index(units.lower())
     # days per day/week/month/year
@@ -125,7 +145,11 @@ def parse_timedelta(delta):
 
 
 def process_command_line():
-    """Main command line interface"""
+    """Main command line interface
+
+    :rtype: ``tuple`` of ``optparse`` and ``list``
+    :return: Parsed options and arguments
+    """
     parser = optparse.OptionParser(usage="%prog [options...]",
                                    version="%prog v" + __version__,
                                    description=USAGE)
@@ -169,7 +193,8 @@ class Person(object):
         self.frequency = frequency
 
     def __repr__(self):
-        """
+        """Self-documenting string representation
+
         >>> Person("James Rowe", "jnrowe@gmail.com", 200)
         Person('James Rowe', ['jnrowe@gmail.com'], 200)
         """
@@ -178,7 +203,8 @@ class Person(object):
                                    self.addresses, self.frequency)
 
     def __str__(self):
-        """
+        """Pretty printed error string
+
         >>> print Person("James Rowe", "jnrowe@gmail.com", 200)
         James Rowe <jnrowe@gmail.com> (200 days)
         >>> print Person("James Rowe",
@@ -189,11 +215,18 @@ class Person(object):
                                       self.frequency)
 
     def trigger(self, sent):
-        """
+        """Calculate trigger date for contact
+
         >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
         >>> p.trigger({"jnrowe@gmail.com": datetime.datetime(1942, 1, 1)})
         datetime.datetime(1942, 7, 20, 0, 0)
+
+        :type sent: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+        :param sent: Address to last seen dictionary
+        :rtype: ``datetime.datetime``
+        :return: Date to start reminders on
         """
+
         matches = sorted([v for k, v in sent.items() if k in self.addresses])
         return matches[-1] + datetime.timedelta(days=self.frequency)
 
@@ -208,7 +241,8 @@ class People(list):
             self.extend(people)
 
     def __repr__(self):
-        """
+        """Self-documenting string representation
+
         >>> People([Person("James Rowe", "jnrowe@gmail.com", 200), ])
         People([Person('James Rowe', ['jnrowe@gmail.com'], 200)])
         """
@@ -216,29 +250,41 @@ class People(list):
         return "%s(%r)" % (self.__class__.__name__, self[:])
 
     def addresses(self):
-        """
+        """Fetch all addresses of all ``Person`` objects
+
         >>> p = People(
         ... [Person("Bill", ["test@example.com", "new@example.com"], 30),
         ...  Person("Joe", ["joe@example.com"], 30)])
         >>> p.addresses()
         ['test@example.com', 'new@example.com', 'joe@example.com']
+
+        :rtype: ``list`` of ``str``
+        :return: Addresses of every ``Person``
         """
-        return reduce(operator.add, map(operator.attrgetter("addresses"), self))
+        return reduce(operator.add,
+                      map(operator.attrgetter("addresses"), self))
 
     def parse(self, addressbook, field):
-        """
+        """Parse address book for usable entries
+
         >>> people = People()
         >>> people.parse("test/blanco.conf", "custom4")
         >>> people
         People([Person('Bill', ['test@example.com'], 30),
             Person('Joe', ['joe@example.com'], 30),
             Person('Steven', ['steven@example.com'], 365)])
+
+        :type addressbook: ``str``
+        :param addressbook: Location of the address book to useful
+        :type field: ``str``
+        :param field: Address book field to use for contact frequency
         """
+
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
             self.append(Person(entry["name"], entry["email"],
-                               parse_timedelta(entry[field])))
+                               parse_duration(entry[field])))
 
 
 def main():
@@ -248,7 +294,8 @@ def main():
 
     people = People()
     people.parse(options.addressbook, options.field)
-    sent = parse_sent(options.mbox, options.cc, options.bcc, people.addresses())
+    sent = parse_sent(options.mbox, options.cc, options.bcc,
+                      people.addresses())
 
     now = datetime.datetime.now()
     for person in people:
