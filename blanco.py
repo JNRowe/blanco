@@ -30,6 +30,8 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
+Check sent mail to make sure you're keeping in contact with your friends.
+
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
@@ -124,7 +126,7 @@ def parse_timedelta(delta):
 
 def process_command_line():
     """Main command line interface"""
-    parser = optparse.OptionParser(usage="%prog [options...] <site>...",
+    parser = optparse.OptionParser(usage="%prog [options...]",
                                    version="%prog v" + __version__,
                                    description=USAGE)
 
