@@ -104,7 +104,8 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
             fields.extend(message.get_all("cc", []))
         if bcc:
             fields.extend(message.get_all("bcc", []))
-        results = map(operator.itemgetter(1), utils.getaddresses(fields))
+        results = map(str.lower,
+                      map(operator.itemgetter(1), utils.getaddresses(fields)))
         date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
         contacts.extend([(address, date) for address in results
                          if not addresses or address in addresses])
@@ -187,9 +188,9 @@ class Person(object):
         """Initialise a new ``Person`` object"""
         self.name = name
         if isinstance(addresses, basestring):
-            self.addresses = [addresses, ]
+            self.addresses = [addresses.lower(), ]
         else:
-            self.addresses = addresses
+            self.addresses = map(str.lower, addresses)
         self.frequency = frequency
 
     def __repr__(self):

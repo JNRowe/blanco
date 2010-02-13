@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Mail addresses should be treated as case insensitive.
+desc: ""
+type: :bugfix
+component: blanco
+release: 0.3.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2010-02-13 06:16:25.879958 Z
+references: []
+
+id: d5389268cba4498223c9674bca75c6c4f2a117f6
+log_events: 
+- - 2010-02-13 06:18:15.798409 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - Email addresses should be treated as case insensitive, as per RDC 5321.
+- - 2010-02-13 06:22:54.183878 Z
+  - James Rowe <jnrowe@gmail.com>
+  - closed with disposition fixed
+  - ""
+claimer: 
+git_branch: 
