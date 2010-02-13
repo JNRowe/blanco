@@ -1,0 +1,24 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Add support for config file.
+desc: ""
+type: :feature
+component: blanco
+release: 0.3.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-13 09:30:22.715959 Z
+references: []
+
+id: 6ed4d62578a39c37457e73b60cc43ae3d812f14a
+log_events: 
+- - 2010-02-13 09:30:23.495848 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - ""
+- - 2010-02-13 09:30:28.675938 Z
+  - James Rowe <jnrowe@gmail.com>
+  - issue claimed
+  - ""
+claimer: James Rowe <jnrowe@gmail.com>
+git_branch: 
