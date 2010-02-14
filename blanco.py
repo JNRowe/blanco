@@ -80,7 +80,7 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     :param bcc: Whether to check BCC fields for contacts
     :type addresses: ``list``
     :param addresses: Addresses to look for in sent mail, all if not specified
-    :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+    :rtype: ``dict`` of ``str`` keys and ``datetime.date`` values
     :return: Keys of email address, and values of seen date
     """
 
@@ -107,7 +107,7 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
         results = map(str.lower,
                       map(operator.itemgetter(1), utils.getaddresses(fields)))
         date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
-        contacts.extend([(address, date) for address in results
+        contacts.extend([(address, date.date()) for address in results
                          if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
@@ -219,12 +219,12 @@ class Person(object):
         """Calculate trigger date for contact
 
         >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
-        >>> p.trigger({"jnrowe@gmail.com": datetime.datetime(1942, 1, 1)})
-        datetime.datetime(1942, 7, 20, 0, 0)
+        >>> p.trigger({"jnrowe@gmail.com": datetime.date(1942, 1, 1)})
+        datetime.date(1942, 7, 20)
 
-        :type sent: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+        :type sent: ``dict`` of ``str`` keys and ``datetime.date`` values
         :param sent: Address to last seen dictionary
-        :rtype: ``datetime.datetime``
+        :rtype: ``datetime.date``
         :return: Date to start reminders on
         """
 
@@ -298,7 +298,7 @@ def main():
     sent = parse_sent(options.mbox, options.cc, options.bcc,
                       people.addresses())
 
-    now = datetime.datetime.now()
+    now = datetime.date.today()
     for person in people:
         if not any(address in sent for address in person.addresses):
             print fail("No record of a sent email for %s" % person.name)

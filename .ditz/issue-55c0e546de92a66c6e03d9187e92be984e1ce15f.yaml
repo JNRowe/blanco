@@ -1,0 +1,28 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Use datetime.date objects, as we don't need time accuracy.
+desc: ""
+type: :bugfix
+component: blanco
+release: 0.3.0
+reporter: James Rowe <jnrowe@gmail.com>
+status: :closed
+disposition: :fixed
+creation_time: 2010-02-14 14:29:48.991752 Z
+references: []
+
+id: 55c0e546de92a66c6e03d9187e92be984e1ce15f
+log_events: 
+- - 2010-02-14 14:29:49.531643 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - ""
+- - 2010-02-14 14:29:58.571727 Z
+  - James Rowe <jnrowe@gmail.com>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2010-02-14 14:31:50.563666 Z
+  - James Rowe <jnrowe@gmail.com>
+  - closed with disposition fixed
+  - ""
+claimer: 
+git_branch: 
