@@ -113,7 +113,7 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
-def parse_msmtp(log, all_recipients=False, addresses=None):
+def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
     """Parse sent messages mailbox for contact details
 
     :type log: ``str``
@@ -121,13 +121,17 @@ def parse_msmtp(log, all_recipients=False, addresses=None):
     :type all_recipients: ``bool``
     :param all_recipients: Whether to include all recipients in results, or just
         first
+    :type gmail: ``bool``
+    :param gmail: Log is for a gmail account
     :type addresses: ``list``
     :param addresses: Addresses to look for in sent mail, all if not specified
     :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
     :return: Keys of email address, and values of seen date
     """
 
-    matcher = re.compile("recipients=([^ ]*)")
+    matcher = re.compile("recipients=([^ ]+)")
+    gmail_date = re.compile("smtpmsg.*OK ([^ ]+)")
+
     start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
 
     year = start.year
@@ -135,16 +139,25 @@ def parse_msmtp(log, all_recipients=False, addresses=None):
     contacts = []
     for line in reversed(filter(lambda s: s.endswith("exitcode=EX_OK\n"),
                                 open(log).readlines())):
-        date = time.strptime(line[:6], "%b %d")[1:3]
-        if date > md:
-            year = year - 1
-        md = date
+        if gmail:
+            gd = gmail_date.search(line)
+            try:
+                parsed = datetime.datetime.utcfromtimestamp(int(gd.groups()[0]))
+            except AttributeError:
+                raise ValueError("msmtp log is not in gmail format")
+            year = parsed.year
+            md = parsed.month, parsed.day
+        else:
+            date = time.strptime(line[:6], "%b %d")[1:3]
+            if date > md:
+                year = year - 1
+            md = date
 
         results = map(str.lower,
                       matcher.search(line, 16).groups()[0].split(","))
         if not all_recipients:
             results = [results[0], ]
-        contacts.extend([(address, datetime.datetime(year, *date))
+        contacts.extend([(address, datetime.datetime(year, *md))
                          for address in results
                          if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
@@ -218,6 +231,8 @@ def process_command_line():
                           help="msmtp log to parse")
     msmtp_opts.add_option("-r", "--all", action="store_true",
                           help="Include all recipients from msmtp log")
+    msmtp_opts.add_option("-g", "--gmail", action="store_true",
+                          help="Log from a gmail account(more accurate filter)")
 
     parser.add_option("-s", "--field", action="store",
                       metavar="custom4",
@@ -346,7 +361,8 @@ def main():
     people = People()
     people.parse(options.addressbook, options.field)
     if options.log:
-        sent = parse_msmtp(options.log, options.all, people.addresses())
+        sent = parse_msmtp(options.log, options.all, options.gmail,
+                           people.addresses())
     else:
         sent = parse_sent(options.mbox, options.cc, options.bcc,
                           people.addresses())
