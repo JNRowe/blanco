@@ -1,0 +1,3 @@
+Feb 09 12:13:47 host=smtp.example.com tls=on auth=on user=jnrowe@gmail.com from=jnrowe@gmail.com recipients=test@example.com mailsize=4031 smtpstatus=250 smtpmsg='250' exitcode=EX_OK
+Feb 09 12:13:47 host=smtp.example.com tls=on auth=on user=jnrowe@gmail.com from=jnrowe@gmail.com recipients=Joe@example.com,max@example.com,steven@example.com mailsize=3051 smtpstatus=250 smtpmsg='250' exitcode=EX_OK
+Feb 09 12:13:47 host=smtp.example.com tls=on auth=on user=jnrowe@gmail.com from=jnrowe@gmail.com recipients=nobody@example.com mailsize=864 smtpstatus=250 smtpmsg='250' exitcode=EX_OK
