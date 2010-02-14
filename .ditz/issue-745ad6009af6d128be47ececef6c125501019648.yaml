@@ -1,0 +1,23 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: Support msmtp log as sent mail source.
+desc: "It would be a much faster way to process the sent addresses"
+type: :feature
+component: blanco
+release: bluesky
+reporter: James Rowe <jnrowe@gmail.com>
+status: :unstarted
+disposition: 
+creation_time: 2010-02-14 11:25:26.067753 Z
+references: []
+
+id: 745ad6009af6d128be47ececef6c125501019648
+log_events: 
+- - 2010-02-14 11:27:56.623916 Z
+  - James Rowe <jnrowe@gmail.com>
+  - created
+  - |-
+    Unfortunately the msmtp log file doesn't include the year in the output, so it
+    must be parsed backwards using mtime as the latest year.  Of course, it would
+    break if no mail was sent for a whole year, but who lives in that world?
+claimer: 
+git_branch: 
