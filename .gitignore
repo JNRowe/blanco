@@ -1,3 +1,5 @@
+doc/.build/
+
 *.py[co]
 .coverage
 README.html

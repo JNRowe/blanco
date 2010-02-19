@@ -46,6 +46,7 @@ import sys
 from email import utils
 
 import configobj
+import validate
 
 try:
     import termstyle
@@ -151,26 +152,43 @@ def process_command_line():
     :rtype: ``tuple`` of ``optparse`` and ``list``
     :return: Parsed options and arguments
     """
+
+    config_spec = [
+        "addressbook = string(default='~/.abook/addressbox')",
+        "mbox = string(default='~/.sup/sent.mbox')",
+        "cc = boolean(default=False)",
+        "bcc = boolean(default=False)",
+        "field = string(default='custom4')",
+    ]
+    config = configobj.ConfigObj(os.path.expanduser("~/.blancorc"),
+                                 configspec=config_spec)
+    results = config.validate(validate.Validator())
+    if results is not True:
+        for key in filter(lambda k: not results[k], results):
+            print fail("Config value for `%s' is invalid" % key)
+        raise SyntaxError("Invalid configuration file")
+
     parser = optparse.OptionParser(usage="%prog [options...]",
                                    version="%prog v" + __version__,
                                    description=USAGE)
 
-    parser.set_defaults(addressbook=os.path.expanduser("~/.abook/addressbook"),
-                        mbox=os.path.expanduser("~/.sup/sent.mbox"),
-                        field="custom4")
+    parser.set_defaults(addressbook=os.path.expanduser(config["addressbook"]),
+                        mbox=os.path.expanduser(config["mbox"]),
+                        cc=config["cc"], bcc=config["bcc"],
+                        field=config["field"])
 
     parser.add_option("-a", "--addressbook", action="store",
-                      metavar="~/.abook/addressbook",
+                      metavar=config["addressbook"],
                       help="Address book to read contacts from")
     parser.add_option("-m", "--mbox", action="store",
-                      metavar="~/.sup/sent.mbox",
+                      metavar=config["mbox"],
                       help="Mailbox used to store sent mail")
     parser.add_option("-c", "--cc", action="store_true",
                       help="Include CC fields from sent mail")
     parser.add_option("-b", "--bcc", action="store_true",
                       help="Include BCC fields from sent mail")
     parser.add_option("-s", "--field", action="store",
-                      metavar="custom4",
+                      metavar=config["field"],
                       help="Abook field to use for frequency value")
     parser.add_option("-v", "--verbose", action="store_true",
                       dest="verbose", help="Produce verbose output")
@@ -291,7 +309,10 @@ class People(list):
 def main():
     """Main script"""
 
-    options, args = process_command_line() # pylint: disable-msg=W0612
+    try:
+        options, args = process_command_line() # pylint: disable-msg=W0612
+    except SyntaxError:
+        sys.exit(1)
 
     people = People()
     people.parse(options.addressbook, options.field)
