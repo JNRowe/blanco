@@ -6,6 +6,18 @@ User-visible changes
 
 .. contents::
 
+0.3.0 - VCS only
+----------------
+
+    * Support for setting command line options in ``~/.blancorc``, the format is
+      ``<option>=<value>`` with no leading dashes in option names
+    * Much faster processing for large sent mailboxes
+    * Support for reading msmtp_ logs as an alternative to parsing sent mail
+    * Optional gmail_-specific log parser for increased accuracy in log parsing
+
+.. _msmtp: http://msmtp.sourceforge.net/
+.. _gmail: http://mail.google.com/
+
 0.2.0 - 2010-02-11
 ------------------
 
