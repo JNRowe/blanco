@@ -35,8 +35,10 @@ Example
 the location of your sent mail in mbox format, and informs you if you're
 forgetting to contact somebody.
 
-..
+::
 
+    $ ./date.py
+    2010-02-15
     $ ./blanco.py -a test/blanco.conf -m test/sent.mbox
     Due for Joe
     No record of a sent email for Steven
