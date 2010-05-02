@@ -362,7 +362,7 @@ class Person(object):
                                    self.addresses, self.frequency)
 
     def __str__(self):
-        """Pretty printed error string
+        """Pretty printed person string
 
         >>> print Person("James Rowe", "jnrowe@gmail.com", 200)
         James Rowe <jnrowe@gmail.com> (200 days)
@@ -405,10 +405,12 @@ class Person(object):
         """
 
         if "body-hyperlinks" in pynotify.get_server_caps():
-            name = "<a href='mailto:%s'>%s</a>" % (self.addresses[0], self.name)
+            name = "<a href='mailto:%s'>%s</a>" \
+                % (self.addresses[0], self.name)
         else:
             name = self.name
         return name
+
 
 class People(list):
     """Group of ``Person``"""
