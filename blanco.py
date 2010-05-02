@@ -79,6 +79,28 @@ USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details
 
+    >>> parse_sent("None")
+    Traceback (most recent call last):
+        ...
+    IOError: Sent mailbox `None' not found
+    >>> parse_sent("test/sent.maildir", True)
+    {'nobody@example.com': datetime.date(2000, 2, 9),
+     'max@example.com': datetime.date(2000, 2, 9),
+     'test@example.com': datetime.date(2010, 2, 9),
+     'steven@example.com': datetime.date(2000, 2, 9),
+     'joe@example.com': datetime.date(2000, 2, 9)}
+    >>> parse_sent("test/sent.mh")
+    {'nobody@example.com': datetime.date(2000, 2, 9),
+     'max@example.com': datetime.date(2000, 2, 9),
+     'test@example.com': datetime.date(2010, 2, 9),
+     'joe@example.com': datetime.date(2000, 2, 9)}
+    >>> parse_sent("test/sent.mbox", addresses="joe@example.com")
+    {'joe@example.com': datetime.date(2000, 2, 9)}
+    >>> parse_sent("/dev/null")
+    Traceback (most recent call last):
+        ...
+    ValueError: Unknown mailbox format
+
     :type path: ``str``
     :param path: Location of the sent mailbox
     :type all_recipients: ``bool``
@@ -119,6 +141,26 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details
+
+    >>> parse_msmtp("None")
+    Traceback (most recent call last):
+        ...
+    IOError: msmtp sent log `None' not found
+    >>> parse_msmtp("test/sent.msmtp")
+    {'nobody@example.com': datetime.date(2010, 2, 9), 'test@example.com':
+     datetime.date(2010, 2, 9), 'joe@example.com': datetime.date(2010, 2, 9)}
+    >>> parse_msmtp("test/sent.msmtp", True)
+    {'nobody@example.com': datetime.date(2010, 2, 9),
+     'max@example.com': datetime.date(2010, 2, 9),
+     'test@example.com': datetime.date(2010, 2, 9),
+     'steven@example.com': datetime.date(2010, 2, 9),
+     'joe@example.com': datetime.date(2010, 2, 9)}
+    >>> parse_msmtp("test/sent.msmtp", addresses=["nobody@example.com", ])
+    {'nobody@example.com': datetime.date(2010, 2, 9)}
+    >>> parse_msmtp("test/sent_gmail.msmtp", gmail=True)
+    {'nobody@example.com': datetime.date(2000, 2, 9),
+     'test@example.com': datetime.date(2010, 2, 9),
+     'joe@example.com': datetime.date(2000, 2, 9)}
 
     :type log: ``str``
     :param log: Location of the msmtp logfile
