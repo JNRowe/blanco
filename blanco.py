@@ -339,6 +339,41 @@ def process_command_line():
     return parser.parse_args()
 
 
+def show_note(notify, message, person, urgency=pynotify.URGENCY_NORMAL,
+              expires=pynotify.EXPIRES_DEFAULT):
+    """Display reminder
+
+    >>> show_note(False, "Note for %s",
+    ...           Person("James Rowe", "jnrowe@gmail.com", 200))
+    Note for James Rowe
+
+    :type notify: ``bool``
+    :param notify: Whether to use notification popup
+    :type message: ``str``
+    :param message: Message string to show
+    :type person: ``Person``
+    :type urgency: ``int``
+    :param urgency: Urgency state for message
+    :type expires: ``int``
+    :param expires: Time to show notification popup in milliseconds
+    :param person: Person to show message for
+    :raise OSError: Failure to show notification
+    """
+    if notify:
+        note = pynotify.Notification("Hey, remember me?",
+                                     message % person.notify_str(),
+                                     "stock_person")
+        note.set_urgency(urgency)
+        note.set_timeout(expires)
+
+        if not note.show():
+            raise OSError("Notification failed to display!")
+    else:
+        if urgency == pynotify.URGENCY_CRITICAL:
+            print success(message % person.name)
+        else:
+            print warn(message % person.name)
+
 class Person(object):
     """Simple contact class"""
 
@@ -499,28 +534,10 @@ def main():
     now = datetime.date.today()
     for person in people:
         if not any(address in sent for address in person.addresses):
-            message = "No mail record for %s"
-            if options.notify:
-                note = pynotify.Notification("Hey, remember me?",
-                                             message % person.notify_str(),
-                                             "stock_person")
-                if not note.show():
-                    raise OSError("Notification failed to display!")
-            else:
-                print warn(message % person.name)
-            continue
-        if now > person.trigger(sent):
-            message = "Mail due for %s"
-            if options.notify:
-                note = pynotify.Notification("Hey, remember me?",
-                                             message % person.notify_str(),
-                                             "stock_person")
-                note.set_urgency(pynotify.URGENCY_CRITICAL)
-                note.set_timeout(pynotify.EXPIRES_NEVER)
-                if not note.show():
-                    raise OSError("Notification failed to display!")
-            else:
-                print success(message % person.name)
+            show_note(options.notify, "No mail record for %s", person)
+        elif now > person.trigger(sent):
+            show_note(options.notify, "mail due for %s", person,
+                      pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
 
 if __name__ == '__main__':
     sys.exit(main())
