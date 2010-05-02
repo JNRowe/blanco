@@ -218,7 +218,7 @@ def process_command_line():
         "log = string(default='~/Mail/.logs/gmail.log')",
         "all = boolean(default=False)",
         "gmail = boolean(default=False)",
-        "senttype = string(default='mailbox')",
+        "sent type = string(default='mailbox')",
     ]
     config = configobj.ConfigObj(os.path.expanduser("~/.blancorc"),
                                  configspec=config_spec)
@@ -236,7 +236,7 @@ def process_command_line():
                         field=config["field"],
                         mbox=os.path.expanduser(config["mbox"]),
                         log=os.path.expanduser(config["log"]),
-                        sent_type=config['senttype'])
+                        sent_type=config['sent type'])
 
     parser.add_option("-a", "--addressbook", action="store",
                       metavar=config["addressbook"],
@@ -244,7 +244,7 @@ def process_command_line():
 
     parser.add_option("-t", "--sent-type", action="store",
                       choices=("mailbox", "msmtp"),
-                      metavar=config["senttype"],
+                      metavar=config["sent type"],
                       help="Sent source type(mailbox or msmtp)")
     parser.add_option("-r", "--all", action="store_true",
                       help="Include all recipients(CC and BCC fields)")
