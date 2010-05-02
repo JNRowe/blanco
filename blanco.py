@@ -94,8 +94,8 @@ def parse_sent(path, all_recipients=False, addresses=None):
         raise IOError("Sent mailbox `%s' not found" % path)
     if os.path.isdir("%s/new" % path):
         mtype = "Maildir"
-    elif os.path.exists("%s/.mh_sequences"):
-        mtype = "MHMailbox"
+    elif os.path.exists("%s/.mh_sequences" % path):
+        mtype = "MH"
     elif os.path.isfile(path):
         mtype = "mbox"
     else:
