@@ -219,12 +219,13 @@ def process_command_line():
     config_file = os.path.join(config_dir, "blanco", "config.ini")
     config_spec = [
         "addressbook = string(default='~/.abook/addressbook')",
-        "field = string(default='custom4')",
+        "sent type = string(default='mailbox')",
+        "all = boolean(default=False)",
         "mbox = string(default='~/.sup/sent.mbox')",
         "log = string(default='~/Mail/.logs/gmail.log')",
-        "all = boolean(default=False)",
         "gmail = boolean(default=False)",
-        "sent type = string(default='mailbox')",
+        "field = string(default='custom4')",
+        "notify = boolean(default=False)",
     ]
     config = configobj.ConfigObj(config_file, configspec=config_spec)
     results = config.validate(validate.Validator())
@@ -238,10 +239,13 @@ def process_command_line():
                                    description=USAGE)
 
     parser.set_defaults(addressbook=os.path.expanduser(config["addressbook"]),
-                        field=config["field"],
+                        sent_type=config['sent type'],
+                        all=config['all'],
                         mbox=os.path.expanduser(config["mbox"]),
                         log=os.path.expanduser(config["log"]),
-                        sent_type=config['sent type'])
+                        gmail=config['gmail'],
+                        field=config["field"],
+                        notify=config['notify'])
 
     parser.add_option("-a", "--addressbook", action="store",
                       metavar=config["addressbook"],
@@ -253,6 +257,9 @@ def process_command_line():
                       help="Sent source type(mailbox or msmtp)")
     parser.add_option("-r", "--all", action="store_true",
                       help="Include all recipients(CC and BCC fields)")
+    parser.add_option("--no-all", action="store_false",
+                      dest="all",
+                      help="Include only the first recipient(TO field)")
 
     mbox_opts = optparse.OptionGroup(parser, "Mailbox options")
     parser.add_option_group(mbox_opts)
@@ -267,12 +274,19 @@ def process_command_line():
                           help="msmtp log to parse")
     msmtp_opts.add_option("-g", "--gmail", action="store_true",
                           help="Log from a gmail account(use accurate filter)")
+    msmtp_opts.add_option("--no-gmail", action="store_false",
+                      dest="gmail",
+                      help="msmtp log for non-gmail account")
 
     parser.add_option("-s", "--field", action="store",
                       metavar=config["field"],
                       help="Abook field to use for frequency value")
     parser.add_option("-n", "--notify", action="store_true",
                       help="Display reminders using notification popups")
+    parser.add_option("--no-notify", action="store_false",
+                      dest="notify",
+                      help="Display reminders on standard out")
+
     parser.add_option("-v", "--verbose", action="store_true",
                       dest="verbose", help="Produce verbose output")
     parser.add_option("-q", "--quiet", action="store_false",
