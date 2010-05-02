@@ -50,6 +50,11 @@ import configobj
 import validate
 
 try:
+    import pynotify
+except ImportError:
+    pynotify = None # pylint: disable-msg=C0103
+
+try:
     import termstyle
 except ImportError:
     termstyle = None # pylint: disable-msg=C0103
@@ -258,6 +263,8 @@ def process_command_line():
     parser.add_option("-s", "--field", action="store",
                       metavar=config["field"],
                       help="Abook field to use for frequency value")
+    parser.add_option("-n", "--notify", action="store_true",
+                      help="Display reminders using notification popups")
     parser.add_option("-v", "--verbose", action="store_true",
                       dest="verbose", help="Produce verbose output")
     parser.add_option("-q", "--quiet", action="store_false",
@@ -380,7 +387,15 @@ def main():
     try:
         options, args = process_command_line() # pylint: disable-msg=W0612
     except SyntaxError:
-        sys.exit(1)
+        return 1
+
+    if options.notify:
+        if not pynotify:
+            print fail("Notification popups require the notify-python package")
+            return 127
+        if not pynotify.init(sys.argv[0]):
+            print fail("Unable to initialise pynotify!")
+            return 255
 
     people = People()
     people.parse(options.addressbook, options.field)
@@ -394,10 +409,19 @@ def main():
     now = datetime.date.today()
     for person in people:
         if not any(address in sent for address in person.addresses):
-            print fail("No record of a sent email for %s" % person.name)
+            print warn("No record of a sent email for %s" % person.name)
             continue
         if now > person.trigger(sent):
-            print "Due for", person.name
+            if options.notify:
+                note = pynotify.Notification("Hey, remember me?",
+                                             "mail due for %s" % person.name,
+                                             "stock_person")
+                note.set_urgency(pynotify.URGENCY_CRITICAL)
+                note.set_timeout(pynotify.EXPIRES_NEVER)
+                if not note.show():
+                    raise OSError("Notification failed to display!")
+            else:
+                print "Due for", person.name
 
 if __name__ == '__main__':
     sys.exit(main())
