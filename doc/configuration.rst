@@ -88,7 +88,7 @@ An example configuration file is below:
 
 .. [#] The default value for ``${XDG_CONFIG_HOME}`` is system dependent, but
        likely to be ``~/.config`` if you haven't set it.  For more information
-       see `XDG base directory specification`_
+       see `XDG base directory specification`_.
 
 .. _mailbox: http://docs.python.org/library/mailbox.html
 .. _msmtp: http://msmtp.sourceforge.net/
