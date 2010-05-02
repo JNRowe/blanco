@@ -211,6 +211,12 @@ def process_command_line():
     :return: Parsed options and arguments
     """
 
+    # XDG basedir config location, using the glib bindings to get this would be
+    # easier but the dependency is a bit too large for just that
+    config_dir = os.environ.get("XDG_CONFIG_HOME",
+                                os.path.join(os.environ.get("HOME", "/"),
+                                             ".config"))
+    config_file = os.path.join(config_dir, "blanco", "config.ini")
     config_spec = [
         "addressbook = string(default='~/.abook/addressbook')",
         "field = string(default='custom4')",
@@ -220,8 +226,7 @@ def process_command_line():
         "gmail = boolean(default=False)",
         "sent type = string(default='mailbox')",
     ]
-    config = configobj.ConfigObj(os.path.expanduser("~/.blancorc"),
-                                 configspec=config_spec)
+    config = configobj.ConfigObj(config_file, configspec=config_spec)
     results = config.validate(validate.Validator())
     if results is not True:
         for key in filter(lambda k: not results[k], results):
