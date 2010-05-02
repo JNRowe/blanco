@@ -92,7 +92,7 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     """
 
     if not os.path.exists(path):
-        raise IOError("File not found")
+        raise IOError("Sent mailbox `%s' not found" % path)
     if os.path.isdir("%s/new" % path):
         mtype = "Maildir"
     elif os.path.exists("%s/.mh_sequences"):
@@ -134,6 +134,9 @@ def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
     :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
     :return: Keys of email address, and values of seen date
     """
+
+    if not os.path.exists(log):
+        raise IOError("msmtp sent log `%s' not found" % log)
 
     matcher = re.compile("recipients=([^ ]+)")
     gmail_date = re.compile("smtpmsg.*OK ([^ ]+)")
