@@ -6,6 +6,14 @@ User-visible changes
 
 .. contents::
 
+0.4.0 - 2010-05-02
+------------------
+
+    * Popup notifications support, for use in desktop environments, using
+      notify-python_
+
+.. _notify-python: http://www.galago-project.org/
+
 0.3.0 - 2010-02-19
 ------------------
 
