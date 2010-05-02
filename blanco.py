@@ -158,7 +158,7 @@ def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
                       matcher.search(line, 16).groups()[0].split(","))
         if not all_recipients:
             results = [results[0], ]
-        contacts.extend([(address, datetime.datetime(year, *md))
+        contacts.extend([(address, datetime.datetime(year, *md).date())
                          for address in results
                          if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
