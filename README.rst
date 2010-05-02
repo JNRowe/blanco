@@ -7,7 +7,7 @@ Introduction
 ``blanco`` is a simple tool to help you, or more specifically *me*. keep in
 touch with people.  All it does is notify you if you're failing to keep in
 contact.  It is just a quick solution to a simple problem, as long as you use
-abook_ and your sent mail is easily accessible that is.
+abook_ and your sent mail is easily accessible.
 
 It is written in Python_ and licensed under the `GPL v3`_.
 
