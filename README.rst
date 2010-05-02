@@ -40,7 +40,7 @@ forgetting to contact somebody.
     $ ./blanco.py -a test/blanco.conf -m test/sent.mbox
     Due for Joe
     No record of a sent email for Steven
-    $ ./blanco.py -a test/blanco.conf -m test/sent.mbox --cc
+    $ ./blanco.py -a test/blanco.conf -m test/sent.mbox --all
     Due for Joe
     Due for Steven
 
