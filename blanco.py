@@ -237,10 +237,10 @@ def process_command_line():
                                    description=USAGE)
 
     parser.set_defaults(addressbook=os.path.expanduser(config["addressbook"]),
-                        sent_type=config['senttype'],
+                        field=config["field"],
                         mbox=os.path.expanduser(config["mbox"]),
-                        cc=config["cc"], bcc=config["bcc"],
-                        field=config["field"])
+                        log=os.path.expanduser(config["log"]),
+                        sent_type=config['senttype'])
 
     parser.add_option("-a", "--addressbook", action="store",
                       metavar=config["addressbook"],
