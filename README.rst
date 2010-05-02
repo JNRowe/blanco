@@ -91,8 +91,8 @@ drop me a mail_ or file an issue_.  Locally bugs are managed with ditz_, so if
 you're working with a clone of the repository you can report, list and fix bugs
 using ``ditz``.
 
-If you've found please attempt to include a minimal testcase so I can reproduce
-the problem, or even better a patch!
+If you've found a bug please attempt to include a minimal testcase so I can
+reproduce the problem, or even better a patch!
 
 .. _abook: http://abook.sourceforge.net/
 .. _GPL v3: http://www.gnu.org/licenses/
