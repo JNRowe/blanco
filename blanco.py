@@ -36,6 +36,7 @@ Check sent mail to make sure you're keeping in contact with your friends.
 """ % parseaddr(__author__)
 
 import datetime
+import errno
 import mailbox
 import operator
 import optparse
@@ -471,15 +472,15 @@ def main():
     try:
         options, args = process_command_line()  # pylint: disable-msg=W0612
     except SyntaxError:
-        return 1
+        return errno.EPERM
 
     if options.notify:
         if not pynotify:
             print fail("Notification popups require the notify-python package")
-            return 127
+            return errno.ENOENT
         if not pynotify.init(sys.argv[0]):
             print fail("Unable to initialise pynotify!")
-            return 255
+            return errno.EIO
 
     people = People()
     people.parse(options.addressbook, options.field)
@@ -491,7 +492,7 @@ def main():
             sent = parse_sent(options.mbox, options.all, people.addresses())
     except IOError as e:
         print fail(e)
-        return 1
+        return errno.EPERM
 
     now = datetime.date.today()
     for person in people:
