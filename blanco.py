@@ -211,7 +211,7 @@ def process_command_line():
     """
 
     config_spec = [
-        "addressbook = string(default='~/.abook/addressbox')",
+        "addressbook = string(default='~/.abook/addressbook')",
         "field = string(default='custom4')",
         "mbox = string(default='~/.sup/sent.mbox')",
         "cc = boolean(default=False)",
