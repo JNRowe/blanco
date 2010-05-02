@@ -280,7 +280,7 @@ def process_command_line():
 
     parser.add_option("-s", "--field", action="store",
                       metavar=config["field"],
-                      help="Abook field to use for frequency value")
+                      help="Addressbook field to use for frequency value")
     parser.add_option("-n", "--notify", action="store_true",
                       help="Display reminders using notification popups")
     parser.add_option("--no-notify", action="store_false",
