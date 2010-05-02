@@ -52,12 +52,12 @@ import validate
 try:
     import pynotify
 except ImportError:
-    pynotify = None # pylint: disable-msg=C0103
+    pynotify = None  # pylint: disable-msg=C0103
 
 try:
     import termstyle
 except ImportError:
-    termstyle = None # pylint: disable-msg=C0103
+    termstyle = None  # pylint: disable-msg=C0103
 
 # Select colours if terminal is a tty
 if termstyle:
@@ -125,8 +125,8 @@ def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
     :type log: ``str``
     :param log: Location of the msmtp logfile
     :type all_recipients: ``bool``
-    :param all_recipients: Whether to include all recipients in results, or just
-        first
+    :param all_recipients: Whether to include all recipients in results, or
+        just first
     :type gmail: ``bool``
     :param gmail: Log is for a gmail account
     :type addresses: ``list``
@@ -148,7 +148,8 @@ def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
         if gmail:
             gd = gmail_date.search(line)
             try:
-                parsed = datetime.datetime.utcfromtimestamp(int(gd.groups()[0]))
+                ts = int(gd.groups()[0])
+                parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
                 raise ValueError("msmtp log is not in gmail format")
             year = parsed.year
@@ -258,7 +259,7 @@ def process_command_line():
     msmtp_opts.add_option("-r", "--all", action="store_true",
                           help="Include all recipients from msmtp log")
     msmtp_opts.add_option("-g", "--gmail", action="store_true",
-                          help="Log from a gmail account(more accurate filter)")
+                          help="Log from a gmail account(use accurate filter)")
 
     parser.add_option("-s", "--field", action="store",
                       metavar=config["field"],
@@ -385,7 +386,7 @@ def main():
     """Main script"""
 
     try:
-        options, args = process_command_line() # pylint: disable-msg=W0612
+        options, args = process_command_line()  # pylint: disable-msg=W0612
     except SyntaxError:
         return 1
 
@@ -411,7 +412,8 @@ def main():
         if not any(address in sent for address in person.addresses):
             if options.notify:
                 note = pynotify.Notification("Hey, remember me?",
-                                             "No mail record for %s" % person.name,
+                                             "No mail record for %s" \
+                                                % person.name,
                                              "stock_person")
                 if not note.show():
                     raise OSError("Notification failed to display!")
