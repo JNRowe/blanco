@@ -62,8 +62,8 @@ Another alternative would be to use abook_ just to convert your current address
 book in to a suitable format.  Check the output of ``abook --formats`` for the
 file formats supported by your version of abook_.
 
-.. [#] You can select a different field using the ``--field`` option to
-       ``blanco``.
+.. [#] You can select a different field using the :option:`--field <-s>` option
+       to ``blanco``.
 
 Configuration
 -------------
