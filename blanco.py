@@ -76,15 +76,14 @@ USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 
 
-def parse_sent(path, cc=False, bcc=False, addresses=None):
+def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details
 
     :type path: ``str``
     :param path: Location of the sent mailbox
-    :type cc: ``bool``
-    :param cc: Whether to check CC fields for contacts
-    :type bcc: ``bool``
-    :param bcc: Whether to check BCC fields for contacts
+    :type all_recipients: ``bool``
+    :param all_recipients: Whether to include CC and BCC addresses in results,
+        or just first
     :type addresses: ``list``
     :param addresses: Addresses to look for in sent mail, all if not specified
     :rtype: ``dict`` of ``str`` keys and ``datetime.date`` values
@@ -107,9 +106,8 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     contacts = []
     for message in mbox:
         fields = message.get_all("to", [])
-        if cc:
+        if all_recipients:
             fields.extend(message.get_all("cc", []))
-        if bcc:
             fields.extend(message.get_all("bcc", []))
         results = map(str.lower,
                       map(operator.itemgetter(1), utils.getaddresses(fields)))
@@ -119,7 +117,7 @@ def parse_sent(path, cc=False, bcc=False, addresses=None):
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
-def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
+def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details
 
     :type log: ``str``
@@ -127,10 +125,10 @@ def parse_msmtp(log, all_recipients=False, gmail=False, addresses=None):
     :type all_recipients: ``bool``
     :param all_recipients: Whether to include all recipients in results, or
         just first
-    :type gmail: ``bool``
-    :param gmail: Log is for a gmail account
     :type addresses: ``list``
     :param addresses: Addresses to look for in sent mail, all if not specified
+    :type gmail: ``bool``
+    :param gmail: Log is for a gmail account
     :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
     :return: Keys of email address, and values of seen date
     """
@@ -217,8 +215,6 @@ def process_command_line():
         "addressbook = string(default='~/.abook/addressbook')",
         "field = string(default='custom4')",
         "mbox = string(default='~/.sup/sent.mbox')",
-        "cc = boolean(default=False)",
-        "bcc = boolean(default=False)",
         "log = string(default='~/Mail/.logs/gmail.log')",
         "all = boolean(default=False)",
         "gmail = boolean(default=False)",
@@ -250,24 +246,20 @@ def process_command_line():
                       choices=("mailbox", "msmtp"),
                       metavar=config["senttype"],
                       help="Sent source type(mailbox or msmtp)")
+    parser.add_option("-r", "--all", action="store_true",
+                      help="Include all recipients(CC and BCC fields)")
 
     mbox_opts = optparse.OptionGroup(parser, "Mailbox options")
     parser.add_option_group(mbox_opts)
     mbox_opts.add_option("-m", "--mbox", action="store",
                       metavar=config["mbox"],
                       help="Mailbox used to store sent mail")
-    mbox_opts.add_option("-c", "--cc", action="store_true",
-                      help="Include CC fields from sent mail")
-    mbox_opts.add_option("-b", "--bcc", action="store_true",
-                      help="Include BCC fields from sent mail")
 
     msmtp_opts = optparse.OptionGroup(parser, "msmtp log options")
     parser.add_option_group(msmtp_opts)
     msmtp_opts.add_option("-l", "--log", action="store",
                           metavar=config["log"],
                           help="msmtp log to parse")
-    msmtp_opts.add_option("-r", "--all", action="store_true",
-                          help="Include all recipients from msmtp log")
     msmtp_opts.add_option("-g", "--gmail", action="store_true",
                           help="Log from a gmail account(use accurate filter)")
 
@@ -410,12 +402,15 @@ def main():
 
     people = People()
     people.parse(options.addressbook, options.field)
-    if options.sent_type == "msmtp":
-        sent = parse_msmtp(options.log, options.all, options.gmail,
-                           people.addresses())
-    else:
-        sent = parse_sent(options.mbox, options.cc, options.bcc,
-                          people.addresses())
+    try:
+        if options.sent_type == "msmtp":
+            sent = parse_msmtp(options.log, options.all, people.addresses(),
+                               options.gmail)
+        else:
+            sent = parse_sent(options.mbox, options.all, people.addresses())
+    except IOError as e:
+        print fail(e)
+        return 1
 
     now = datetime.date.today()
     for person in people:
