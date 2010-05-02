@@ -346,6 +346,26 @@ class Person(object):
         matches = sorted([v for k, v in sent.items() if k in self.addresses])
         return matches[-1] + datetime.timedelta(days=self.frequency)
 
+    def notify_str(self):
+        """Calculate trigger date for contact
+
+        >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
+        >>> pynotify.get_server_caps = lambda: []
+        >>> p.notify_str()
+        'James Rowe'
+        >>> pynotify.get_server_caps = lambda: ["body-hyperlinks", ]
+        >>> p.notify_str()
+        "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
+
+        :rtype: ``str``
+        :return: Stylised name for use with notifications
+        """
+
+        if "body-hyperlinks" in pynotify.get_server_caps():
+            name = "<a href='mailto:%s'>%s</a>" % (self.addresses[0], self.name)
+        else:
+            name = self.name
+        return name
 
 class People(list):
     """Group of ``Person``"""
@@ -434,28 +454,28 @@ def main():
     now = datetime.date.today()
     for person in people:
         if not any(address in sent for address in person.addresses):
-            message = "No mail record for %s" % person.name
+            message = "No mail record for %s"
             if options.notify:
                 note = pynotify.Notification("Hey, remember me?",
-                                             message,
+                                             message % person.notify_str(),
                                              "stock_person")
                 if not note.show():
                     raise OSError("Notification failed to display!")
             else:
-                print warn(message)
+                print warn(message % person.name)
             continue
         if now > person.trigger(sent):
-            message = "Mail due for %s" % person.name
+            message = "Mail due for %s"
             if options.notify:
                 note = pynotify.Notification("Hey, remember me?",
-                                             message,
+                                             message % person.notify_str(),
                                              "stock_person")
                 note.set_urgency(pynotify.URGENCY_CRITICAL)
                 note.set_timeout(pynotify.EXPIRES_NEVER)
                 if not note.show():
                     raise OSError("Notification failed to display!")
             else:
-                print success(message)
+                print success(message % person.name)
 
 if __name__ == '__main__':
     sys.exit(main())
