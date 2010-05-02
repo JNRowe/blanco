@@ -415,27 +415,28 @@ def main():
     now = datetime.date.today()
     for person in people:
         if not any(address in sent for address in person.addresses):
+            message = "No mail record for %s" % person.name
             if options.notify:
                 note = pynotify.Notification("Hey, remember me?",
-                                             "No mail record for %s" \
-                                                % person.name,
+                                             message,
                                              "stock_person")
                 if not note.show():
                     raise OSError("Notification failed to display!")
             else:
-                print warn("No record of a sent email for %s" % person.name)
+                print warn(message)
             continue
         if now > person.trigger(sent):
+            message = "Mail due for %s" % person.name
             if options.notify:
                 note = pynotify.Notification("Hey, remember me?",
-                                             "Mail due for %s" % person.name,
+                                             message,
                                              "stock_person")
                 note.set_urgency(pynotify.URGENCY_CRITICAL)
                 note.set_timeout(pynotify.EXPIRES_NEVER)
                 if not note.show():
                     raise OSError("Notification failed to display!")
             else:
-                print "Due for", person.name
+                print success(message)
 
 if __name__ == '__main__':
     sys.exit(main())
