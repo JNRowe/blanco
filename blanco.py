@@ -222,6 +222,7 @@ def process_command_line():
         "log = string(default='~/Mail/.logs/gmail.log')",
         "all = boolean(default=False)",
         "gmail = boolean(default=False)",
+        "senttype = string(default='mailbox')",
     ]
     config = configobj.ConfigObj(os.path.expanduser("~/.blancorc"),
                                  configspec=config_spec)
@@ -236,6 +237,7 @@ def process_command_line():
                                    description=USAGE)
 
     parser.set_defaults(addressbook=os.path.expanduser(config["addressbook"]),
+                        sent_type=config['senttype'],
                         mbox=os.path.expanduser(config["mbox"]),
                         cc=config["cc"], bcc=config["bcc"],
                         field=config["field"])
@@ -243,6 +245,11 @@ def process_command_line():
     parser.add_option("-a", "--addressbook", action="store",
                       metavar=config["addressbook"],
                       help="Address book to read contacts from")
+
+    parser.add_option("-t", "--sent-type", action="store",
+                      choices=("mailbox", "msmtp"),
+                      metavar=config["senttype"],
+                      help="Sent source type(mailbox or msmtp)")
 
     mbox_opts = optparse.OptionGroup(parser, "Mailbox options")
     parser.add_option_group(mbox_opts)
@@ -403,7 +410,7 @@ def main():
 
     people = People()
     people.parse(options.addressbook, options.field)
-    if options.log:
+    if options.sent_type == "msmtp":
         sent = parse_msmtp(options.log, options.all, options.gmail,
                            people.addresses())
     else:
