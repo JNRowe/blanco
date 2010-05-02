@@ -6,8 +6,8 @@ User-visible changes
 
 .. contents::
 
-0.3.0 - VCS only
-----------------
+0.3.0 - 2010-02-19
+------------------
 
     * Support for setting command line options in ``~/.blancorc``, the format is
       ``<option>=<value>`` with no leading dashes in option names
