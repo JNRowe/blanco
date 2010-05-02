@@ -1,15 +1,27 @@
-.. blanco documentation master file, created by
-   sphinx-quickstart on Sun Feb 14 14:34:02 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+:mod:`blanco`
+==============
 
-Welcome to blanco's documentation!
-==================================
+.. module:: blanco
+   :synopsis: *"Hey, remember me?"*
+.. moduleauthor:: James Rowe <jnrowe@gmail.com>
+
+:mod:`blanco` is a simple tool to help you, or more specifically *me*. keep in
+touch with people.  All it does is notify you if you're failing to keep in
+contact.  It is just a quick solution to a simple problem, as long as you use
+abook_ and your sent mail is easily accessible.
+
+It is written in Python_, and requires v2.6 or later.  :mod:`blanco` is
+released under the `GPL v3`_
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
+
+   background
+   configuration
+   usage
+   blanco manpage <blanco.1>
 
 Indices and tables
 ==================
@@ -18,3 +30,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _abook: http://abook.sourceforge.net/
+.. _Python: http://www.python.org
+.. _GPL v3: http://www.gnu.org/licenses/
