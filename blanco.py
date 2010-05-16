@@ -52,12 +52,12 @@ import validate
 
 try:
     import pynotify
-except ImportError:
+except ImportError: # pragma: no cover
     pynotify = None  # pylint: disable-msg=C0103
 
 try:
     import termstyle
-except ImportError:
+except ImportError: # pragma: no cover
     termstyle = None  # pylint: disable-msg=C0103
 
 # Select colours if terminal is a tty
@@ -67,7 +67,7 @@ if termstyle:
     success = termstyle.green
     fail = termstyle.red
     warn = termstyle.yellow
-else:
+else: # pragma: no cover
     # pylint: disable-msg=C0103
     success = fail = warn = str
 
