@@ -6,6 +6,17 @@ User-visible changes
 
 .. contents::
 
+0.5.0 - 2010-05-16
+------------------
+
+    * Full documentation using Sphinx_
+    * ``--no-`` prefix options for overriding configuration file from the
+      command line
+    * Basic ``setup.py`` script for installation, using distutils_
+
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _distutils: http://docs.python.org/library/distutils.html
+
 0.4.0 - 2010-05-02
 ------------------
 
