@@ -52,12 +52,12 @@ import validate
 
 try:
     import pynotify
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     pynotify = None  # pylint: disable-msg=C0103
 
 try:
     import termstyle
-except ImportError: # pragma: no cover
+except ImportError:  # pragma: no cover
     termstyle = None  # pylint: disable-msg=C0103
 
 # Select colours if terminal is a tty
@@ -67,7 +67,7 @@ if termstyle:
     success = termstyle.green
     fail = termstyle.red
     warn = termstyle.yellow
-else: # pragma: no cover
+else:  # pragma: no cover
     # pylint: disable-msg=C0103
     success = fail = warn = str
 
@@ -373,6 +373,7 @@ def show_note(notify, message, person, urgency=pynotify.URGENCY_NORMAL,
             print success(message % person.name)
         else:
             print warn(message % person.name)
+
 
 class Person(object):
     """Simple contact class"""
