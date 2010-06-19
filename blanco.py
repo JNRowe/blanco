@@ -211,6 +211,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
         contacts.extend([(address, datetime.datetime(year, *md).date())
                          for address in results
                          if not addresses or address in addresses])
+    # Sorting prior to making the dictionary means we only use the latest entry.
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
