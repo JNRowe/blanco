@@ -2,4 +2,5 @@ doc/.build/
 
 *.py[co]
 .coverage
+.noseids
 README.html
