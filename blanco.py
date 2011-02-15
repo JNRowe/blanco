@@ -1,6 +1,4 @@
 #! /usr/bin/python -tt
-# vim: set sw=4 sts=4 et tw=80 fileencoding=utf-8:
-#
 """blanco - Keep in touch, barely"""
 # Copyright (C) 2010  James Rowe <jnrowe@gmail.com>
 #

@@ -1,6 +1,4 @@
 #! /usr/bin/python -tt
-# vim: set sw=4 sts=4 et tw=80 fileencoding=utf-8:
-#
 """setup - distutils info for blanco"""
 # Copyright (C) 2010  James Rowe <jnrowe@gmail.com>
 #
