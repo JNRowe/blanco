@@ -94,8 +94,5 @@ reproduce the problem, or even better a patch!
 .. _GPL v3: http://www.gnu.org/licenses/
 .. _Python: http://www.python.org/
 .. _mail: jnrowe@gmail.com
-.. _issue: http://github.com/JNRowe/blanco/issues
+.. _issue: https://github.com/JNRowe/blanco/issues
 .. _ini: http://www.cloanto.com/specs/ini/
-
-..
-    :vim: set ft=rst ts=4 sw=4 et:

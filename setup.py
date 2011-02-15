@@ -30,7 +30,7 @@ setup(
     author=aname,
     author_email=aemail,
     scripts=['blanco.py', ],
-    url='http://github.com/JNRowe/blanco',
+    url='https://github.com/JNRowe/blanco',
     license='GPL-3',
     description=blanco.__doc__.splitlines ()[0].split("-", 1)[1][1:],
     long_description=open('README.rst').read(),

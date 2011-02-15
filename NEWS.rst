@@ -47,7 +47,7 @@ User-visible changes
     * Support for sent mail in maildir and MH formats
     * Coloured output with termstyle_
 
-.. _termstyle: http://github.com/gfxmonk/termstyle
+.. _termstyle: https://github.com/gfxmonk/termstyle
 
 0.1.0 - 2010-02-10
 ------------------
