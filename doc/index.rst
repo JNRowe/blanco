@@ -1,3 +1,5 @@
+.. _blanco-label:
+
 :mod:`blanco`
 ==============
 
