@@ -21,6 +21,7 @@ Contents:
    :maxdepth: 2
 
    background
+   install
    configuration
    usage
    blanco manpage <blanco.1>
