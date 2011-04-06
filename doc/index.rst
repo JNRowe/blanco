@@ -1,7 +1,7 @@
 .. _blanco-label:
 
 :mod:`blanco`
-==============
+=============
 
 .. module:: blanco
    :synopsis: *"Hey, remember me?"*
