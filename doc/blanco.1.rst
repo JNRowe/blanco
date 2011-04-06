@@ -82,7 +82,9 @@ CONFIGURATION FILE
 
 The configuration file, **${XDG_CONFIG_HOME:-~/.config}/blanco/config.ini**, is
 a simple **INI** format file for storing defaults for the command line options.
-For example::
+For example:
+
+.. code-block:: ini
 
     sent type = msmtp
     field = custom5

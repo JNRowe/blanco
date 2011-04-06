@@ -4,7 +4,7 @@ Usage
 :program:`blanco.py` supports writing to standard output or using popup
 notifications.
 
-::
+.. code-block:: sh
 
     Ξ Desktop/blanco git:(master) ▶ blanco.py
     Mail due for Luke Legate
