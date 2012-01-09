@@ -432,11 +432,12 @@ class Person(object):
     def notify_str(self):
         """Calculate trigger date for contact
 
+        >>> from mock import Mock
         >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
-        >>> pynotify.get_server_caps = lambda: []
+        >>> pynotify.get_server_caps = Mock(return_value=[])
         >>> p.notify_str()
         'James Rowe'
-        >>> pynotify.get_server_caps = lambda: ["body-hyperlinks", ]
+        >>> pynotify.get_server_caps = Mock(return_value=["body-hyperlinks", ])
         >>> p.notify_str()
         "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
 
