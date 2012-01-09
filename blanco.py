@@ -51,7 +51,11 @@ import validate
 try:
     import pynotify
 except ImportError:  # pragma: no cover
-    pynotify = None  # pylint: disable-msg=C0103
+    class _Fake_PyNotify(object):
+        URGENCY_CRITICAL = 1
+        URGENCY_NORMAL = 0
+        EXPIRES_DEFAULT = 0
+    pynotify = _Fake_PyNotify  # pylint: disable-msg=C0103
 
 try:
     from termcolor import colored
@@ -510,7 +514,7 @@ def main():
         return errno.EPERM
 
     if options.notify:
-        if not pynotify:
+        if pynotify is _Fake_PyNotify:
             print fail("Notification popups require the notify-python package")
             return errno.ENOENT
         if not pynotify.init(sys.argv[0]):
