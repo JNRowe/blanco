@@ -80,6 +80,7 @@ USAGE = "\n".join(USAGE).replace("blanco", "%prog")
 def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details
 
+    >>> from dtopt import NORMALIZE_WHITESPACE
     >>> parse_sent("None")
     Traceback (most recent call last):
         ...
@@ -143,6 +144,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details
 
+    >>> from dtopt import NORMALIZE_WHITESPACE
     >>> parse_msmtp("None")
     Traceback (most recent call last):
         ...
@@ -486,6 +488,7 @@ class People(list):
     def parse(self, addressbook, field):
         """Parse address book for usable entries
 
+        >>> from dtopt import NORMALIZE_WHITESPACE
         >>> people = People()
         >>> people.parse("test/blanco.conf", "custom4")
         >>> people
