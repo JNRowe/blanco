@@ -211,7 +211,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
         contacts.extend([(address, datetime.datetime(year, *md).date())
                          for address in results
                          if not addresses or address in addresses])
-    # Sorting prior to making the dictionary means we only use the latest entry.
+    # Sorting prior to making the dictionary means we only use the latest
+    # entry.
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
@@ -540,6 +541,7 @@ def main():
         elif now > person.trigger(sent):
             show_note(options.notify, "mail due for %s", person,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
+
 
 if __name__ == '__main__':
     sys.exit(main())
