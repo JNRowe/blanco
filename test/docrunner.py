@@ -27,7 +27,7 @@ __history__ = "See git repository"
 
 try:
     from email.utils import parseaddr
-except ImportError: # Python 2.4
+except ImportError:  # Python 2.4
     from email.Utils import parseaddr
 
 __doc__ += """.
@@ -49,4 +49,3 @@ if __name__ == "__main__":
     sys.exit(doctest.testfile("README.rst", module_relative=False,
                               extraglobs={"system_command": sd.system_command},
                               parser=sd.ShellDocTestParser())[0])
-
