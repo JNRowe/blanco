@@ -10,7 +10,7 @@ You can download releases from the `downloads page`_ on GitHub_.
 The following optional packages will be used if available:
 
 * `libnotify Python bindings`_ for popup notifications
-* termcolor_ for coloured output in the terminal
+* blessings_ for coloured output in the terminal
 
 If you're using Gentoo_ the hard dependencies are available from the main tree,
 and the optional dependencies are available from a combination of the main tree
@@ -24,6 +24,6 @@ script.
 .. _Python: http://www.python.org/
 .. _configobj: http://code.google.com/p/configobj/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
-.. _termcolor: http://pypi.python.org/pypi/termcolor/
+.. _blessings: http://pypi.python.org/pypi/blessings/
 .. _Gentoo: http://www.gentoo.org/
 .. _my overlay: http://github.com/JNRowe/misc-overlay

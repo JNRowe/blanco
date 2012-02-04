@@ -45,6 +45,7 @@ import time
 
 from email import utils
 
+import blessings
 import configobj
 import validate
 
@@ -57,19 +58,33 @@ except ImportError:  # pragma: no cover
         EXPIRES_DEFAULT = 0
     pynotify = _Fake_PyNotify  # pylint: disable-msg=C0103
 
-try:
-    from termcolor import colored
-except ImportError:  # pragma: no cover
-    colored = None  # pylint: disable-msg=C0103
 
-# Select colours if terminal is a tty
-if colored and sys.stdout.isatty():
-    success = lambda s: colored(s, "green")
-    fail = lambda s: colored(s, "red")
-    warn = lambda s: colored(s, "yellow")
-else:  # pragma: no cover
-    # pylint: disable-msg=C0103
-    success = fail = warn = str
+T = blessings.Terminal()
+
+
+# Set up informational message functions
+def _colourise(text, colour):
+    """Colour text, if possible
+
+    :param str text: Text to colourise
+    :param str colour: Colour to display text in
+    :rtype: str
+    :return: Colourised text, if possible
+    """
+    return getattr(T, colour.replace(' ', '_'))(text)
+
+
+def success(text):
+    return _colourise(text, 'bright green')
+
+
+def fail(text):
+    return _colourise(text, 'bright red')
+
+
+def warn(text):
+    return _colourise(text, 'bright yellow')
+
 
 # Pull the first paragraph from the docstring
 USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
