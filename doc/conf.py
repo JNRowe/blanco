@@ -44,7 +44,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'blanco'
-copyright = u'2010-2011, James Rowe'
+copyright = u'2010-2012, James Rowe'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -240,7 +240,7 @@ autoclass_content = "both"
 epub_title = u'h'
 epub_author = u'h'
 epub_publisher = u'h'
-epub_copyright = u'2010, h'
+epub_copyright = u'2010-2012, h'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

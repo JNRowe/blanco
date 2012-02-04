@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 """blanco - Keep in touch, barely"""
-# Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
+# Copyright (C) 2010-2012  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 __version__ = "0.5.0"
 __date__ = "2010-05-16"
 __author__ = "James Rowe <jnrowe@gmail.com>"
-__copyright__ = "Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>"
+__copyright__ = "Copyright (C) 2010-2012  James Rowe <jnrowe@gmail.com>"
 __license__ = "GNU General Public License Version 3"
 __credits__ = ""
 __history__ = "See git repository"
