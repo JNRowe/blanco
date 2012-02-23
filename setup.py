@@ -16,8 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from distutils.core import setup
 from email.utils import parseaddr
+
+from setuptools import setup
 
 import blanco
 
@@ -32,4 +33,5 @@ setup(
     license='GPL-3',
     description=blanco.__doc__.splitlines()[0].split("-", 1)[1][1:],
     long_description=open('README.rst').read(),
+    install_requires=['blessings', 'configobj', 'notify-python'],
 )
