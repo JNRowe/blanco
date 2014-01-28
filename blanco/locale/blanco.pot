@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blanco 0.5.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-01-28 06:06+0000\n"
+"POT-Creation-Date: 2014-01-28 06:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,26 +17,26 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: blanco/__init__.py:94
+#: blanco/__init__.py:93
 msgid "Check sent mail to make sure you're keeping in contact with your friends."
 msgstr ""
 
-#: blanco/__init__.py:111
+#: blanco/__init__.py:110
 #, python-format
 msgid "Sent mailbox %r not found"
 msgstr ""
 
-#: blanco/__init__.py:119
+#: blanco/__init__.py:118
 #, python-format
 msgid "Unknown mailbox format for %r"
 msgstr ""
 
-#: blanco/__init__.py:151
+#: blanco/__init__.py:150
 #, python-format
 msgid "msmtp sent log %r not found"
 msgstr ""
 
-#: blanco/__init__.py:169
+#: blanco/__init__.py:168
 #, python-format
 msgid "msmtp %r log is not in gmail format"
 msgstr ""
@@ -112,33 +112,33 @@ msgstr ""
 msgid "output only matches and errors"
 msgstr ""
 
-#: blanco/__init__.py:309
+#: blanco/__init__.py:296
+msgid "Notification popups require the notify-python package"
+msgstr ""
+
+#: blanco/__init__.py:315
 msgid "Hey, remember me?"
 msgstr ""
 
-#: blanco/__init__.py:316
+#: blanco/__init__.py:322
 msgid "Notification failed to display!"
 msgstr ""
 
-#: blanco/__init__.py:361
+#: blanco/__init__.py:367
 #, python-format
 msgid "Unknown format_spec %r"
 msgstr ""
 
-#: blanco/__init__.py:437
-msgid "Notification popups require the notify-python package"
-msgstr ""
-
-#: blanco/__init__.py:441
+#: blanco/__init__.py:440
 msgid "Unable to initialise pynotify!"
 msgstr ""
 
-#: blanco/__init__.py:459
+#: blanco/__init__.py:458
 #, python-format
 msgid "No mail record for %s"
 msgstr ""
 
-#: blanco/__init__.py:461
+#: blanco/__init__.py:460
 #, python-format
 msgid "mail due for %s"
 msgstr ""

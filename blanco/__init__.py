@@ -290,7 +290,13 @@ def process_command_line():
     parser.add_argument('-q', '--quiet', action='store_false', dest='verbose',
                         help=_('output only matches and errors'))
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.notify and pynotify is _Fake_PyNotify:
+        parser.exit(errno.ENOENT,
+                    fail(_('Notification popups require the notify-python '
+                           'package') + '\n'))
+
+    return args
 
 
 def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
@@ -430,10 +436,6 @@ def main():
     args = process_command_line()
 
     if args.notify:
-        if pynotify is _Fake_PyNotify:
-            print fail(_('Notification popups require the notify-python '
-                         'package'))
-            return errno.ENOENT
         if not pynotify.init(sys.argv[0]):
             print fail(_('Unable to initialise pynotify!'))
             return errno.EIO
