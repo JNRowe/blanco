@@ -6,7 +6,6 @@ include blanco/locale/blanco.pot
 include blanco/locale/*/LC_MESSAGES/*.mo
 include blanco/locale/*/LC_MESSAGES/*.po
 include doc/conf.py
-include doc/.static/luke.png
 include doc/wordlist.txt
 include extra/_blanco
 include extra/docrunner.py
@@ -23,6 +22,7 @@ include tests/data/sent.mh/.mh_sequences
 include tests/data/sent.msmtp
 
 recursive-include doc *.rst
+recursive-include doc/.static *.png
 
 recursive-include tests/data/sent.maildir/new *.kate
 recursive-include tests/data/sent.mh [0-9]*
