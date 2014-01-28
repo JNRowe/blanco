@@ -38,7 +38,7 @@ import datetime
 import errno
 import mailbox
 import operator
-import optparse
+import argparse
 import os
 import re
 import sys
@@ -90,8 +90,8 @@ def warn(text):
 
 # Pull the first paragraph from the docstring
 USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
-# Replace script name with optparse's substitution var, and rebuild string
-USAGE = '\n'.join(USAGE).replace('blanco', '%prog')
+# Replace script name with argparse's substitution var, and rebuild string
+USAGE = '\n'.join(USAGE).replace('blanco', '%(prog)s')
 
 
 def parse_sent(path, all_recipients=False, addresses=None):
@@ -208,7 +208,7 @@ def parse_duration(duration):
 def process_command_line():
     """Main command line interface.
 
-    :rtype: `tuple` of `optparse` options and `list` of `str` arguments
+    :rtype: `argparse.Namespace`
     :return: Parsed options and arguments
 
     """
@@ -235,9 +235,10 @@ def process_command_line():
             print fail("Config value for %r is invalid" % key)
         raise SyntaxError('Invalid configuration file %r' % config_file)
 
-    parser = optparse.OptionParser(usage='%prog [options...]',
-                                   version='%prog v' + __version__,
-                                   description=USAGE)
+    parser = argparse.ArgumentParser(usage='%(prog)s [options...]',
+                                     description=USAGE)
+    parser.add_argument('--version', action='version',
+                        version='%(prog)s v' + __version__)
 
     parser.set_defaults(addressbook=os.path.expanduser(config['addressbook']),
                         sent_type=config['sent type'],
@@ -248,43 +249,43 @@ def process_command_line():
                         field=config['field'],
                         notify=config['notify'])
 
-    parser.add_option('-a', '--addressbook', metavar=config['addressbook'],
-                      help='address book to read contacts from')
+    parser.add_argument('-a', '--addressbook', metavar=config['addressbook'],
+                        help='address book to read contacts from')
 
-    parser.add_option('-t', '--sent-type', choices=('mailbox', 'msmtp'),
-                      metavar=config['sent type'],
-                      help='sent source type(mailbox or msmtp)')
-    parser.add_option('-r', '--all', action='store_true',
-                      help='include all recipients(CC and BCC fields)')
-    parser.add_option('--no-all', action='store_false',
-                      dest='all',
-                      help='include only the first recipient(TO field)')
+    parser.add_argument('-t', '--sent-type', choices=('mailbox', 'msmtp'),
+                        metavar=config['sent type'],
+                        help='sent source type(mailbox or msmtp)')
+    parser.add_argument('-r', '--all', action='store_true',
+                        help='include all recipients(CC and BCC fields)')
+    parser.add_argument('--no-all', action='store_false', dest='all',
+                        help='include only the first recipient(TO field)')
 
-    mbox_opts = optparse.OptionGroup(parser, 'Mailbox options')
-    parser.add_option_group(mbox_opts)
-    mbox_opts.add_option('-m', '--mbox', metavar=config['mbox'],
-                         help='mailbox used to store sent mail')
+    mbox_opts = parser.add_argument_group('Mailbox options')
+    parser.add_argument_group(mbox_opts)
+    mbox_opts.add_argument('-m', '--mbox', metavar=config['mbox'],
+                           help='mailbox used to store sent mail')
 
-    msmtp_opts = optparse.OptionGroup(parser, 'msmtp log options')
-    parser.add_option_group(msmtp_opts)
-    msmtp_opts.add_option('-l', '--log', metavar=config['log'],
-                          help='msmtp log to parse')
-    msmtp_opts.add_option('-g', '--gmail', action='store_true',
-                          help='log from a gmail account(use accurate filter)')
-    msmtp_opts.add_option('--no-gmail', action='store_false',
-                          dest='gmail', help='msmtp log for non-gmail account')
+    msmtp_opts = parser.add_argument_group('msmtp log options')
+    parser.add_argument_group(msmtp_opts)
+    msmtp_opts.add_argument('-l', '--log', metavar=config['log'],
+                            help='msmtp log to parse')
+    msmtp_opts.add_argument('-g', '--gmail', action='store_true',
+                            help='log from a gmail account(use accurate '
+                                 'filter)')
+    msmtp_opts.add_argument('--no-gmail', action='store_false', dest='gmail',
+                            help='msmtp log for non-gmail account')
 
-    parser.add_option('-s', '--field', metavar=config['field'],
-                      help='addressbook field to use for frequency value')
-    parser.add_option('-n', '--notify', action='store_true',
-                      help='display reminders using notification popups')
-    parser.add_option('--no-notify', action='store_false', dest='notify',
-                      help='display reminders on standard out')
+    parser.add_argument('-s', '--field', metavar=config['field'],
+                        help='addressbook field to use for frequency value')
+    parser.add_argument('-n', '--notify', action='store_true',
+                        help='display reminders using notification popups')
+    parser.add_argument('--no-notify', action='store_false', dest='notify',
+                        help='display reminders on standard out')
 
-    parser.add_option('-v', '--verbose', action='store_true',
-                      help='produce verbose output')
-    parser.add_option('-q', '--quiet', action='store_false', dest='verbose',
-                      help='output only matches and errors')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='produce verbose output')
+    parser.add_argument('-q', '--quiet', action='store_false', dest='verbose',
+                        help='output only matches and errors')
 
     return parser.parse_args()
 
@@ -424,11 +425,11 @@ class Contacts(list):
 def main():
     """Main script."""
     try:
-        options, args = process_command_line()  # pylint: disable-msg=W0612
+        args = process_command_line()  # pylint: disable-msg=W0612
     except SyntaxError:
         return errno.EPERM
 
-    if options.notify:
+    if args.notify:
         if pynotify is _Fake_PyNotify:
             print fail('Notification popups require the notify-python package')
             return errno.ENOENT
@@ -437,13 +438,13 @@ def main():
             return errno.EIO
 
     contacts = Contacts()
-    contacts.parse(options.addressbook, options.field)
+    contacts.parse(args.addressbook, args.field)
     try:
-        if options.sent_type == 'msmtp':
-            sent = parse_msmtp(options.log, options.all, contacts.addresses(),
-                               options.gmail)
+        if args.sent_type == 'msmtp':
+            sent = parse_msmtp(args.log, args.all, contacts.addresses(),
+                               args.gmail)
         else:
-            sent = parse_sent(options.mbox, options.all, contacts.addresses())
+            sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
         print fail(e)
         return errno.EPERM
@@ -451,9 +452,9 @@ def main():
     now = datetime.date.today()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(options.notify, 'No mail record for %s', contact)
+            show_note(args.notify, 'No mail record for %s', contact)
         elif now > contact.trigger(sent):
-            show_note(options.notify, 'mail due for %s', contact,
+            show_note(args.notify, 'mail due for %s', contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
 
 
