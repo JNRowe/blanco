@@ -1,8 +1,8 @@
 Setup
 -----
 
-:program:`blanco` requires access to your sent mail for evaluating last contact
-times, and also access to a map of contact to frequency for calculating
+:program:`blanco` requires access to your sent mail for calculating last contact
+times, and also access to a map of contact-to-frequency for calculating
 forgotten people.
 
 If you can't fulfil the requirements in the following two sections then
@@ -28,11 +28,11 @@ Addressbook
 The default addressbook format is the format used by abook_, where one of the
 custom fields allowed by abook_ is used to store frequency information.
 
-``blanco`` expects your abook_ entries to have a frequency value in
-the ``custom4`` field [#]_.  The format is "<n> <units>", where ``n`` is
-a number and ``units`` is a character from the set ``[dwmy]``.  For example, an
-entry with a frequency of ``3 m`` will be triggered if there hasn't been a mail
-sent to that address in three months.
+``blanco`` expects your abook_ entries to have a frequency value in the
+``custom4`` field [#]_.  The format is "<n> <units>", where ``n`` is a number
+and ``units`` is a character from the set ``[dwmy]``.  For example, an entry
+with a frequency of ``3 m`` will be triggered if there hasn't been a mail sent
+to that address in three months.
 
 If you set ``customfield 4 Frequency`` in your ``~/.abook/abookrc`` the abook_
 interface will display "Frequency" in the interface when editing the custom
