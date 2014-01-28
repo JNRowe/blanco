@@ -1,6 +1,7 @@
 #! /usr/bin/python -tt
+# coding=utf-8
 """setup - distutils info for blanco"""
-# Copyright (C) 2010-2012  James Rowe <jnrowe@gmail.com>
+# Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
