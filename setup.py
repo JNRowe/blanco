@@ -29,7 +29,7 @@ setup(
     version=blanco.__version__,
     author=aname,
     author_email=aemail,
-    scripts=['blanco.py', ],
+    packages=['blanco', ],
     url='https://github.com/JNRowe/blanco',
     license='GPL-3',
     description=blanco.__doc__.splitlines()[0].split('-', 1)[1][1:],

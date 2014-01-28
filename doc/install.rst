@@ -16,8 +16,6 @@ If you're using Gentoo_ the hard dependencies are available from the main tree,
 and the optional dependencies are available from a combination of the main tree
 and `my overlay`_.
 
-``blanco`` doesn't require installation to work as it is only a single Python_
-script.
 
 .. _downloads page: https://github.com/JNRowe/blanco/downloads
 .. _GitHub: https://github.com/
