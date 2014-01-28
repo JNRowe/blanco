@@ -446,7 +446,7 @@ def main():
         else:
             sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
-        print fail(e)
+        print fail(e.message)
         return errno.EPERM
 
     now = datetime.date.today()
