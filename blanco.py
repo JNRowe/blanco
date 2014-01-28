@@ -96,29 +96,6 @@ USAGE = '\n'.join(USAGE).replace('blanco', '%prog')
 def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details
 
-    >>> from dtopt import NORMALIZE_WHITESPACE
-    >>> parse_sent("None")
-    Traceback (most recent call last):
-        ...
-    IOError: Sent mailbox `None' not found
-    >>> parse_sent("tests/data/sent.maildir", True)
-    {'nobody@example.com': datetime.date(2000, 2, 9),
-     'max@example.com': datetime.date(2000, 2, 9),
-     'test@example.com': datetime.date(2010, 2, 9),
-     'steven@example.com': datetime.date(2000, 2, 9),
-     'joe@example.com': datetime.date(2000, 2, 9)}
-    >>> parse_sent("tests/data/sent.mh")
-    {'nobody@example.com': datetime.date(2000, 2, 9),
-     'max@example.com': datetime.date(2000, 2, 9),
-     'test@example.com': datetime.date(2010, 2, 9),
-     'joe@example.com': datetime.date(2000, 2, 9)}
-    >>> parse_sent("tests/data/sent.mbox", addresses="joe@example.com")
-    {'joe@example.com': datetime.date(2000, 2, 9)}
-    >>> parse_sent("/dev/null")
-    Traceback (most recent call last):
-        ...
-    ValueError: Unknown mailbox format
-
     :type path: ``str``
     :param path: Location of the sent mailbox
     :type all_recipients: ``bool``
@@ -159,27 +136,6 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details
-
-    >>> from dtopt import NORMALIZE_WHITESPACE
-    >>> parse_msmtp("None")
-    Traceback (most recent call last):
-        ...
-    IOError: msmtp sent log `None' not found
-    >>> parse_msmtp("tests/data/sent.msmtp")
-    {'nobody@example.com': datetime.date(2010, 2, 9), 'test@example.com':
-     datetime.date(2010, 2, 9), 'joe@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("tests/data/sent.msmtp", True)
-    {'nobody@example.com': datetime.date(2010, 2, 9),
-     'max@example.com': datetime.date(2010, 2, 9),
-     'test@example.com': datetime.date(2010, 2, 9),
-     'steven@example.com': datetime.date(2010, 2, 9),
-     'joe@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("tests/data/sent.msmtp", addresses=["nobody@example.com", ])
-    {'nobody@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("tests/data/sent_gmail.msmtp", gmail=True)
-    {'nobody@example.com': datetime.date(2000, 2, 9),
-     'test@example.com': datetime.date(2010, 2, 9),
-     'joe@example.com': datetime.date(2000, 2, 9)}
 
     :type log: ``str``
     :param log: Location of the msmtp logfile
@@ -236,19 +192,6 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 
 def parse_duration(duration):
     """Parse human readable duration
-
-    >>> parse_duration("1d")
-    1
-    >>> parse_duration("1 d")
-    1
-    >>> parse_duration("0.5 y")
-    182
-    >>> parse_duration("0.5 Y")
-    182
-    >>> parse_duration("1 k")
-    Traceback (most recent call last):
-        ...
-    ValueError: Invalid 'duration' value
 
     :type duration: ``str``
     :param duration: Duration definition
@@ -355,10 +298,6 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
               expires=pynotify.EXPIRES_DEFAULT):
     """Display reminder
 
-    >>> show_note(False, "Note for %s",
-    ...           Contact("James Rowe", "jnrowe@gmail.com", 200))
-    Note for James Rowe
-
     :type notify: ``bool``
     :param notify: Whether to use notification popup
     :type message: ``str``
@@ -400,33 +339,17 @@ class Contact(object):
         self.frequency = frequency
 
     def __repr__(self):
-        """Self-documenting string representation
-
-        >>> Contact("James Rowe", "jnrowe@gmail.com", 200)
-        Contact('James Rowe', ['jnrowe@gmail.com'], 200)
-        """
-
+        """Self-documenting string representation"""
         return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
                                    self.addresses, self.frequency)
 
     def __str__(self):
-        """Pretty printed contact string
-
-        >>> print Contact("James Rowe", "jnrowe@gmail.com", 200)
-        James Rowe <jnrowe@gmail.com> (200 days)
-        >>> print Contact("James Rowe",
-        ...              ["jnrowe@gmail.com", "jnrowe@example.com"], 200)
-        James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)
-        """
+        """Pretty printed contact string"""
         return '%s <%s> (%i days)' % (self.name, ', '.join(self.addresses),
                                       self.frequency)
 
     def trigger(self, sent):
         """Calculate trigger date for contact
-
-        >>> p = Contact("James Rowe", "jnrowe@gmail.com", 200)
-        >>> p.trigger({"jnrowe@gmail.com": datetime.date(1942, 1, 1)})
-        datetime.date(1942, 7, 20)
 
         :type sent: ``dict`` of ``str`` keys and ``datetime.date`` values
         :param sent: Address to last seen dictionary
@@ -439,15 +362,6 @@ class Contact(object):
 
     def notify_str(self):
         """Calculate trigger date for contact
-
-        >>> from mock import Mock
-        >>> p = Contact("James Rowe", "jnrowe@gmail.com", 200)
-        >>> pynotify.get_server_caps = Mock(return_value=[])
-        >>> p.notify_str()
-        'James Rowe'
-        >>> pynotify.get_server_caps = Mock(return_value=["body-hyperlinks", ])
-        >>> p.notify_str()
-        "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
 
         :rtype: ``str``
         :return: Stylised name for use with notifications
@@ -471,23 +385,11 @@ class Contacts(list):
             self.extend(contacts)
 
     def __repr__(self):
-        """Self-documenting string representation
-
-        >>> Contacts([Contact("James Rowe", "jnrowe@gmail.com", 200), ])
-        Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])
-        """
-
+        """Self-documenting string representation"""
         return '%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
         """Fetch all addresses of all ``Contact`` objects
-
-        >>> p = Contacts([
-        ...     Contact("Bill", ["test@example.com", "new@example.com"], 30),
-        ...     Contact("Joe", ["joe@example.com"], 30)
-        ... ])
-        >>> p.addresses()
-        ['test@example.com', 'new@example.com', 'joe@example.com']
 
         :rtype: ``list`` of ``str``
         :return: Addresses of every ``Contact``
@@ -497,16 +399,6 @@ class Contacts(list):
 
     def parse(self, addressbook, field):
         """Parse address book for usable entries
-
-        >>> from dtopt import NORMALIZE_WHITESPACE
-        >>> contacts = Contacts()
-        >>> contacts.parse("tests/data/blanco.conf", "custom4")
-        >>> contacts
-        Contacts([
-            Contact('Bill', ['test@example.com'], 30),
-            Contact('Joe', ['joe@example.com'], 30),
-            Contact('Steven', ['steven@example.com'], 365)
-        ])
 
         :type addressbook: ``str``
         :param addressbook: Location of the address book to useful
