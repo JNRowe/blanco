@@ -15,3 +15,17 @@ Blanco
 
 .. autoclass:: Contact
 .. autoclass:: Contacts
+
+Examples
+--------
+
+.. testsetup::
+
+    import datetime
+    from blanco import Contact
+
+.. doctest::
+
+    >>> contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+    >>> contact.trigger({'jnrowe@gmail.com': datetime.date(1942, 1, 1)})
+    datetime.date(1942, 7, 20)
