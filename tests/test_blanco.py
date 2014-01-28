@@ -77,6 +77,7 @@ YEAR = date.today().year
 if date.today() < date(YEAR, 2, 9):
     YEAR = YEAR - 1
 
+
 @params(
     ('tests/data/sent.msmtp', False, None, False, {
         'nobody@example.com': date(YEAR, 2, 9),
@@ -127,7 +128,7 @@ def test_show_note(stdout):
 
 
 class ContactTest:
-    def setUp(self):
+    def setUp(self):  # NOQA
         self.contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 
     def test___repr__(self):

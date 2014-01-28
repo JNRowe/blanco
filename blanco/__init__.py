@@ -54,7 +54,7 @@ import validate
 try:
     import pynotify
 except ImportError:  # pragma: no cover
-    class _Fake_PyNotify(object):
+    class _Fake_PyNotify(object):  # NOQA
         URGENCY_CRITICAL = 1
         URGENCY_NORMAL = 0
         EXPIRES_DEFAULT = 0
