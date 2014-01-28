@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 # coding=utf-8
-"""setup - distutils info for blanco"""
+"""setup.py - Setuptools tasks and config for blanco"""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -17,22 +17,52 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from email.utils import parseaddr
+import imp
 
 from setuptools import setup
 
-import blanco
+# Hack to import _version file without importing blanco/__init__.py, its
+# purpose is to allow import without requiring dependencies at this point.
+ver_file = open('blanco/_version.py')
+_version = imp.load_module('_version', ver_file, ver_file.name,
+                           ('.py', ver_file.mode, imp.PY_SOURCE))
 
-aname, aemail = parseaddr(blanco.__author__)
+install_requires = map(str.strip, open('extra/requirements.txt').readlines())
+
 setup(
     name='blanco',
-    version=blanco.__version__,
-    author=aname,
-    author_email=aemail,
-    packages=['blanco', ],
+    version=_version.dotted,
+    description='Keep in touch, barely',
+    long_description=open('README.rst').read(),
+    author='James Rowe',
+    author_email='jnrowe@gmail.com',
     url='https://github.com/JNRowe/blanco',
     license='GPL-3',
-    description=blanco.__doc__.splitlines()[0].split('-', 1)[1][1:],
-    long_description=open('README.rst').read(),
-    install_requires=['blessings', 'configobj', 'notify-python'],
+    keywords='reminder mail contact',
+    packages=['blanco', ],
+    entry_points={'console_scripts': ['blanco = blanco:main', ]},
+    install_requires=install_requires,
+    zip_safe=False,
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Environment :: Other Environment",
+        "Environment :: X11 Applications",
+        "Intended Audience :: Developers",
+        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Other Audience",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Natural Language :: English",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Communications :: Email",
+        "Topic :: Communications :: Email :: Address Book",
+        "Topic :: Communications :: Email :: Filters",
+        "Topic :: Desktop Environment",
+        "Topic :: Home Automation",
+        "Topic :: Utilities",
+    ],
 )
