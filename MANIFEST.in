@@ -2,20 +2,22 @@ include COPYING
 include *.rst
 include doc/conf.py
 include doc/.static/luke.png
-include doc/.templates/layout.html
+include doc/wordlist.txt
+include extra/docrunner.py
 include extra/requirements*.txt
 include blanco.py
+include nose2.cfg
 
-include tests/blanco.conf
 include tests/*.py
-include tests/sent_gmail.msmtp
-include tests/sent.maildir/cur/.keep
-include tests/sent.maildir/tmp/.keep
-include tests/sent.mbox
-include tests/sent.mh/.mh_sequences
-include tests/sent.msmtp
+include tests/data/blanco.conf
+include tests/data/sent_gmail.msmtp
+include tests/data/sent.maildir/cur/.keep/NOTE
+include tests/data/sent.maildir/tmp/.keep
+include tests/data/sent.mbox
+include tests/data/sent.mh/.mh_sequences
+include tests/data/sent.msmtp
 
 recursive-include doc *.rst
 
-recursive-include tests/sent.maildir/new *.kate
-recursive-include tests/sent.mh [0-9]*
+recursive-include tests/data/sent.maildir/new *.kate
+recursive-include tests/data/sent.mh [0-9]*
