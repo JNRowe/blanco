@@ -1,4 +1,4 @@
-doc/.build/
+build/
 
 *.py[co]
 .coverage
