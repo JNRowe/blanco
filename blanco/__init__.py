@@ -227,7 +227,7 @@ def process_command_line():
         "mbox = string(default='~/.sup/sent.mbox')",
         "log = string(default='~/Mail/.logs/gmail.log')",
         'gmail = boolean(default=False)',
-        "field = string(default='custom4')",
+        "field = string(default='frequency')",
         'notify = boolean(default=False)',
     ]
     config = configobj.ConfigObj(config_file, configspec=config_spec)

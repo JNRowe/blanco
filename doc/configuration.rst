@@ -29,15 +29,22 @@ The default addressbook format is the format used by abook_, where one of the
 custom fields allowed by abook_ is used to store frequency information.
 
 ``blanco`` expects your abook_ entries to have a frequency value in the
-``custom4`` field [#]_.  The format is "<n> <units>", where ``n`` is a number
+``frequency`` field [#]_.  The format is "<n> <units>", where ``n`` is a number
 and ``units`` is a character from the set ``[dwmy]``.  For example, an entry
 with a frequency of ``3 m`` will be triggered if there hasn't been a mail sent
 to that address in three months.
 
-If you set ``customfield 4 Frequency`` in your ``~/.abook/abookrc`` the abook_
-interface will display "Frequency" in the interface when editing the custom
-fields.  You do *not* need to set this for ``blanco`` to work, but it makes the
-purpose of the field clearer.
+You can add the following snippet to your :file:`~/.abook/abookrc` file to
+display a frequency field in the ``other`` tab::
+
+    field frequency = Frequency
+
+    view OTHER = frequency
+
+.. figure:: .static/abook_rach.png
+
+You do *not* need to set this for ``blanco`` to work, but it makes the purpose
+of the field clearer.
 
 ``blanco`` can be used without abook_, as it only requires a ini_ formatted
 contacts file.  To create your own contacts file without abook follow the format
@@ -48,15 +55,15 @@ below:
     [0]
     name=Bill
     email=test@example.com
-    frequency=30d
+    freq=30d
 
     [1]
     name=Joe
     email=joe@example.com
-    frequency=30d
+    freq=30d
 
-If you use the layout above you should specify ``--field=frequency`` when
-calling ``blanco``.
+If you use the layout above you should specify ``--field=freq`` when calling
+``blanco``.
 
 Another alternative would be to use abook_ just to convert your current address
 book in to a suitable format.  Check the output of ``abook --formats`` for the
