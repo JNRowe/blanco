@@ -2,6 +2,7 @@ include *.rst
 include doc/conf.py
 include doc/.static/luke.png
 include doc/.templates/layout.html
+include extra/requirements*.txt
 include blanco.py
 
 include tests/blanco.conf
