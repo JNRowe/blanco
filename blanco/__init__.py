@@ -46,10 +46,13 @@ import sys
 
 from email import utils
 
+try:
+    import configparser
+except ImportError:  # Python 3
+    import ConfigParser as configparser  # NOQA
+
 import arrow
 import blessings
-import configobj
-import validate
 
 try:
     import pynotify
@@ -106,6 +109,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     :return: Keys of email address, and values of seen date
 
     """
+    path = os.path.expanduser(path)
     if not os.path.exists(path):
         raise IOError(_('Sent mailbox %r not found') % path)
     if os.path.isdir('%s/new' % path):
@@ -216,26 +220,25 @@ def process_command_line():
     """
     # XDG basedir config location, using the glib bindings to get this would be
     # easier but the dependency is a bit too large for just that
-    config_dir = os.environ.get('XDG_CONFIG_HOME',
-                                os.path.join(os.environ.get('HOME', '/'),
-                                             '.config'))
-    config_file = os.path.join(config_dir, 'blanco', 'config.ini')
-    config_spec = [
-        "addressbook = string(default='~/.abook/addressbook')",
-        "sent type = string(default='mailbox')",
-        'all = boolean(default=False)',
-        "mbox = string(default='~/.sup/sent.mbox')",
-        "log = string(default='~/Mail/.logs/gmail.log')",
-        'gmail = boolean(default=False)',
-        "field = string(default='frequency')",
-        'notify = boolean(default=False)',
+    xdg_config_dir = os.environ.get('XDG_CONFIG_HOME',
+                                    os.path.join(os.environ.get('HOME', '/'),
+                                                 '.config'))
+
+    configs = [
+        os.path.dirname(__file__) + '/config',
+        os.path.join(xdg_config_dir, 'blanco', 'config.ini'),
     ]
-    config = configobj.ConfigObj(config_file, configspec=config_spec)
-    results = config.validate(validate.Validator())
-    if results is not True:
-        for key in filter(lambda k: not results[k], results):
-            print fail(_('Config value for %r is invalid') % key)
-        raise SyntaxError(_('Invalid configuration file %r') % config_file)
+    for s in os.getenv('XDG_CONFIG_DIRS', '/etc/xdg').split(':'):
+        p = s + '/blanco/config'
+        if os.path.isfile(p):
+            configs.append(p)
+    cfg = configparser.SafeConfigParser()
+    cfg.read(configs)
+    cfg_get = lambda s: cfg.get('blanco', s)
+    cfg_getbool = lambda s: cfg.getboolean('blanco', s)
+
+    if not cfg_getbool('colour') or os.getenv('NO_COLOUR'):
+        utils._colourise = lambda s, colour: s
 
     parser = argparse.ArgumentParser(
         description=USAGE,
@@ -243,49 +246,51 @@ def process_command_line():
     parser.add_argument('--version', action='version',
                         version='%(prog)s v' + __version__)
 
-    parser.set_defaults(addressbook=os.path.expanduser(config['addressbook']),
-                        sent_type=config['sent type'],
-                        all=config['all'],
-                        mbox=os.path.expanduser(config['mbox']),
-                        log=os.path.expanduser(config['log']),
-                        gmail=config['gmail'],
-                        field=config['field'],
-                        notify=config['notify'])
+    parser.add_argument('-a', '--addressbook', default=cfg_get('addressbook'),
+                        help=_('address book to read contacts from'),
+                        metavar=cfg_get('addressbook'))
 
-    parser.add_argument('-a', '--addressbook', metavar=config['addressbook'],
-                        help=_('address book to read contacts from'))
-
-    parser.add_argument('-t', '--sent-type', choices=('mailbox', 'msmtp'),
-                        metavar=config['sent type'],
-                        help=_('sent source type(mailbox or msmtp)'))
+    parser.add_argument('-t', '--sent-type', default=cfg_get('sent type'),
+                        choices=('mailbox', 'msmtp'),
+                        help=_('sent source type(mailbox or msmtp)'),
+                        metavar=cfg_get('sent type'))
     parser.add_argument('-r', '--all', action='store_true',
+                        default=cfg_getbool('all'),
                         help=_('include all recipients(CC and BCC fields)'))
-    parser.add_argument('--no-all', action='store_false', dest='all',
-                        help=_('include only the first recipient(TO field)'))
+    parser.add_argument('--no-all', action='store_false',
+                        help=_('include only the first recipient(TO field)'),
+                        dest='all')
 
     mbox_opts = parser.add_argument_group('Mailbox options')
     parser.add_argument_group(mbox_opts)
-    mbox_opts.add_argument('-m', '--mbox', metavar=config['mbox'],
-                           help=_('mailbox used to store sent mail'))
+    mbox_opts.add_argument('-m', '--mbox', default=cfg_get('mbox'),
+                           help=_('mailbox used to store sent mail'),
+                           metavar=cfg_get('mbox'))
 
     msmtp_opts = parser.add_argument_group('msmtp log options')
     parser.add_argument_group(msmtp_opts)
-    msmtp_opts.add_argument('-l', '--log', metavar=config['log'],
-                            help=_('msmtp log to parse'))
+    msmtp_opts.add_argument('-l', '--log', default=cfg_get('log'),
+                            help=_('msmtp log to parse'),
+                            metavar=cfg_get('log'))
     msmtp_opts.add_argument('-g', '--gmail', action='store_true',
+                            default=cfg_getbool('gmail'),
                             help=_('log from a gmail account(use accurate '
                                    'filter)'))
-    msmtp_opts.add_argument('--no-gmail', action='store_false', dest='gmail',
-                            help=_('msmtp log for non-gmail account'))
+    msmtp_opts.add_argument('--no-gmail', action='store_false',
+                            help=_('msmtp log for non-gmail account'),
+                            dest='gmail')
 
-    parser.add_argument('-s', '--field', metavar=config['field'],
-                        help=_('addressbook field to use for frequency value'))
+    parser.add_argument('-s', '--field', default=cfg_get('field'),
+                        help=_('addressbook field to use for frequency value'),
+                        metavar=cfg_get('field'))
     parser.add_argument('-n', '--notify', action='store_true',
+                        default=cfg_getbool('notify'),
                         help=_('display reminders using notification popups'))
     parser.add_argument('--no-notify', action='store_false', dest='notify',
                         help=_('display reminders on standard out'))
 
     parser.add_argument('-v', '--verbose', action='store_true',
+                        default=cfg_getbool('verbose'),
                         help=_('produce verbose output'))
     parser.add_argument('-q', '--quiet', action='store_false', dest='verbose',
                         help=_('output only matches and errors'))
@@ -424,11 +429,14 @@ class Contacts(list):
         :param str field: Address book field to use for contact frequency
 
         """
-        config = configobj.ConfigObj(addressbook)
-        reminder_entries = filter(lambda x: field in x, config.values())
+        cfg = configparser.SafeConfigParser()
+        cfg.read(os.path.expanduser(addressbook))
+        reminder_entries = filter(lambda s: cfg.has_option(s, field),
+                                  cfg.sections())
         for entry in reminder_entries:
-            self.append(Contact(entry['name'], entry['email'],
-                                parse_duration(entry[field])))
+            data = dict(cfg.items(entry))
+            self.append(Contact(data['name'], data['email'],
+                                parse_duration(data[field])))
 
 
 def main():

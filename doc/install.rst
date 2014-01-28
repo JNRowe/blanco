@@ -6,7 +6,6 @@ You can download releases from the `downloads page`_ on GitHub_.
 ``blanco`` requires Python_ v2.6(or newer) and the following Python modules:
 
 * arrow_
-* configobj_
 
 The following optional packages will be used if available:
 
@@ -31,7 +30,6 @@ steps::
 .. _GitHub: https://github.com/
 .. _Python: http://www.python.org/
 .. _arrow: https://crate.io/packages/arrow/
-.. _configobj: https://crate.io/packages/configobj/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
 .. _blessings: https://crate.io/packages/blessings/
 .. _Gentoo: http://www.gentoo.org/
