@@ -1,0 +1,12 @@
+Addressbook
+Setup
+abook
+addressbook
+blanco
+gmail
+logfile
+msmtp
+popup
+popups
+py
+startup

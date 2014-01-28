@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 # coding=utf-8
-"""blanco - Keep in touch, barely"""
+"""blanco - Keep in touch, barely."""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -65,12 +65,13 @@ T = blessings.Terminal()
 
 # Set up informational message functions
 def _colourise(text, colour):
-    """Colour text, if possible
+    """Colour text, if possible.
 
     :param str text: Text to colourise
     :param str colour: Colour to display text in
-    :rtype: str
+    :rtype: `str`
     :return: Colourised text, if possible
+
     """
     return getattr(T, colour.replace(' ', '_'))(text)
 
@@ -94,19 +95,17 @@ USAGE = '\n'.join(USAGE).replace('blanco', '%prog')
 
 
 def parse_sent(path, all_recipients=False, addresses=None):
-    """Parse sent messages mailbox for contact details
+    """Parse sent messages mailbox for contact details.
 
-    :type path: ``str``
-    :param path: Location of the sent mailbox
-    :type all_recipients: ``bool``
-    :param all_recipients: Whether to include CC and BCC addresses in results,
-        or just first
-    :type addresses: ``list``
-    :param addresses: Addresses to look for in sent mail, all if not specified
-    :rtype: ``dict`` of ``str`` keys and ``datetime.date`` values
+    :param str path: Location of the sent mailbox
+    :param bool all_recipients: Whether to include CC and BCC addresses in
+        results, or just the first
+    :param list addresses: Addresses to look for in sent mail, all if not
+        specified
+    :rtype: `dict` of `str` keys and `datetime.date` values
     :return: Keys of email address, and values of seen date
-    """
 
+    """
     if not os.path.exists(path):
         raise IOError("Sent mailbox `%s' not found" % path)
     if os.path.isdir('%s/new' % path):
@@ -135,21 +134,18 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
 
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
-    """Parse sent messages mailbox for contact details
+    """Parse sent messages mailbox for contact details.
 
-    :type log: ``str``
-    :param log: Location of the msmtp logfile
-    :type all_recipients: ``bool``
-    :param all_recipients: Whether to include all recipients in results, or
-        just first
-    :type addresses: ``list``
-    :param addresses: Addresses to look for in sent mail, all if not specified
-    :type gmail: ``bool``
-    :param gmail: Log is for a gmail account
-    :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+    :param str log: Location of the msmtp logfile
+    :param bool all_recipients: Whether to include all recipients in results, or
+        just the first
+    :param list addresses: Addresses to look for in sent mail, all if not
+        specified
+    :param bool gmail: Log is for a gmail account
+    :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
-    """
 
+    """
     if not os.path.exists(log):
         raise IOError("msmtp sent log `%s' not found" % log)
 
@@ -191,15 +187,14 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 
 
 def parse_duration(duration):
-    """Parse human readable duration
+    """Parse human readable duration.
 
-    :type duration: ``str``
-    :param duration: Duration definition
-    :rtype: ``int``
+    :param str duration: Duration definition
+    :rtype: `int`
     :return: Number of days in ``duration``
     :raise ValueError: Invalid value for ``duration``
-    """
 
+    """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
         raise ValueError("Invalid 'duration' value")
@@ -211,12 +206,12 @@ def parse_duration(duration):
 
 
 def process_command_line():
-    """Main command line interface
+    """Main command line interface.
 
-    :rtype: ``tuple`` of ``optparse`` and ``list``
+    :rtype: `tuple` of `optparse` options and `list` of `str` arguments
     :return: Parsed options and arguments
-    """
 
+    """
     # XDG basedir config location, using the glib bindings to get this would be
     # easier but the dependency is a bit too large for just that
     config_dir = os.environ.get('XDG_CONFIG_HOME',
@@ -296,19 +291,15 @@ def process_command_line():
 
 def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
               expires=pynotify.EXPIRES_DEFAULT):
-    """Display reminder
+    """Display reminder.
 
-    :type notify: ``bool``
-    :param notify: Whether to use notification popup
-    :type message: ``str``
-    :param message: Message string to show
-    :type contact: ``Contact``
-    :type urgency: ``int``
-    :param urgency: Urgency state for message
-    :type expires: ``int``
-    :param expires: Time to show notification popup in milliseconds
-    :param contact: Contact to show message for
+    :param bool notify: Whether to use notification popup
+    :param str message: Message string to show
+    :param Contact contact: Contact to show message for
+    :param int urgency: Urgency state for message
+    :param int expires: Time to show notification popup in milliseconds
     :raise OSError: Failure to show notification
+
     """
     if notify:
         note = pynotify.Notification('Hey, remember me?',
@@ -327,10 +318,11 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
 
 
 class Contact(object):
-    """Simple contact class"""
+
+    """Simple contact class."""
 
     def __init__(self, name, addresses, frequency):
-        """Initialise a new ``Contact`` object"""
+        """Initialise a new `Contact` object."""
         self.name = name
         if isinstance(addresses, basestring):
             self.addresses = [addresses.lower(), ]
@@ -339,34 +331,34 @@ class Contact(object):
         self.frequency = frequency
 
     def __repr__(self):
-        """Self-documenting string representation"""
+        """Self-documenting string representation."""
         return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
                                    self.addresses, self.frequency)
 
     def __str__(self):
-        """Pretty printed contact string"""
+        """Pretty printed contact string."""
         return '%s <%s> (%i days)' % (self.name, ', '.join(self.addresses),
                                       self.frequency)
 
     def trigger(self, sent):
-        """Calculate trigger date for contact
+        """Calculate trigger date for contact.
 
-        :type sent: ``dict`` of ``str`` keys and ``datetime.date`` values
+        :type sent: `dict` of `str` keys and `datetime.date` values
         :param sent: Address to last seen dictionary
-        :rtype: ``datetime.date``
+        :rtype: `datetime.date`
         :return: Date to start reminders on
-        """
 
+        """
         matches = sorted([v for k, v in sent.items() if k in self.addresses])
         return matches[-1] + datetime.timedelta(days=self.frequency)
 
     def notify_str(self):
-        """Calculate trigger date for contact
+        """Calculate trigger date for contact.
 
-        :rtype: ``str``
+        :rtype: `str`
         :return: Stylised name for use with notifications
-        """
 
+        """
         if 'body-hyperlinks' in pynotify.get_server_caps():
             name = "<a href='mailto:%s'>%s</a>" \
                 % (self.addresses[0], self.name)
@@ -376,36 +368,36 @@ class Contact(object):
 
 
 class Contacts(list):
-    """Group of ``Contact``"""
+
+    """Group of `Contact`."""
 
     def __init__(self, contacts=None):
-        """Initialise a new ``Contacts`` object"""
+        """Initialise a new `Contacts` object."""
         super(Contacts, self).__init__()
         if contacts:
             self.extend(contacts)
 
     def __repr__(self):
-        """Self-documenting string representation"""
+        """Self-documenting string representation."""
         return '%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
-        """Fetch all addresses of all ``Contact`` objects
+        """Fetch all addresses of all `Contact` objects.
 
-        :rtype: ``list`` of ``str``
-        :return: Addresses of every ``Contact``
+        :rtype: `list` of `str`
+        :return: Addresses of every `Contact`
+
         """
         return reduce(operator.add,
                       map(operator.attrgetter('addresses'), self))
 
     def parse(self, addressbook, field):
-        """Parse address book for usable entries
+        """Parse address book for usable entries.
 
-        :type addressbook: ``str``
-        :param addressbook: Location of the address book to useful
-        :type field: ``str``
-        :param field: Address book field to use for contact frequency
+        :param str addressbook: Location of the address book to useful
+        :param str field: Address book field to use for contact frequency
+
         """
-
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
@@ -414,8 +406,7 @@ class Contacts(list):
 
 
 def main():
-    """Main script"""
-
+    """Main script."""
     try:
         options, args = process_command_line()  # pylint: disable-msg=W0612
     except SyntaxError:

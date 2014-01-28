@@ -18,7 +18,7 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-A simple tool to help you, or more specifically *me*. keep in touch with people.
+A simple tool to help you, or more specifically *me*, keep in touch with people.
 All it does is notify you if you're failing to keep in contact.  It is just
 a quick solution to a simple problem, as long as you use `abook
 <http://abook.sourceforge.net/>`_ and your sent mail is easily accessible.
