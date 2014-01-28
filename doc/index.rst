@@ -25,6 +25,7 @@ Contents:
    configuration
    usage
    blanco manpage <blanco.1>
+   api/index
 
 Indices and tables
 ==================

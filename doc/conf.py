@@ -28,7 +28,8 @@ sys.path.insert(0, root_dir)
 import blanco
 
 extensions = \
-    ['sphinx.ext.%s' % ext for ext in []] \
+    ['sphinx.ext.%s' % ext for ext in ['autodoc', 'coverage', 'doctest',
+                                       'intersphinx', 'viewcode']] \
     + ['sphinxcontrib.%s' % ext for ext in []]
 
 # Only activate spelling, if it is installed.  It is not required in the
