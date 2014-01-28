@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blanco 0.6.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-01-28 08:13+0000\n"
+"POT-Creation-Date: 2014-01-28 08:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,118 +17,118 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: blanco/__init__.py:96
+#: blanco/__init__.py:98
 msgid "Check sent mail to make sure you're keeping in contact with your friends."
 msgstr ""
 
-#: blanco/__init__.py:114
+#: blanco/__init__.py:116
 #, python-format
 msgid "Sent mailbox %r not found"
 msgstr ""
 
-#: blanco/__init__.py:122
+#: blanco/__init__.py:124
 #, python-format
 msgid "Unknown mailbox format for %r"
 msgstr ""
 
-#: blanco/__init__.py:154
+#: blanco/__init__.py:156
 #, python-format
 msgid "msmtp sent log %r not found"
 msgstr ""
 
-#: blanco/__init__.py:172
+#: blanco/__init__.py:174
 #, python-format
 msgid "msmtp %r log is not in gmail format"
 msgstr ""
 
-#: blanco/__init__.py:206
+#: blanco/__init__.py:208
 #, python-format
 msgid "Invalid duration value %r"
 msgstr ""
 
-#: blanco/__init__.py:245
+#: blanco/__init__.py:247
 msgid "Please report bugs to jnrowe@gmail.com"
 msgstr ""
 
-#: blanco/__init__.py:250
+#: blanco/__init__.py:252
 msgid "address book to read contacts from"
 msgstr ""
 
-#: blanco/__init__.py:255
+#: blanco/__init__.py:257
 msgid "sent source type(mailbox or msmtp)"
 msgstr ""
 
-#: blanco/__init__.py:259
+#: blanco/__init__.py:261
 msgid "include all recipients(CC and BCC fields)"
 msgstr ""
 
-#: blanco/__init__.py:261
+#: blanco/__init__.py:263
 msgid "include only the first recipient(TO field)"
 msgstr ""
 
-#: blanco/__init__.py:267
+#: blanco/__init__.py:269
 msgid "mailbox used to store sent mail"
 msgstr ""
 
-#: blanco/__init__.py:273
+#: blanco/__init__.py:275
 msgid "msmtp log to parse"
 msgstr ""
 
-#: blanco/__init__.py:277
+#: blanco/__init__.py:279
 msgid "log from a gmail account(use accurate filter)"
 msgstr ""
 
-#: blanco/__init__.py:280
+#: blanco/__init__.py:282
 msgid "msmtp log for non-gmail account"
 msgstr ""
 
-#: blanco/__init__.py:284
+#: blanco/__init__.py:286
 msgid "addressbook field to use for frequency value"
 msgstr ""
 
-#: blanco/__init__.py:288
+#: blanco/__init__.py:290
 msgid "display reminders using notification popups"
 msgstr ""
 
-#: blanco/__init__.py:290
+#: blanco/__init__.py:292
 msgid "display reminders on standard out"
 msgstr ""
 
-#: blanco/__init__.py:294
+#: blanco/__init__.py:296
 msgid "produce verbose output"
 msgstr ""
 
-#: blanco/__init__.py:296
+#: blanco/__init__.py:298
 msgid "output only matches and errors"
 msgstr ""
 
-#: blanco/__init__.py:301
+#: blanco/__init__.py:303
 msgid "Notification popups require the notify-python package"
 msgstr ""
 
-#: blanco/__init__.py:320
+#: blanco/__init__.py:322
 msgid "Hey, remember me?"
 msgstr ""
 
-#: blanco/__init__.py:327
+#: blanco/__init__.py:329
 msgid "Notification failed to display!"
 msgstr ""
 
-#: blanco/__init__.py:372
+#: blanco/__init__.py:374
 #, python-format
 msgid "Unknown format_spec %r"
 msgstr ""
 
-#: blanco/__init__.py:448
+#: blanco/__init__.py:450
 msgid "Unable to initialise pynotify!"
 msgstr ""
 
-#: blanco/__init__.py:466
+#: blanco/__init__.py:468
 #, python-format
 msgid "No mail record for %s"
 msgstr ""
 
-#: blanco/__init__.py:468
+#: blanco/__init__.py:470
 #, python-format
 msgid "mail due for %s"
 msgstr ""

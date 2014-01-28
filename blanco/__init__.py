@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from __future__ import print_function
+
 from . import _version
 
 __version__ = _version.dotted
@@ -327,9 +329,9 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            print success(message % contact.name)
+            print(success(message % contact.name))
         else:
-            print warn(message % contact.name)
+            print(warn(message % contact.name))
 
 
 class Contact(object):
@@ -445,7 +447,7 @@ def main():
 
     if args.notify:
         if not pynotify.init(sys.argv[0]):
-            print fail(_('Unable to initialise pynotify!'))
+            print(fail(_('Unable to initialise pynotify!')))
             return errno.EIO
 
     contacts = Contacts()
@@ -457,7 +459,7 @@ def main():
         else:
             sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
-        print fail(e.message)
+        print(fail(e.message))
         return errno.EPERM
 
     now = arrow.now()
