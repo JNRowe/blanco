@@ -101,18 +101,18 @@ def parse_sent(path, all_recipients=False, addresses=None):
     Traceback (most recent call last):
         ...
     IOError: Sent mailbox `None' not found
-    >>> parse_sent("test/sent.maildir", True)
+    >>> parse_sent("tests/data/sent.maildir", True)
     {'nobody@example.com': datetime.date(2000, 2, 9),
      'max@example.com': datetime.date(2000, 2, 9),
      'test@example.com': datetime.date(2010, 2, 9),
      'steven@example.com': datetime.date(2000, 2, 9),
      'joe@example.com': datetime.date(2000, 2, 9)}
-    >>> parse_sent("test/sent.mh")
+    >>> parse_sent("tests/data/sent.mh")
     {'nobody@example.com': datetime.date(2000, 2, 9),
      'max@example.com': datetime.date(2000, 2, 9),
      'test@example.com': datetime.date(2010, 2, 9),
      'joe@example.com': datetime.date(2000, 2, 9)}
-    >>> parse_sent("test/sent.mbox", addresses="joe@example.com")
+    >>> parse_sent("tests/data/sent.mbox", addresses="joe@example.com")
     {'joe@example.com': datetime.date(2000, 2, 9)}
     >>> parse_sent("/dev/null")
     Traceback (most recent call last):
@@ -165,18 +165,18 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     Traceback (most recent call last):
         ...
     IOError: msmtp sent log `None' not found
-    >>> parse_msmtp("test/sent.msmtp")
+    >>> parse_msmtp("tests/data/sent.msmtp")
     {'nobody@example.com': datetime.date(2010, 2, 9), 'test@example.com':
      datetime.date(2010, 2, 9), 'joe@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("test/sent.msmtp", True)
+    >>> parse_msmtp("tests/data/sent.msmtp", True)
     {'nobody@example.com': datetime.date(2010, 2, 9),
      'max@example.com': datetime.date(2010, 2, 9),
      'test@example.com': datetime.date(2010, 2, 9),
      'steven@example.com': datetime.date(2010, 2, 9),
      'joe@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("test/sent.msmtp", addresses=["nobody@example.com", ])
+    >>> parse_msmtp("tests/data/sent.msmtp", addresses=["nobody@example.com", ])
     {'nobody@example.com': datetime.date(2010, 2, 9)}
-    >>> parse_msmtp("test/sent_gmail.msmtp", gmail=True)
+    >>> parse_msmtp("tests/data/sent_gmail.msmtp", gmail=True)
     {'nobody@example.com': datetime.date(2000, 2, 9),
      'test@example.com': datetime.date(2010, 2, 9),
      'joe@example.com': datetime.date(2000, 2, 9)}
@@ -500,7 +500,7 @@ class Contacts(list):
 
         >>> from dtopt import NORMALIZE_WHITESPACE
         >>> contacts = Contacts()
-        >>> contacts.parse("test/blanco.conf", "custom4")
+        >>> contacts.parse("tests/data/blanco.conf", "custom4")
         >>> contacts
         Contacts([
             Contact('Bill', ['test@example.com'], 30),
