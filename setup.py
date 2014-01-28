@@ -32,7 +32,7 @@ setup(
     scripts=['blanco.py', ],
     url='https://github.com/JNRowe/blanco',
     license='GPL-3',
-    description=blanco.__doc__.splitlines()[0].split("-", 1)[1][1:],
+    description=blanco.__doc__.splitlines()[0].split('-', 1)[1][1:],
     long_description=open('README.rst').read(),
     install_requires=['blessings', 'configobj', 'notify-python'],
 )

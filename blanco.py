@@ -17,13 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-__version__ = "0.5.0"
-__date__ = "2010-05-16"
-__author__ = "James Rowe <jnrowe@gmail.com>"
-__copyright__ = "Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>"
-__license__ = "GNU General Public License Version 3"
-__credits__ = ""
-__history__ = "See git repository"
+__version__ = '0.5.0'
+__date__ = '2010-05-16'
+__author__ = 'James Rowe <jnrowe@gmail.com>'
+__copyright__ = 'Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>'
+__license__ = 'GNU General Public License Version 3'
+__credits__ = ''
+__history__ = 'See git repository'
 
 from email.utils import parseaddr
 
@@ -90,7 +90,7 @@ def warn(text):
 # Pull the first paragraph from the docstring
 USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
 # Replace script name with optparse's substitution var, and rebuild string
-USAGE = "\n".join(USAGE).replace("blanco", "%prog")
+USAGE = '\n'.join(USAGE).replace('blanco', '%prog')
 
 
 def parse_sent(path, all_recipients=False, addresses=None):
@@ -132,26 +132,26 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
     if not os.path.exists(path):
         raise IOError("Sent mailbox `%s' not found" % path)
-    if os.path.isdir("%s/new" % path):
-        mtype = "Maildir"
-    elif os.path.exists("%s/.mh_sequences" % path):
-        mtype = "MH"
+    if os.path.isdir('%s/new' % path):
+        mtype = 'Maildir'
+    elif os.path.exists('%s/.mh_sequences' % path):
+        mtype = 'MH'
     elif os.path.isfile(path):
-        mtype = "mbox"
+        mtype = 'mbox'
     else:
-        raise ValueError("Unknown mailbox format")
+        raise ValueError('Unknown mailbox format')
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = getattr(mailbox, mtype)(path, factory=None, create=False)
 
     contacts = []
     for message in mbox:
-        fields = message.get_all("to", [])
+        fields = message.get_all('to', [])
         if all_recipients:
-            fields.extend(message.get_all("cc", []))
-            fields.extend(message.get_all("bcc", []))
+            fields.extend(message.get_all('cc', []))
+            fields.extend(message.get_all('bcc', []))
         results = map(str.lower,
                       map(operator.itemgetter(1), utils.getaddresses(fields)))
-        date = datetime.datetime(*utils.parsedate(message["date"])[:-2])
+        date = datetime.datetime(*utils.parsedate(message['date'])[:-2])
         contacts.extend([(address, date.date()) for address in results
                          if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
@@ -197,15 +197,15 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     if not os.path.exists(log):
         raise IOError("msmtp sent log `%s' not found" % log)
 
-    matcher = re.compile("recipients=([^ ]+)")
-    gmail_date = re.compile("smtpmsg.*OK ([^ ]+)")
+    matcher = re.compile('recipients=([^ ]+)')
+    gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
 
     start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
 
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed(filter(lambda s: s.endswith("exitcode=EX_OK\n"),
+    for line in reversed(filter(lambda s: s.endswith('exitcode=EX_OK\n'),
                                 open(log).readlines())):
         if gmail:
             gd = gmail_date.search(line)
@@ -213,17 +213,17 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 ts = int(gd.groups()[0])
                 parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
-                raise ValueError("msmtp log is not in gmail format")
+                raise ValueError('msmtp log is not in gmail format')
             year = parsed.year
             md = parsed.month, parsed.day
         else:
-            date = time.strptime(line[:6], "%b %d")[1:3]
+            date = time.strptime(line[:6], '%b %d')[1:3]
             if date > md:
                 year = year - 1
             md = date
 
         results = map(str.lower,
-                      matcher.search(line, 16).groups()[0].split(","))
+                      matcher.search(line, 16).groups()[0].split(','))
         if not all_recipients:
             results = [results[0], ]
         contacts.extend([(address, datetime.datetime(year, *md).date())
@@ -257,11 +257,11 @@ def parse_duration(duration):
     :raise ValueError: Invalid value for ``duration``
     """
 
-    match = re.match("^(\d+(?:|\.\d+)) *([dwmy])$", duration, re.IGNORECASE)
+    match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
         raise ValueError("Invalid 'duration' value")
     value, units = match.groups()
-    units = "dwmy".index(units.lower())
+    units = 'dwmy'.index(units.lower())
     # days per day/week/month/year
     multiplier = (1, 7, 28, 365)
     return int(float(value) * multiplier[units])
@@ -276,77 +276,77 @@ def process_command_line():
 
     # XDG basedir config location, using the glib bindings to get this would be
     # easier but the dependency is a bit too large for just that
-    config_dir = os.environ.get("XDG_CONFIG_HOME",
-                                os.path.join(os.environ.get("HOME", "/"),
-                                             ".config"))
-    config_file = os.path.join(config_dir, "blanco", "config.ini")
+    config_dir = os.environ.get('XDG_CONFIG_HOME',
+                                os.path.join(os.environ.get('HOME', '/'),
+                                             '.config'))
+    config_file = os.path.join(config_dir, 'blanco', 'config.ini')
     config_spec = [
         "addressbook = string(default='~/.abook/addressbook')",
         "sent type = string(default='mailbox')",
-        "all = boolean(default=False)",
+        'all = boolean(default=False)',
         "mbox = string(default='~/.sup/sent.mbox')",
         "log = string(default='~/Mail/.logs/gmail.log')",
-        "gmail = boolean(default=False)",
+        'gmail = boolean(default=False)',
         "field = string(default='custom4')",
-        "notify = boolean(default=False)",
+        'notify = boolean(default=False)',
     ]
     config = configobj.ConfigObj(config_file, configspec=config_spec)
     results = config.validate(validate.Validator())
     if results is not True:
         for key in filter(lambda k: not results[k], results):
             print fail("Config value for `%s' is invalid" % key)
-        raise SyntaxError("Invalid configuration file")
+        raise SyntaxError('Invalid configuration file')
 
-    parser = optparse.OptionParser(usage="%prog [options...]",
-                                   version="%prog v" + __version__,
+    parser = optparse.OptionParser(usage='%prog [options...]',
+                                   version='%prog v' + __version__,
                                    description=USAGE)
 
-    parser.set_defaults(addressbook=os.path.expanduser(config["addressbook"]),
+    parser.set_defaults(addressbook=os.path.expanduser(config['addressbook']),
                         sent_type=config['sent type'],
                         all=config['all'],
-                        mbox=os.path.expanduser(config["mbox"]),
-                        log=os.path.expanduser(config["log"]),
+                        mbox=os.path.expanduser(config['mbox']),
+                        log=os.path.expanduser(config['log']),
                         gmail=config['gmail'],
-                        field=config["field"],
+                        field=config['field'],
                         notify=config['notify'])
 
-    parser.add_option("-a", "--addressbook", metavar=config["addressbook"],
-                      help="Address book to read contacts from")
+    parser.add_option('-a', '--addressbook', metavar=config['addressbook'],
+                      help='Address book to read contacts from')
 
-    parser.add_option("-t", "--sent-type", choices=("mailbox", "msmtp"),
-                      metavar=config["sent type"],
-                      help="Sent source type(mailbox or msmtp)")
-    parser.add_option("-r", "--all", action="store_true",
-                      help="Include all recipients(CC and BCC fields)")
-    parser.add_option("--no-all", action="store_false",
-                      dest="all",
-                      help="Include only the first recipient(TO field)")
+    parser.add_option('-t', '--sent-type', choices=('mailbox', 'msmtp'),
+                      metavar=config['sent type'],
+                      help='Sent source type(mailbox or msmtp)')
+    parser.add_option('-r', '--all', action='store_true',
+                      help='Include all recipients(CC and BCC fields)')
+    parser.add_option('--no-all', action='store_false',
+                      dest='all',
+                      help='Include only the first recipient(TO field)')
 
-    mbox_opts = optparse.OptionGroup(parser, "Mailbox options")
+    mbox_opts = optparse.OptionGroup(parser, 'Mailbox options')
     parser.add_option_group(mbox_opts)
-    mbox_opts.add_option("-m", "--mbox", metavar=config["mbox"],
-                         help="Mailbox used to store sent mail")
+    mbox_opts.add_option('-m', '--mbox', metavar=config['mbox'],
+                         help='Mailbox used to store sent mail')
 
-    msmtp_opts = optparse.OptionGroup(parser, "msmtp log options")
+    msmtp_opts = optparse.OptionGroup(parser, 'msmtp log options')
     parser.add_option_group(msmtp_opts)
-    msmtp_opts.add_option("-l", "--log", metavar=config["log"],
-                          help="msmtp log to parse")
-    msmtp_opts.add_option("-g", "--gmail", action="store_true",
-                          help="Log from a gmail account(use accurate filter)")
-    msmtp_opts.add_option("--no-gmail", action="store_false",
-                          dest="gmail", help="msmtp log for non-gmail account")
+    msmtp_opts.add_option('-l', '--log', metavar=config['log'],
+                          help='msmtp log to parse')
+    msmtp_opts.add_option('-g', '--gmail', action='store_true',
+                          help='Log from a gmail account(use accurate filter)')
+    msmtp_opts.add_option('--no-gmail', action='store_false',
+                          dest='gmail', help='msmtp log for non-gmail account')
 
-    parser.add_option("-s", "--field", metavar=config["field"],
-                      help="Addressbook field to use for frequency value")
-    parser.add_option("-n", "--notify", action="store_true",
-                      help="Display reminders using notification popups")
-    parser.add_option("--no-notify", action="store_false", dest="notify",
-                      help="Display reminders on standard out")
+    parser.add_option('-s', '--field', metavar=config['field'],
+                      help='Addressbook field to use for frequency value')
+    parser.add_option('-n', '--notify', action='store_true',
+                      help='Display reminders using notification popups')
+    parser.add_option('--no-notify', action='store_false', dest='notify',
+                      help='Display reminders on standard out')
 
-    parser.add_option("-v", "--verbose", action="store_true",
-                      help="Produce verbose output")
-    parser.add_option("-q", "--quiet", action="store_false", dest="verbose",
-                      help="Output only matches and errors")
+    parser.add_option('-v', '--verbose', action='store_true',
+                      help='Produce verbose output')
+    parser.add_option('-q', '--quiet', action='store_false', dest='verbose',
+                      help='Output only matches and errors')
 
     return parser.parse_args()
 
@@ -372,14 +372,14 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
     :raise OSError: Failure to show notification
     """
     if notify:
-        note = pynotify.Notification("Hey, remember me?",
+        note = pynotify.Notification('Hey, remember me?',
                                      message % contact.notify_str(),
-                                     "stock_person")
+                                     'stock_person')
         note.set_urgency(urgency)
         note.set_timeout(expires)
 
         if not note.show():
-            raise OSError("Notification failed to display!")
+            raise OSError('Notification failed to display!')
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
             print success(message % contact.name)
@@ -406,7 +406,7 @@ class Contact(object):
         Contact('James Rowe', ['jnrowe@gmail.com'], 200)
         """
 
-        return "%s(%r, %r, %r)" % (self.__class__.__name__, self.name,
+        return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
                                    self.addresses, self.frequency)
 
     def __str__(self):
@@ -418,7 +418,7 @@ class Contact(object):
         ...              ["jnrowe@gmail.com", "jnrowe@example.com"], 200)
         James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)
         """
-        return "%s <%s> (%i days)" % (self.name, ", ".join(self.addresses),
+        return '%s <%s> (%i days)' % (self.name, ', '.join(self.addresses),
                                       self.frequency)
 
     def trigger(self, sent):
@@ -453,7 +453,7 @@ class Contact(object):
         :return: Stylised name for use with notifications
         """
 
-        if "body-hyperlinks" in pynotify.get_server_caps():
+        if 'body-hyperlinks' in pynotify.get_server_caps():
             name = "<a href='mailto:%s'>%s</a>" \
                 % (self.addresses[0], self.name)
         else:
@@ -477,7 +477,7 @@ class Contacts(list):
         Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])
         """
 
-        return "%s(%r)" % (self.__class__.__name__, self[:])
+        return '%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
         """Fetch all addresses of all ``Contact`` objects
@@ -493,7 +493,7 @@ class Contacts(list):
         :return: Addresses of every ``Contact``
         """
         return reduce(operator.add,
-                      map(operator.attrgetter("addresses"), self))
+                      map(operator.attrgetter('addresses'), self))
 
     def parse(self, addressbook, field):
         """Parse address book for usable entries
@@ -517,7 +517,7 @@ class Contacts(list):
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
-            self.append(Contact(entry["name"], entry["email"],
+            self.append(Contact(entry['name'], entry['email'],
                                 parse_duration(entry[field])))
 
 
@@ -531,16 +531,16 @@ def main():
 
     if options.notify:
         if pynotify is _Fake_PyNotify:
-            print fail("Notification popups require the notify-python package")
+            print fail('Notification popups require the notify-python package')
             return errno.ENOENT
         if not pynotify.init(sys.argv[0]):
-            print fail("Unable to initialise pynotify!")
+            print fail('Unable to initialise pynotify!')
             return errno.EIO
 
     contacts = Contacts()
     contacts.parse(options.addressbook, options.field)
     try:
-        if options.sent_type == "msmtp":
+        if options.sent_type == 'msmtp':
             sent = parse_msmtp(options.log, options.all, contacts.addresses(),
                                options.gmail)
         else:
@@ -552,9 +552,9 @@ def main():
     now = datetime.date.today()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(options.notify, "No mail record for %s", contact)
+            show_note(options.notify, 'No mail record for %s', contact)
         elif now > contact.trigger(sent):
-            show_note(options.notify, "mail due for %s", contact,
+            show_note(options.notify, 'mail due for %s', contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
 
 

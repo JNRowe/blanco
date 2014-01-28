@@ -17,13 +17,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-__version__ = "0.1.0"
-__date__ = "2010-02-12"
-__author__ = "James Rowe <jnrowe@gmail.com>"
-__copyright__ = "Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>"
-__license__ = "GNU General Public License Version 3"
-__credits__ = ""
-__history__ = "See git repository"
+__version__ = '0.1.0'
+__date__ = '2010-02-12'
+__author__ = 'James Rowe <jnrowe@gmail.com>'
+__copyright__ = 'Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>'
+__license__ = 'GNU General Public License Version 3'
+__credits__ = ''
+__history__ = 'See git repository'
 
 try:
     from email.utils import parseaddr
@@ -43,9 +43,9 @@ import sys
 
 import shelldoctest as sd
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     os.chdir(os.path.abspath(__file__).rsplit(os.sep, 2)[0])
 
-    sys.exit(doctest.testfile("README.rst", module_relative=False,
-                              extraglobs={"system_command": sd.system_command},
+    sys.exit(doctest.testfile('README.rst', module_relative=False,
+                              extraglobs={'system_command': sd.system_command},
                               parser=sd.ShellDocTestParser())[0])
