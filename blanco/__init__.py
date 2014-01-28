@@ -460,7 +460,7 @@ def main():
         else:
             sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
-        print(fail(e.message))
+        print(fail(e.args[0]))
         return errno.EPERM
 
     now = arrow.now()
