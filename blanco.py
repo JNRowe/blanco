@@ -69,7 +69,7 @@ def _colourise(text, colour):
 
     :param str text: Text to colourise
     :param str colour: Colour to display text in
-    :rtype: str
+    :rtype: `str`
     :return: Colourised text, if possible
 
     """
@@ -97,14 +97,12 @@ USAGE = '\n'.join(USAGE).replace('blanco', '%prog')
 def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details.
 
-    :type path: ``str``
-    :param path: Location of the sent mailbox
-    :type all_recipients: ``bool``
-    :param all_recipients: Whether to include CC and BCC addresses in results,
-        or just first
-    :type addresses: ``list``
-    :param addresses: Addresses to look for in sent mail, all if not specified
-    :rtype: ``dict`` of ``str`` keys and ``datetime.date`` values
+    :param str path: Location of the sent mailbox
+    :param bool all_recipients: Whether to include CC and BCC addresses in
+        results, or just the first
+    :param list addresses: Addresses to look for in sent mail, all if not
+        specified
+    :rtype: `dict` of `str` keys and `datetime.date` values
     :return: Keys of email address, and values of seen date
 
     """
@@ -138,16 +136,13 @@ def parse_sent(path, all_recipients=False, addresses=None):
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details.
 
-    :type log: ``str``
-    :param log: Location of the msmtp logfile
-    :type all_recipients: ``bool``
-    :param all_recipients: Whether to include all recipients in results, or
-        just first
-    :type addresses: ``list``
-    :param addresses: Addresses to look for in sent mail, all if not specified
-    :type gmail: ``bool``
-    :param gmail: Log is for a gmail account
-    :rtype: ``dict`` of ``str`` keys and ``datetime.datetime`` values
+    :param str log: Location of the msmtp logfile
+    :param bool all_recipients: Whether to include all recipients in results, or
+        just the first
+    :param list addresses: Addresses to look for in sent mail, all if not
+        specified
+    :param bool gmail: Log is for a gmail account
+    :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
 
     """
@@ -194,9 +189,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 def parse_duration(duration):
     """Parse human readable duration.
 
-    :type duration: ``str``
-    :param duration: Duration definition
-    :rtype: ``int``
+    :param str duration: Duration definition
+    :rtype: `int`
     :return: Number of days in ``duration``
     :raise ValueError: Invalid value for ``duration``
 
@@ -214,7 +208,7 @@ def parse_duration(duration):
 def process_command_line():
     """Main command line interface.
 
-    :rtype: ``tuple`` of ``optparse`` and ``list``
+    :rtype: `tuple` of `optparse` options and `list` of `str` arguments
     :return: Parsed options and arguments
 
     """
@@ -299,16 +293,11 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
               expires=pynotify.EXPIRES_DEFAULT):
     """Display reminder.
 
-    :type notify: ``bool``
-    :param notify: Whether to use notification popup
-    :type message: ``str``
-    :param message: Message string to show
-    :type contact: ``Contact``
-    :type urgency: ``int``
-    :param urgency: Urgency state for message
-    :type expires: ``int``
-    :param expires: Time to show notification popup in milliseconds
-    :param contact: Contact to show message for
+    :param bool notify: Whether to use notification popup
+    :param str message: Message string to show
+    :param Contact contact: Contact to show message for
+    :param int urgency: Urgency state for message
+    :param int expires: Time to show notification popup in milliseconds
     :raise OSError: Failure to show notification
 
     """
@@ -333,7 +322,7 @@ class Contact(object):
     """Simple contact class."""
 
     def __init__(self, name, addresses, frequency):
-        """Initialise a new ``Contact`` object."""
+        """Initialise a new `Contact` object."""
         self.name = name
         if isinstance(addresses, basestring):
             self.addresses = [addresses.lower(), ]
@@ -354,9 +343,9 @@ class Contact(object):
     def trigger(self, sent):
         """Calculate trigger date for contact.
 
-        :type sent: ``dict`` of ``str`` keys and ``datetime.date`` values
+        :type sent: `dict` of `str` keys and `datetime.date` values
         :param sent: Address to last seen dictionary
-        :rtype: ``datetime.date``
+        :rtype: `datetime.date`
         :return: Date to start reminders on
 
         """
@@ -366,7 +355,7 @@ class Contact(object):
     def notify_str(self):
         """Calculate trigger date for contact.
 
-        :rtype: ``str``
+        :rtype: `str`
         :return: Stylised name for use with notifications
 
         """
@@ -380,10 +369,10 @@ class Contact(object):
 
 class Contacts(list):
 
-    """Group of ``Contact``."""
+    """Group of `Contact`."""
 
     def __init__(self, contacts=None):
-        """Initialise a new ``Contacts`` object."""
+        """Initialise a new `Contacts` object."""
         super(Contacts, self).__init__()
         if contacts:
             self.extend(contacts)
@@ -393,10 +382,10 @@ class Contacts(list):
         return '%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
-        """Fetch all addresses of all ``Contact`` objects.
+        """Fetch all addresses of all `Contact` objects.
 
-        :rtype: ``list`` of ``str``
-        :return: Addresses of every ``Contact``
+        :rtype: `list` of `str`
+        :return: Addresses of every `Contact`
 
         """
         return reduce(operator.add,
@@ -405,10 +394,8 @@ class Contacts(list):
     def parse(self, addressbook, field):
         """Parse address book for usable entries.
 
-        :type addressbook: ``str``
-        :param addressbook: Location of the address book to useful
-        :type field: ``str``
-        :param field: Address book field to use for contact frequency
+        :param str addressbook: Location of the address book to useful
+        :param str field: Address book field to use for contact frequency
 
         """
         config = configobj.ConfigObj(addressbook)
