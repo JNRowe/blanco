@@ -142,6 +142,16 @@ class ContactTest:
             200))) == \
             'James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)'
 
+    def test___format__(self):
+        expect(format(self.contact)) == \
+            'James Rowe <jnrowe@gmail.com> (200 days)'
+        expect(format(self.contact, 'email')) == \
+            'James Rowe <jnrowe@gmail.com>'
+        expect(format(Contact, 'email'(
+            'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'],
+            200))) == \
+            'James Rowe <jnrowe@gmail.com>'
+
     def trigger(self, sent):
         expect(self.contact.trigger({
             'jnrowe@gmail.com': date(1942, 1, 1)}

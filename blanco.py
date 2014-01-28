@@ -340,6 +340,22 @@ class Contact(object):
         return '%s <%s> (%i days)' % (self.name, ', '.join(self.addresses),
                                       self.frequency)
 
+    def __format__(self, format_spec):
+        """Extended pretty printing for `Contact` strings.
+
+        :param str format_spec: Coordinate formatting system to use
+        :rtype: `str`
+        :return: Human readable string representation of `Contact` object
+        :raise ValueError: Unknown value for ``format_spec``
+
+        """
+        if not format_spec:  # default format calls set format_spec to ''
+            return str(self)
+        elif format_spec == 'email':
+            return '%s <%s>' % (self.name, self.addresses[0])
+        else:
+            raise ValueError('Unknown format_spec %r' % format_spec)
+
     def trigger(self, sent):
         """Calculate trigger date for contact.
 
