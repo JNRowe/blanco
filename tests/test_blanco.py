@@ -184,7 +184,7 @@ class ContactsTest(TestCase):
 
     def test_parse(self):
         contacts = Contacts()
-        contacts.parse('tests/data/blanco.conf', 'custom4')
+        contacts.parse('tests/data/blanco.conf', 'frequency')
         expect(repr(contacts)) == \
             ('Contacts(['
              "Contact('Bill', ['test@example.com'], 30), "

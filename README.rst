@@ -42,12 +42,14 @@ forgetting to contact somebody.
 
 ::
 
-    $ ./blanco.py -a tests/data/blanco.conf -m tests/data/sent.mbox
-    Due for Joe
-    No record of a sent email for Steven
-    $ ./blanco.py -a tests/data/blanco.conf -m tests/data/sent.mbox --all
-    Due for Joe
-    Due for Steven
+    $ ./blanco.py --no-notify -a tests/data/blanco.conf -m tests/data/sent.mbox
+    Mail due for Bill
+    Mail due for Joe
+    No mail record for Steven
+    $ ./blanco.py --no-notify -a tests/data/blanco.conf -m tests/data/sent.mbox --all
+    Mail due for Bill
+    Mail due for Joe
+    Mail due for Steven
 
 Without abook
 '''''''''''''

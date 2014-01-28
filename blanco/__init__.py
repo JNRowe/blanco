@@ -385,8 +385,8 @@ class Contact(object):
         :return: Date to start reminders on
 
         """
-        matches = sorted([v for k, v in sent.items() if k in self.addresses])
-        return matches[-1].replace(days=self.frequency)
+        match = sorted([v for k, v in sent.items() if k in self.addresses])[0]
+        return arrow.get(*match.timetuple()[:3]).replace(days=self.frequency)
 
     def notify_str(self):
         """Calculate trigger date for contact.
