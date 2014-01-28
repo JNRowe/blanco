@@ -1,3 +1,4 @@
+include COPYING
 include *.rst
 include doc/conf.py
 include doc/.static/luke.png
