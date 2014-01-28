@@ -30,9 +30,9 @@ steps::
 .. _downloads page: https://github.com/JNRowe/blanco/downloads
 .. _GitHub: https://github.com/
 .. _Python: http://www.python.org/
-.. _arrow: http://code.google.com/p/arrow/
-.. _configobj: http://code.google.com/p/configobj/
+.. _arrow: https://crate.io/packages/arrow/
+.. _configobj: https://crate.io/packages/configobj/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
-.. _blessings: http://pypi.python.org/pypi/blessings/
+.. _blessings: https://crate.io/packages/blessings/
 .. _Gentoo: http://www.gentoo.org/
 .. _my overlay: http://github.com/JNRowe/misc-overlay
