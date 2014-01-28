@@ -47,6 +47,7 @@ import re
 import sys
 
 from email import utils
+from functools import reduce
 
 try:
     import configparser
