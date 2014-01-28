@@ -1,0 +1,50 @@
+#compdef blanco blanco.py
+# coding=utf-8
+# blanco - ZSH completion support for blanco
+# Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Most of this file is generated from blanco/__init__.py, but feel free to
+# customise it!  If you make improvements, open a pull request against
+# `JNRowe/blanco' with your super changes attached.
+
+(( $+functions[__blanco_list_abook_fields] )) ||
+__blanco_list_abook_fields() {
+    local tmp
+    tmp=($(awk '/^field/ {print $2}' ~/.abook/abookrc 2>/dev/null))
+    if [ -z "${tmp}" ]; then
+        _message "Unable to read supported fields from abook config!"
+    else
+        compadd ${tmp[@]}
+    fi
+}
+
+
+_arguments '--help[show help message and exit]' \
+    "--version[show program's version number and exit]" \
+    "--addressbook[address book to read contacts from]:select file:_files" \
+    "--sent-type[sent source type]:select type:(major minor micro patch)" \
+    "--all[include all recipients(CC and BCC fields)]" \
+    "--no-all[include only the first recipient(TO field)]" \
+    "--field[addressbook field to use for frequency value]:select field:__blanco_list_abook_fields" \
+    "--notify[display reminders using notification popups]" \
+    "--no-notify[display reminders on standard out]" \
+    "--verbose[produce verbose output]" \
+    "--quiet[output only matches and errors]" \
+    "--mbox[mailbox used to store sent mail]:select file:_files" \
+    "--log[msmtp log to parse]:select file:_files" \
+    "-gmail[log from a gmail account(use accurate filter)]" \
+    "--no-gmail[msmtp log for non-gmail account]"
