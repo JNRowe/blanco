@@ -17,8 +17,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-__version__ = '0.5.0'
-__date__ = '2010-05-16'
+from . import _version
+
+__version__ = _version.dotted
+__date__ = _version.date
 __author__ = 'James Rowe <jnrowe@gmail.com>'
 __copyright__ = 'Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>'
 __license__ = 'GNU General Public License Version 3'
