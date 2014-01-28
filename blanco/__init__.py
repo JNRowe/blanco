@@ -237,8 +237,10 @@ def process_command_line():
             print fail("Config value for %r is invalid" % key)
         raise SyntaxError('Invalid configuration file %r' % config_file)
 
-    parser = argparse.ArgumentParser(usage='%(prog)s [options...]',
-                                     description=USAGE)
+    parser = argparse.ArgumentParser(
+        usage='%(prog)s [options...]',
+        description=USAGE,
+        epilog='Please report bugs to jnrowe@gmail.com')
     parser.add_argument('--version', action='version',
                         version='%(prog)s v' + __version__)
 
