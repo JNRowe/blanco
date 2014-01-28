@@ -35,7 +35,7 @@ from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
 
 
 def test_missing_mailbox():
-    with expect.raises(IOError, "Sent mailbox `None' not found"):
+    with expect.raises(IOError, "Sent mailbox 'None' not found"):
         parse_sent('None')
 
 
@@ -67,7 +67,7 @@ def test_parse_sent(mbox, recipients, addresses, result):
 
 
 def test_missing_msmtp_log():
-    with expect.raises(IOError, "msmtp sent log `None' not found"):
+    with expect.raises(IOError, "msmtp sent log 'None' not found"):
         parse_msmtp('None')
 
 
@@ -104,7 +104,7 @@ def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
 
 
 def test_invalid_duration():
-    with expect.raises(ValueError, "Invalid 'duration' value"):
+    with expect.raises(ValueError, "Invalid duration value '1 k'"):
         parse_duration('1 k')
 
 

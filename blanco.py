@@ -107,7 +107,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
     """
     if not os.path.exists(path):
-        raise IOError("Sent mailbox `%s' not found" % path)
+        raise IOError("Sent mailbox %r not found" % path)
     if os.path.isdir('%s/new' % path):
         mtype = 'Maildir'
     elif os.path.exists('%s/.mh_sequences' % path):
@@ -147,7 +147,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 
     """
     if not os.path.exists(log):
-        raise IOError("msmtp sent log `%s' not found" % log)
+        raise IOError("msmtp sent log %r not found" % log)
 
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
@@ -197,7 +197,7 @@ def parse_duration(duration):
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
-        raise ValueError("Invalid 'duration' value")
+        raise ValueError("Invalid duration value %r" % duration)
     value, units = match.groups()
     units = 'dwmy'.index(units.lower())
     # days per day/week/month/year
@@ -232,7 +232,7 @@ def process_command_line():
     results = config.validate(validate.Validator())
     if results is not True:
         for key in filter(lambda k: not results[k], results):
-            print fail("Config value for `%s' is invalid" % key)
+            print fail("Config value for %r is invalid" % key)
         raise SyntaxError('Invalid configuration file')
 
     parser = optparse.OptionParser(usage='%prog [options...]',
