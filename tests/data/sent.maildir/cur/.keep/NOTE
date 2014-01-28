@@ -1,0 +1,3 @@
+The .keep directory is here to make sure the directory exists.  A simple .keep
+file can't be used in cur/ as it will be read by Python's mailbox module as
+a message.
