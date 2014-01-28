@@ -26,6 +26,7 @@ Contents:
    usage
    blanco manpage <blanco.1>
    faq
+   release
    api/index
 
 Indices and tables
