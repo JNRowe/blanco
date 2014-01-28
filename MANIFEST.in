@@ -1,11 +1,14 @@
 include COPYING
 include *.rst
+include blanco.py
+include blanco/locale/blanco.pot
+include blanco/locale/*/LC_MESSAGES/*.mo
+include blanco/locale/*/LC_MESSAGES/*.po
 include doc/conf.py
 include doc/.static/luke.png
 include doc/wordlist.txt
 include extra/docrunner.py
 include extra/requirements*.txt
-include blanco.py
 include nose2.cfg
 
 include tests/*.py

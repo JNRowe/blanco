@@ -61,6 +61,7 @@ except ImportError:  # pragma: no cover
         EXPIRES_DEFAULT = 0
     pynotify = _Fake_PyNotify  # NOQA
 
+from .i18n import _
 
 T = blessings.Terminal()
 
@@ -90,10 +91,8 @@ def warn(text):
     return _colourise(text, 'bright yellow')
 
 
-# Pull the first paragraph from the docstring
-USAGE = __doc__[:__doc__.find('\n\n', 100)].splitlines()[2:]
-# Replace script name with argparse's substitution var, and rebuild string
-USAGE = '\n'.join(USAGE).replace('blanco', '%(prog)s')
+USAGE = _("Check sent mail to make sure you're keeping in contact with your "
+          "friends.")
 
 
 def parse_sent(path, all_recipients=False, addresses=None):
@@ -109,7 +108,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
 
     """
     if not os.path.exists(path):
-        raise IOError("Sent mailbox %r not found" % path)
+        raise IOError(_('Sent mailbox %r not found') % path)
     if os.path.isdir('%s/new' % path):
         mtype = 'Maildir'
     elif os.path.exists('%s/.mh_sequences' % path):
@@ -117,7 +116,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     elif os.path.isfile(path):
         mtype = 'mbox'
     else:
-        raise ValueError('Unknown mailbox format for %r' % path)
+        raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = getattr(mailbox, mtype)(path, factory=None, create=False)
 
@@ -149,7 +148,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 
     """
     if not os.path.exists(log):
-        raise IOError("msmtp sent log %r not found" % log)
+        raise IOError(_('msmtp sent log %r not found') % log)
 
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
@@ -167,7 +166,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 ts = int(gd.groups()[0])
                 parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
-                raise ValueError('msmtp %r log is not in gmail format' % log)
+                raise ValueError(_('msmtp %r log is not in gmail format')
+                                 % log)
             year = parsed.year
             md = parsed.month, parsed.day
         else:
@@ -199,7 +199,7 @@ def parse_duration(duration):
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
-        raise ValueError("Invalid duration value %r" % duration)
+        raise ValueError(_('Invalid duration value %r') % duration)
     value, units = match.groups()
     units = 'dwmy'.index(units.lower())
     # days per day/week/month/year
@@ -234,13 +234,12 @@ def process_command_line():
     results = config.validate(validate.Validator())
     if results is not True:
         for key in filter(lambda k: not results[k], results):
-            print fail("Config value for %r is invalid" % key)
-        raise SyntaxError('Invalid configuration file %r' % config_file)
+            print fail(_('Config value for %r is invalid') % key)
+        raise SyntaxError(_('Invalid configuration file %r') % config_file)
 
     parser = argparse.ArgumentParser(
-        usage='%(prog)s [options...]',
         description=USAGE,
-        epilog='Please report bugs to jnrowe@gmail.com')
+        epilog=_('Please report bugs to jnrowe@gmail.com'))
     parser.add_argument('--version', action='version',
                         version='%(prog)s v' + __version__)
 
@@ -254,42 +253,42 @@ def process_command_line():
                         notify=config['notify'])
 
     parser.add_argument('-a', '--addressbook', metavar=config['addressbook'],
-                        help='address book to read contacts from')
+                        help=_('address book to read contacts from'))
 
     parser.add_argument('-t', '--sent-type', choices=('mailbox', 'msmtp'),
                         metavar=config['sent type'],
-                        help='sent source type(mailbox or msmtp)')
+                        help=_('sent source type(mailbox or msmtp)'))
     parser.add_argument('-r', '--all', action='store_true',
-                        help='include all recipients(CC and BCC fields)')
+                        help=_('include all recipients(CC and BCC fields)'))
     parser.add_argument('--no-all', action='store_false', dest='all',
-                        help='include only the first recipient(TO field)')
+                        help=_('include only the first recipient(TO field)'))
 
     mbox_opts = parser.add_argument_group('Mailbox options')
     parser.add_argument_group(mbox_opts)
     mbox_opts.add_argument('-m', '--mbox', metavar=config['mbox'],
-                           help='mailbox used to store sent mail')
+                           help=_('mailbox used to store sent mail'))
 
     msmtp_opts = parser.add_argument_group('msmtp log options')
     parser.add_argument_group(msmtp_opts)
     msmtp_opts.add_argument('-l', '--log', metavar=config['log'],
-                            help='msmtp log to parse')
+                            help=_('msmtp log to parse'))
     msmtp_opts.add_argument('-g', '--gmail', action='store_true',
-                            help='log from a gmail account(use accurate '
-                                 'filter)')
+                            help=_('log from a gmail account(use accurate '
+                                   'filter)'))
     msmtp_opts.add_argument('--no-gmail', action='store_false', dest='gmail',
-                            help='msmtp log for non-gmail account')
+                            help=_('msmtp log for non-gmail account'))
 
     parser.add_argument('-s', '--field', metavar=config['field'],
-                        help='addressbook field to use for frequency value')
+                        help=_('addressbook field to use for frequency value'))
     parser.add_argument('-n', '--notify', action='store_true',
-                        help='display reminders using notification popups')
+                        help=_('display reminders using notification popups'))
     parser.add_argument('--no-notify', action='store_false', dest='notify',
-                        help='display reminders on standard out')
+                        help=_('display reminders on standard out'))
 
     parser.add_argument('-v', '--verbose', action='store_true',
-                        help='produce verbose output')
+                        help=_('produce verbose output'))
     parser.add_argument('-q', '--quiet', action='store_false', dest='verbose',
-                        help='output only matches and errors')
+                        help=_('output only matches and errors'))
 
     return parser.parse_args()
 
@@ -307,14 +306,14 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
 
     """
     if notify:
-        note = pynotify.Notification('Hey, remember me?',
+        note = pynotify.Notification(_('Hey, remember me?'),
                                      message % contact.notify_str(),
                                      'stock_person')
         note.set_urgency(urgency)
         note.set_timeout(expires)
 
         if not note.show():
-            raise OSError('Notification failed to display!')
+            raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
             print success(message % contact.name)
@@ -359,7 +358,7 @@ class Contact(object):
         elif format_spec == 'email':
             return '%s <%s>' % (self.name, self.addresses[0])
         else:
-            raise ValueError('Unknown format_spec %r' % format_spec)
+            raise ValueError(_('Unknown format_spec %r') % format_spec)
 
     def trigger(self, sent):
         """Calculate trigger date for contact.
@@ -435,10 +434,11 @@ def main():
 
     if args.notify:
         if pynotify is _Fake_PyNotify:
-            print fail('Notification popups require the notify-python package')
+            print fail(_('Notification popups require the notify-python '
+                         'package'))
             return errno.ENOENT
         if not pynotify.init(sys.argv[0]):
-            print fail('Unable to initialise pynotify!')
+            print fail(_('Unable to initialise pynotify!'))
             return errno.EIO
 
     contacts = Contacts()
@@ -456,7 +456,7 @@ def main():
     now = datetime.date.today()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(args.notify, 'No mail record for %s', contact)
+            show_note(args.notify, _('No mail record for %s'), contact)
         elif now > contact.trigger(sent):
-            show_note(args.notify, 'mail due for %s', contact,
+            show_note(args.notify, _('mail due for %s'), contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
