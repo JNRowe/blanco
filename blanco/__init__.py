@@ -163,8 +163,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed(filter(lambda s: s.endswith('exitcode=EX_OK\n'),
-                                open(log).readlines())):
+    for line in reversed(list(filter(lambda s: s.endswith('exitcode=EX_OK\n'),
+                                     open(log).readlines()))):
         if gmail:
             gd = gmail_date.search(line)
             try:
@@ -182,8 +182,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 year = year - 1
             md = date
 
-        results = map(str.lower,
-                      matcher.search(line, 16).groups()[0].split(','))
+        results = list(map(str.lower,
+                           matcher.search(line, 16).groups()[0].split(',')))
         if not all_recipients:
             results = [results[0], ]
         contacts.extend([(address, arrow.get(year, *md).date())
@@ -344,7 +344,7 @@ class Contact(object):
         if isinstance(addresses, basestring):
             self.addresses = [addresses.lower(), ]
         else:
-            self.addresses = map(str.lower, addresses)
+            self.addresses = list(map(str.lower, addresses))
         self.frequency = frequency
 
     def __repr__(self):
