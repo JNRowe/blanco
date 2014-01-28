@@ -31,6 +31,16 @@ extensions = \
     ['sphinx.ext.%s' % ext for ext in []] \
     + ['sphinxcontrib.%s' % ext for ext in []]
 
+# Only activate spelling, if it is installed.  It is not required in the
+# general case and we don't have the granularity to describe this in a clean
+# way
+try:
+    from sphinxcontrib import spelling  # NOQA
+except ImportError:
+    pass
+else:
+    extensions.append('sphinxcontrib.spelling')
+
 master_doc = 'index'
 source_suffix = '.rst'
 
@@ -62,3 +72,6 @@ autodoc_default_flags = ['members', ]
 intersphinx_mapping = {
     'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
 }
+
+spelling_lang = 'en_GB'
+spelling_word_list_filename = 'wordlist.txt'
