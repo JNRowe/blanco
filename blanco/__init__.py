@@ -427,10 +427,7 @@ class Contacts(list):
 
 def main():
     """Main script."""
-    try:
-        args = process_command_line()  # pylint: disable-msg=W0612
-    except SyntaxError:
-        return errno.EPERM
+    args = process_command_line()
 
     if args.notify:
         if pynotify is _Fake_PyNotify:
