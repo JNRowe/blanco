@@ -350,29 +350,29 @@ def process_command_line():
     return parser.parse_args()
 
 
-def show_note(notify, message, person, urgency=pynotify.URGENCY_NORMAL,
+def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
               expires=pynotify.EXPIRES_DEFAULT):
     """Display reminder
 
     >>> show_note(False, "Note for %s",
-    ...           Person("James Rowe", "jnrowe@gmail.com", 200))
+    ...           Contact("James Rowe", "jnrowe@gmail.com", 200))
     Note for James Rowe
 
     :type notify: ``bool``
     :param notify: Whether to use notification popup
     :type message: ``str``
     :param message: Message string to show
-    :type person: ``Person``
+    :type contact: ``Contact``
     :type urgency: ``int``
     :param urgency: Urgency state for message
     :type expires: ``int``
     :param expires: Time to show notification popup in milliseconds
-    :param person: Person to show message for
+    :param contact: Contact to show message for
     :raise OSError: Failure to show notification
     """
     if notify:
         note = pynotify.Notification("Hey, remember me?",
-                                     message % person.notify_str(),
+                                     message % contact.notify_str(),
                                      "stock_person")
         note.set_urgency(urgency)
         note.set_timeout(expires)
@@ -381,16 +381,16 @@ def show_note(notify, message, person, urgency=pynotify.URGENCY_NORMAL,
             raise OSError("Notification failed to display!")
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            print success(message % person.name)
+            print success(message % contact.name)
         else:
-            print warn(message % person.name)
+            print warn(message % contact.name)
 
 
-class Person(object):
+class Contact(object):
     """Simple contact class"""
 
     def __init__(self, name, addresses, frequency):
-        """Initialise a new ``Person`` object"""
+        """Initialise a new ``Contact`` object"""
         self.name = name
         if isinstance(addresses, basestring):
             self.addresses = [addresses.lower(), ]
@@ -401,19 +401,19 @@ class Person(object):
     def __repr__(self):
         """Self-documenting string representation
 
-        >>> Person("James Rowe", "jnrowe@gmail.com", 200)
-        Person('James Rowe', ['jnrowe@gmail.com'], 200)
+        >>> Contact("James Rowe", "jnrowe@gmail.com", 200)
+        Contact('James Rowe', ['jnrowe@gmail.com'], 200)
         """
 
         return "%s(%r, %r, %r)" % (self.__class__.__name__, self.name,
                                    self.addresses, self.frequency)
 
     def __str__(self):
-        """Pretty printed person string
+        """Pretty printed contact string
 
-        >>> print Person("James Rowe", "jnrowe@gmail.com", 200)
+        >>> print Contact("James Rowe", "jnrowe@gmail.com", 200)
         James Rowe <jnrowe@gmail.com> (200 days)
-        >>> print Person("James Rowe",
+        >>> print Contact("James Rowe",
         ...              ["jnrowe@gmail.com", "jnrowe@example.com"], 200)
         James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)
         """
@@ -423,7 +423,7 @@ class Person(object):
     def trigger(self, sent):
         """Calculate trigger date for contact
 
-        >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
+        >>> p = Contact("James Rowe", "jnrowe@gmail.com", 200)
         >>> p.trigger({"jnrowe@gmail.com": datetime.date(1942, 1, 1)})
         datetime.date(1942, 7, 20)
 
@@ -440,7 +440,7 @@ class Person(object):
         """Calculate trigger date for contact
 
         >>> from mock import Mock
-        >>> p = Person("James Rowe", "jnrowe@gmail.com", 200)
+        >>> p = Contact("James Rowe", "jnrowe@gmail.com", 200)
         >>> pynotify.get_server_caps = Mock(return_value=[])
         >>> p.notify_str()
         'James Rowe'
@@ -460,35 +460,36 @@ class Person(object):
         return name
 
 
-class People(list):
-    """Group of ``Person``"""
+class Contacts(list):
+    """Group of ``Contact``"""
 
-    def __init__(self, people=None):
-        """Initialise a new ``People`` object"""
-        super(People, self).__init__()
-        if people:
-            self.extend(people)
+    def __init__(self, contacts=None):
+        """Initialise a new ``Contacts`` object"""
+        super(Contacts, self).__init__()
+        if contacts:
+            self.extend(contacts)
 
     def __repr__(self):
         """Self-documenting string representation
 
-        >>> People([Person("James Rowe", "jnrowe@gmail.com", 200), ])
-        People([Person('James Rowe', ['jnrowe@gmail.com'], 200)])
+        >>> Contacts([Contact("James Rowe", "jnrowe@gmail.com", 200), ])
+        Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])
         """
 
         return "%s(%r)" % (self.__class__.__name__, self[:])
 
     def addresses(self):
-        """Fetch all addresses of all ``Person`` objects
+        """Fetch all addresses of all ``Contact`` objects
 
-        >>> p = People(
-        ... [Person("Bill", ["test@example.com", "new@example.com"], 30),
-        ...  Person("Joe", ["joe@example.com"], 30)])
+        >>> p = Contacts([
+        ...     Contact("Bill", ["test@example.com", "new@example.com"], 30),
+        ...     Contact("Joe", ["joe@example.com"], 30)
+        ... ])
         >>> p.addresses()
         ['test@example.com', 'new@example.com', 'joe@example.com']
 
         :rtype: ``list`` of ``str``
-        :return: Addresses of every ``Person``
+        :return: Addresses of every ``Contact``
         """
         return reduce(operator.add,
                       map(operator.attrgetter("addresses"), self))
@@ -497,12 +498,14 @@ class People(list):
         """Parse address book for usable entries
 
         >>> from dtopt import NORMALIZE_WHITESPACE
-        >>> people = People()
-        >>> people.parse("test/blanco.conf", "custom4")
-        >>> people
-        People([Person('Bill', ['test@example.com'], 30),
-            Person('Joe', ['joe@example.com'], 30),
-            Person('Steven', ['steven@example.com'], 365)])
+        >>> contacts = Contacts()
+        >>> contacts.parse("test/blanco.conf", "custom4")
+        >>> contacts
+        Contacts([
+            Contact('Bill', ['test@example.com'], 30),
+            Contact('Joe', ['joe@example.com'], 30),
+            Contact('Steven', ['steven@example.com'], 365)
+        ])
 
         :type addressbook: ``str``
         :param addressbook: Location of the address book to useful
@@ -513,8 +516,8 @@ class People(list):
         config = configobj.ConfigObj(addressbook)
         reminder_entries = filter(lambda x: field in x, config.values())
         for entry in reminder_entries:
-            self.append(Person(entry["name"], entry["email"],
-                               parse_duration(entry[field])))
+            self.append(Contact(entry["name"], entry["email"],
+                                parse_duration(entry[field])))
 
 
 def main():
@@ -533,24 +536,24 @@ def main():
             print fail("Unable to initialise pynotify!")
             return errno.EIO
 
-    people = People()
-    people.parse(options.addressbook, options.field)
+    contacts = Contacts()
+    contacts.parse(options.addressbook, options.field)
     try:
         if options.sent_type == "msmtp":
-            sent = parse_msmtp(options.log, options.all, people.addresses(),
+            sent = parse_msmtp(options.log, options.all, contacts.addresses(),
                                options.gmail)
         else:
-            sent = parse_sent(options.mbox, options.all, people.addresses())
+            sent = parse_sent(options.mbox, options.all, contacts.addresses())
     except IOError as e:
         print fail(e)
         return errno.EPERM
 
     now = datetime.date.today()
-    for person in people:
-        if not any(address in sent for address in person.addresses):
-            show_note(options.notify, "No mail record for %s", person)
-        elif now > person.trigger(sent):
-            show_note(options.notify, "mail due for %s", person,
+    for contact in contacts:
+        if not any(address in sent for address in contact.addresses):
+            show_note(options.notify, "No mail record for %s", contact)
+        elif now > contact.trigger(sent):
+            show_note(options.notify, "mail due for %s", contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
 
 
