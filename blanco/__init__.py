@@ -109,15 +109,15 @@ def parse_sent(path, all_recipients=False, addresses=None):
     if not os.path.exists(path):
         raise IOError(_('Sent mailbox %r not found') % path)
     if os.path.isdir('%s/new' % path):
-        mtype = 'Maildir'
+        mtype = mailbox.Maildir
     elif os.path.exists('%s/.mh_sequences' % path):
-        mtype = 'MH'
+        mtype = mailbox.MH
     elif os.path.isfile(path):
-        mtype = 'mbox'
+        mtype = mailbox.mbox
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    mbox = getattr(mailbox, mtype)(path, factory=None, create=False)
+    mbox = mtype(path, factory=None, create=False)
 
     contacts = []
     for message in mbox:
