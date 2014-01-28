@@ -1,0 +1,19 @@
+include *.rst
+include doc/conf.py
+include doc/.static/luke.png
+include doc/.templates/layout.html
+include blanco.py
+
+include test/blanco.conf
+include test/*.py
+include test/sent_gmail.msmtp
+include test/sent.maildir/cur/.keep
+include test/sent.maildir/tmp/.keep
+include test/sent.mbox
+include test/sent.mh/.mh_sequences
+include test/sent.msmtp
+
+recursive-include doc *.rst
+
+recursive-include test/sent.maildir/new *.kate
+recursive-include test/sent.mh [0-9]*
