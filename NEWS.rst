@@ -6,6 +6,24 @@ User-visible changes
 
 .. contents::
 
+0.6.0 - 2014-01-28
+------------------
+
+* Now defaults to ``frequency`` field in addressbook, favouring abook_ 0.6's new
+  custom field support
+* arrow_ is now required
+* New support files to handle dependencies for pip_ users in ``extra/``
+* PEP-3101_ format support
+* The testsuite now requires expecter_ and nose2_
+* i18n support, open a PR with your translations now! ;)
+
+.. _abook: http://abook.sourceforge.net/
+.. _arrow: https://crate.io/packages/arrow/
+.. _pip: https://crate.io/packages/pip/
+.. _pep-3101: http://www.python.org/dev/peps/pep-3101/
+.. _expecter: https://crate.io/packages/expecter/
+.. _nose2: https://crate.io/packages/nose2/
+
 0.5.0 - 2010-05-16
 ------------------
 
