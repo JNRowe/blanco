@@ -61,9 +61,11 @@ try:
     import pynotify
 except ImportError:  # pragma: no cover
     class _Fake_PyNotify(object):  # NOQA
-        URGENCY_CRITICAL = 1
-        URGENCY_NORMAL = 0
-        EXPIRES_DEFAULT = 0
+        URGENCY_CRITICAL = 2
+        URGENCY_NORMAL = 1
+        URGENCY_LOW = 0
+        EXPIRES_DEFAULT = -1
+        EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
 from .i18n import _
