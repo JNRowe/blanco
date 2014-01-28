@@ -40,7 +40,7 @@ def test_missing_mailbox():
 
 
 def test_unknown_mailbox_format():
-    with expect.raises(ValueError, 'Unknown mailbox format'):
+    with expect.raises(ValueError, "Unknown mailbox format for '/dev/null'"):
         parse_sent('/dev/null')
 
 

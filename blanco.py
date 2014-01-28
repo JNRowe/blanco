@@ -115,7 +115,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     elif os.path.isfile(path):
         mtype = 'mbox'
     else:
-        raise ValueError('Unknown mailbox format')
+        raise ValueError('Unknown mailbox format for %r' % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = getattr(mailbox, mtype)(path, factory=None, create=False)
 
@@ -165,7 +165,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 ts = int(gd.groups()[0])
                 parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
-                raise ValueError('msmtp log is not in gmail format')
+                raise ValueError('msmtp %r log is not in gmail format' % log)
             year = parsed.year
             md = parsed.month, parsed.day
         else:
@@ -233,7 +233,7 @@ def process_command_line():
     if results is not True:
         for key in filter(lambda k: not results[k], results):
             print fail("Config value for %r is invalid" % key)
-        raise SyntaxError('Invalid configuration file')
+        raise SyntaxError('Invalid configuration file %r' % config_file)
 
     parser = optparse.OptionParser(usage='%prog [options...]',
                                    version='%prog v' + __version__,
