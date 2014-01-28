@@ -471,5 +471,5 @@ def main():
         if not any(address in sent for address in contact.addresses):
             show_note(args.notify, _('No mail record for %s'), contact)
         elif now > contact.trigger(sent):
-            show_note(args.notify, _('mail due for %s'), contact,
+            show_note(args.notify, _('Mail due for %s'), contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blanco 0.6.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-01-28 08:14+0000\n"
+"POT-Creation-Date: 2014-01-28 08:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,6 +130,6 @@ msgstr ""
 
 #: blanco/__init__.py:474
 #, python-format
-msgid "mail due for %s"
+msgid "Mail due for %s"
 msgstr ""
 
