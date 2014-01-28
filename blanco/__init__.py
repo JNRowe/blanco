@@ -67,6 +67,7 @@ except ImportError:  # pragma: no cover
     pynotify = _Fake_PyNotify  # NOQA
 
 from .i18n import _
+from .compat import basestring
 
 T = blessings.Terminal()
 
