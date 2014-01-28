@@ -56,7 +56,7 @@ except ImportError:  # pragma: no cover
         URGENCY_CRITICAL = 1
         URGENCY_NORMAL = 0
         EXPIRES_DEFAULT = 0
-    pynotify = _Fake_PyNotify  # pylint: disable-msg=C0103
+    pynotify = _Fake_PyNotify  # NOQA
 
 
 T = blessings.Terminal()
@@ -309,12 +309,10 @@ def process_command_line():
                         field=config["field"],
                         notify=config['notify'])
 
-    parser.add_option("-a", "--addressbook", action="store",
-                      metavar=config["addressbook"],
+    parser.add_option("-a", "--addressbook", metavar=config["addressbook"],
                       help="Address book to read contacts from")
 
-    parser.add_option("-t", "--sent-type", action="store",
-                      choices=("mailbox", "msmtp"),
+    parser.add_option("-t", "--sent-type", choices=("mailbox", "msmtp"),
                       metavar=config["sent type"],
                       help="Sent source type(mailbox or msmtp)")
     parser.add_option("-r", "--all", action="store_true",
@@ -325,34 +323,28 @@ def process_command_line():
 
     mbox_opts = optparse.OptionGroup(parser, "Mailbox options")
     parser.add_option_group(mbox_opts)
-    mbox_opts.add_option("-m", "--mbox", action="store",
-                      metavar=config["mbox"],
-                      help="Mailbox used to store sent mail")
+    mbox_opts.add_option("-m", "--mbox", metavar=config["mbox"],
+                         help="Mailbox used to store sent mail")
 
     msmtp_opts = optparse.OptionGroup(parser, "msmtp log options")
     parser.add_option_group(msmtp_opts)
-    msmtp_opts.add_option("-l", "--log", action="store",
-                          metavar=config["log"],
+    msmtp_opts.add_option("-l", "--log", metavar=config["log"],
                           help="msmtp log to parse")
     msmtp_opts.add_option("-g", "--gmail", action="store_true",
                           help="Log from a gmail account(use accurate filter)")
     msmtp_opts.add_option("--no-gmail", action="store_false",
-                      dest="gmail",
-                      help="msmtp log for non-gmail account")
+                          dest="gmail", help="msmtp log for non-gmail account")
 
-    parser.add_option("-s", "--field", action="store",
-                      metavar=config["field"],
+    parser.add_option("-s", "--field", metavar=config["field"],
                       help="Addressbook field to use for frequency value")
     parser.add_option("-n", "--notify", action="store_true",
                       help="Display reminders using notification popups")
-    parser.add_option("--no-notify", action="store_false",
-                      dest="notify",
+    parser.add_option("--no-notify", action="store_false", dest="notify",
                       help="Display reminders on standard out")
 
     parser.add_option("-v", "--verbose", action="store_true",
-                      dest="verbose", help="Produce verbose output")
-    parser.add_option("-q", "--quiet", action="store_false",
-                      dest="verbose",
+                      help="Produce verbose output")
+    parser.add_option("-q", "--quiet", action="store_false", dest="verbose",
                       help="Output only matches and errors")
 
     return parser.parse_args()
