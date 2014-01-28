@@ -114,21 +114,21 @@ msgstr ""
 msgid "Notification failed to display!"
 msgstr ""
 
-#: blanco/__init__.py:376
+#: blanco/__init__.py:377
 #, python-format
 msgid "Unknown format_spec %r"
 msgstr ""
 
-#: blanco/__init__.py:452
+#: blanco/__init__.py:454
 msgid "Unable to initialise pynotify!"
 msgstr ""
 
-#: blanco/__init__.py:470
+#: blanco/__init__.py:472
 #, python-format
 msgid "No mail record for %s"
 msgstr ""
 
-#: blanco/__init__.py:472
+#: blanco/__init__.py:474
 #, python-format
 msgid "mail due for %s"
 msgstr ""

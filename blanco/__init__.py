@@ -67,7 +67,7 @@ except ImportError:  # pragma: no cover
     pynotify = _Fake_PyNotify  # NOQA
 
 from .i18n import _
-from .compat import basestring
+from .compat import (basestring, mangle_repr_type)
 
 T = blessings.Terminal()
 
@@ -336,6 +336,7 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             print(warn(message % contact.name))
 
 
+@mangle_repr_type
 class Contact(object):
 
     """Simple contact class."""
@@ -351,8 +352,8 @@ class Contact(object):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
-                                   self.addresses, self.frequency)
+        return u'%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
+                                    self.addresses, self.frequency)
 
     def __str__(self):
         """Pretty printed contact string."""
@@ -402,6 +403,7 @@ class Contact(object):
         return name
 
 
+@mangle_repr_type
 class Contacts(list):
 
     """Group of `Contact`."""
@@ -414,7 +416,7 @@ class Contacts(list):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '%s(%r)' % (self.__class__.__name__, self[:])
+        return u'%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
