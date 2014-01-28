@@ -70,6 +70,7 @@ man_pages = [
 autoclass_content = 'init'
 autodoc_default_flags = ['members', ]
 
+default_role = 'py:obj'
 intersphinx_mapping = {
     'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
 }
