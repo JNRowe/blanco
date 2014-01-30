@@ -38,10 +38,10 @@ Check sent mail to make sure you're keeping in contact with your friends.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
+import argparse
 import errno
 import mailbox
 import operator
-import argparse
 import os
 import re
 import sys
