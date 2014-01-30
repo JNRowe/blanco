@@ -30,7 +30,7 @@ import datetime
 import errno
 import mailbox
 import operator
-import os
+import pathlib
 import sys
 import time
 
@@ -70,19 +70,19 @@ def parse_sent(path, all_recipients=False, addresses=None):
     :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
     """
-    path = os.path.expanduser(path)
-    if not os.path.exists(path):
+    path = pathlib.Path(path).expanduser()
+    if not path.exists():
         raise IOError(f'Sent mailbox ‘{path}’ not found')
-    if os.path.isdir(f'{path}/new'):
-        mtype = mailbox.Maildir
-    elif os.path.exists(f'{path}/.mh_sequences'):
-        mtype = mailbox.MH
-    elif os.path.isfile(path):
+    if path.is_file():
         mtype = mailbox.mbox
+    elif path.is_dir() and path.joinpath('new').exists():
+        mtype = mailbox.Maildir
+    elif path.is_dir() and path.joinpath('.mh_sequences').exists():
+        mtype = mailbox.MH
     else:
         raise ValueError(f'Unknown mailbox format for ‘{path}’')
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    mbox = mtype(path, factory=None, create=False)
+    mbox = mtype(path.as_posix(), factory=None, create=False)
 
     contacts = []
     for message in mbox:
@@ -109,18 +109,19 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
     """
-    if not os.path.exists(log):
+    log = pathlib.Path(log).expanduser()
+    if not log.exists():
         raise IOError(f'msmtp sent log ‘{log}’ not found')
 
     matcher = parse.compile(' recipients={recip:S} ')
     gmail_date = parse.compile(' OK {timestamp:d} ')
 
-    start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
+    start = datetime.datetime.utcfromtimestamp(log.stat().st_mtime)
 
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed([line for line in open(log)
+    for line in reversed([line for line in log.open()
                           if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
@@ -170,11 +171,11 @@ def process_config():
     :rtype: `dict`
     :return: Parsed configuration file
     """
-    config_file = os.path.join(xdg_basedir.user_config('blanco'), 'config.ini')
+    conf_file = pathlib.Path(xdg_basedir.user_config('blanco')) / 'config.ini'
     bool_keys = ['all', 'colour', 'gmail', 'notify', 'verbose']
     config = configparser.ConfigParser()
     config.read_string(resources.read_text('blanco', 'config'), 'pkg config')
-    config.read(config_file)
+    config.read(conf_file.as_posix())
     parsed = {}
     for key, value in config['blanco'].items():
         if key in bool_keys:
@@ -307,10 +308,10 @@ class Contacts(list):
         :param str addressbook: Location of the address book to useful
         :param str field: Address book field to use for contact frequency
         """
-        if not os.path.isfile(addressbook):
+        if not addressbook.is_file():
             raise IOError(f'Addressbook file not found {addressbook!r}')
         config = configparser.ConfigParser()
-        config.read(os.path.expanduser(addressbook))
+        config.read(addressbook.as_posix())
 
         for entry in config.values():
             if not field in entry:
@@ -347,15 +348,15 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     """Main script."""
     config = process_config()
     if not addressbook:
-        addressbook = os.path.expanduser(config['addressbook'])
+        addressbook = pathlib.Path(config['addressbook']).expanduser()
     if not sent_type:
         sent_type = config['sent type']
     if not all:
         all = config['all']
     if not mbox:
-        mbox = os.path.expanduser(config['mbox'])
+        mbox = pathlib.Path(config['mbox']).expanduser()
     if not log:
-        log = os.path.expanduser(config['log'])
+        log = pathlib.Path(config['log']).expanduser()
     if not gmail:
         gmail = config['gmail']
     if not field:
