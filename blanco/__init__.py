@@ -135,8 +135,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
         if all_recipients:
             fields.extend(message.get_all('cc', []))
             fields.extend(message.get_all('bcc', []))
-        results = map(str.lower,
-                      map(operator.itemgetter(1), utils.getaddresses(fields)))
+        results = [x[1].lower() for x in utils.getaddresses(fields)]
         date = arrow.get(message['date'], 'ddd, DD MMM YYYY HH:mm:ss Z')
         contacts.extend([(address, date.date()) for address in results
                          if not addresses or address in addresses])
@@ -167,8 +166,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed(list(filter(lambda s: s.endswith('exitcode=EX_OK\n'),
-                                     open(log).readlines()))):
+    for line in reversed([line for line in open(log)
+                          if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
             try:
@@ -186,8 +185,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 year = year - 1
             md = date
 
-        results = list(map(str.lower,
-                           matcher.search(line, 16).groups()[0].split(',')))
+        results = [s.lower() for s in matcher.search(line, 16).groups()[0].split(',')]
         if not all_recipients:
             results = [results[0], ]
         contacts.extend([(address, arrow.get(year, *md).date())
@@ -349,7 +347,7 @@ class Contact(object):
         if isinstance(addresses, basestring):
             self.addresses = [addresses.lower(), ]
         else:
-            self.addresses = list(map(str.lower, addresses))
+            self.addresses = [s.lower() for s in addresses]
         self.frequency = frequency
 
     def __repr__(self):
@@ -427,8 +425,7 @@ class Contacts(list):
         :return: Addresses of every `Contact`
 
         """
-        return reduce(operator.add,
-                      map(operator.attrgetter('addresses'), self))
+        return [address for contact in self for address in contact.addresses]
 
     def parse(self, addressbook, field):
         """Parse address book for usable entries.
@@ -439,9 +436,7 @@ class Contacts(list):
         """
         cfg = configparser.SafeConfigParser()
         cfg.read(os.path.expanduser(addressbook))
-        reminder_entries = filter(lambda s: cfg.has_option(s, field),
-                                  cfg.sections())
-        for entry in reminder_entries:
+        for entry in (s for s in cfg.sections() if cfg.has_option(s, field)):
             data = dict(cfg.items(entry))
             self.append(Contact(data['name'], data['email'],
                                 parse_duration(data[field])))
