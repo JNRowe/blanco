@@ -1,2 +1,2 @@
-arrow
+arrow>=0.4.1
 blessings
