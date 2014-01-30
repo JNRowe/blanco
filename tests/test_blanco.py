@@ -30,7 +30,7 @@ from expecter import expect
 from mock import patch
 from nose2.tools import params
 
-from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
+from blanco import (Contact, Contacts, PY2, parse_duration, parse_msmtp,
                     parse_sent, show_note)
 
 
@@ -185,9 +185,11 @@ class ContactsTest(TestCase):
     def test_parse(self):
         contacts = Contacts()
         contacts.parse('tests/data/blanco.conf', 'frequency')
+
+        # Dirty, dirty, way to handle Unicode type repr differences... sorry
         expect(repr(contacts)) == \
             ('Contacts(['
-             "Contact('Bill', ['test@example.com'], 30), "
-             "Contact('Joe', ['joe@example.com'], 30), "
-             "Contact('Steven', ['steven@example.com'], 365)"
-             '])')
+             "Contact(u'Bill', [u'test@example.com'], 30), "
+             "Contact(u'Joe', [u'joe@example.com'], 30), "
+             "Contact(u'Steven', [u'steven@example.com'], 365)"
+             '])'.replace("u'", "u'" if PY2 else "'"))

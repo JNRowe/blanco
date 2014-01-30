@@ -69,7 +69,7 @@ except ImportError:  # pragma: no cover
     pynotify = _Fake_PyNotify  # NOQA
 
 from .i18n import _
-from .compat import (basestring, mangle_repr_type)
+from .compat import (PY2, basestring, mangle_repr_type, open)
 
 T = blessings.Terminal()
 
@@ -127,7 +127,10 @@ def parse_sent(path, all_recipients=False, addresses=None):
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    mbox = mtype(path, factory=None, create=False)
+    if PY2:
+        mbox = mtype(path.encode(), factory=None, create=False)
+    else:
+        mbox = mtype(path, factory=None, create=False)
 
     contacts = []
     for message in mbox:
@@ -233,11 +236,11 @@ def process_command_line():
         os.path.join(xdg_config_dir, 'blanco', 'config.ini'),
     ]
     for s in os.getenv('XDG_CONFIG_DIRS', '/etc/xdg').split(':'):
-        p = s + '/blanco/config'
-        if os.path.isfile(p):
-            configs.append(p)
+        configs.append(s + '/blanco/config')
     cfg = configparser.SafeConfigParser()
-    cfg.read(configs)
+    for file in configs:
+        if os.path.isfile(file):
+            cfg.readfp(open(file, encoding='utf-8'))
     cfg_get = lambda s: cfg.get('blanco', s)
     cfg_getbool = lambda s: cfg.getboolean('blanco', s)
 
@@ -434,8 +437,12 @@ class Contacts(list):
         :param str field: Address book field to use for contact frequency
 
         """
+        addressbook = os.path.expanduser(addressbook)
+        if not os.path.isfile(addressbook):
+            raise IOError('Addressbook file not found %r' % addressbook)
         cfg = configparser.SafeConfigParser()
-        cfg.read(os.path.expanduser(addressbook))
+        cfg.readfp(open(addressbook, encoding='utf-8'))
+
         for entry in (s for s in cfg.sections() if cfg.has_option(s, field)):
             data = dict(cfg.items(entry))
             self.append(Contact(data['name'], data['email'],

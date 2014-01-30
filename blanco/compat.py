@@ -22,9 +22,13 @@ from sys import version_info
 PY2 = version_info[0] == 2
 
 if PY2:
+    import codecs
+
     basestring = basestring
+    open = codecs.open
 else:
     basestring = str
+    open = open
 
 if PY2:
     def mangle_repr_type(klass):
