@@ -47,7 +47,6 @@ import re
 import sys
 
 from email.utils import (formataddr, getaddresses)
-from functools import reduce
 
 try:
     import configparser
@@ -188,7 +187,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 year = year - 1
             md = date
 
-        results = [s.lower() for s in matcher.search(line, 16).groups()[0].split(',')]
+        recips = matcher.search(line, re.DOTALL)
+        results = [s.lower() for s in recips.groups()[0].split(',')]
         if not all_recipients:
             results = [results[0], ]
         contacts.extend([(address, arrow.get(year, *md).date())
