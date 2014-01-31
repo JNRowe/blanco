@@ -46,7 +46,7 @@ import os
 import re
 import sys
 
-from email import utils
+from email.utils import (formataddr, getaddresses)
 from functools import reduce
 
 try:
@@ -138,7 +138,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
         if all_recipients:
             fields.extend(message.get_all('cc', []))
             fields.extend(message.get_all('bcc', []))
-        results = [x[1].lower() for x in utils.getaddresses(fields)]
+        results = [x[1].lower() for x in getaddresses(fields)]
         date = arrow.get(message['date'], 'ddd, DD MMM YYYY HH:mm:ss Z')
         contacts.extend([(address, date.date()) for address in results
                          if not addresses or address in addresses])
@@ -375,7 +375,7 @@ class Contact(object):
         if not format_spec:  # default format calls set format_spec to ''
             return str(self)
         elif format_spec == 'email':
-            return '%s <%s>' % (self.name, self.addresses[0])
+            return formataddr((self.name, self.addresses[0]))
         else:
             raise ValueError(_('Unknown format_spec %r') % format_spec)
 
