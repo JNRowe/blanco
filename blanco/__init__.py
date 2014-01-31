@@ -48,10 +48,10 @@ import sys
 
 from email.utils import (formataddr, getaddresses)
 
-try:
-    import configparser
-except ImportError:  # Python 3
-    import ConfigParser as configparser  # NOQA
+try:  # For Python 3
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser as ConfigParser  # NOQA
 
 import arrow
 import blessings
@@ -237,7 +237,7 @@ def process_command_line():
     ]
     for s in os.getenv('XDG_CONFIG_DIRS', '/etc/xdg').split(':'):
         configs.append(s + '/blanco/config')
-    cfg = configparser.SafeConfigParser()
+    cfg = ConfigParser()
     for file in configs:
         if os.path.isfile(file):
             cfg.readfp(open(file, encoding='utf-8'))
@@ -440,7 +440,7 @@ class Contacts(list):
         addressbook = os.path.expanduser(addressbook)
         if not os.path.isfile(addressbook):
             raise IOError('Addressbook file not found %r' % addressbook)
-        cfg = configparser.SafeConfigParser()
+        cfg = ConfigParser()
         cfg.readfp(open(addressbook, encoding='utf-8'))
 
         for entry in (s for s in cfg.sections() if cfg.has_option(s, field)):
