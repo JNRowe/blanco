@@ -419,7 +419,8 @@ class Contacts(list):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '%s(%r)' % (self.__class__.__name__, self[:])
+        return '%s(%r)' % (self.__class__.__name__,
+                           sorted(self[:], key=operator.attrgetter('name')))
 
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
