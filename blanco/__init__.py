@@ -355,8 +355,8 @@ class Contact(object):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return u'%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
-                                    self.addresses, self.frequency)
+        return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
+                                   self.addresses, self.frequency)
 
     def __str__(self):
         """Pretty printed contact string."""
@@ -419,7 +419,7 @@ class Contacts(list):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return u'%s(%r)' % (self.__class__.__name__, self[:])
+        return '%s(%r)' % (self.__class__.__name__, self[:])
 
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
