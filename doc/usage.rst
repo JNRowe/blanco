@@ -23,68 +23,68 @@ Options
 
 .. program:: blanco.py
 
-.. cmdoption:: --version
+.. option:: --version
 
    Show program's version number and exit
 
-.. cmdoption:: -h, --help
+.. option:: -h, --help
 
    Show this help message and exit
 
-.. cmdoption:: -a <file>, --addressbook=<file>
+.. option:: -a <file>, --addressbook=<file>
 
    Address book to read contacts from
 
-.. cmdoption:: -t <mailbox|msmtp>, --sent-type=<mailbox|msmtp>
+.. option:: -t <mailbox|msmtp>, --sent-type=<mailbox|msmtp>
 
    Sent source type(mailbox or msmtp)
 
-.. cmdoption:: -r, --all
+.. option:: -r, --all
 
    Include all recipients(CC and BCC fields)
 
-.. cmdoption:: --no-all
+.. option:: --no-all
 
    Include only the first recipient(TO field)
 
-.. cmdoption:: -s <name>, --field=<name>
+.. option:: -s <name>, --field=<name>
 
    Addressbook field to use for frequency value
 
-.. cmdoption:: -n, --notify
+.. option:: -n, --notify
 
    Display reminders using notification popups
 
-.. cmdoption:: --no-notify
+.. option:: --no-notify
 
    Display reminders on standard out
 
-.. cmdoption:: -v, --verbose
+.. option:: -v, --verbose
 
    Produce verbose output
 
-.. cmdoption:: -q, --quiet
+.. option:: -q, --quiet
 
    Output only matches and errors
 
 Mailbox options
 ~~~~~~~~~~~~~~~
 
-.. cmdoption:: -m <mailbox>, --mbox=<mailbox>
+.. option:: -m <mailbox>, --mbox=<mailbox>
 
    Mailbox used to store sent mail
 
 msmtp log options
 ~~~~~~~~~~~~~~~~~
 
-.. cmdoption:: -l <file>, --log=<file>
+.. option:: -l <file>, --log=<file>
 
    msmtp log to parse
 
-.. cmdoption:: -g, --gmail
+.. option:: -g, --gmail
 
    Log from a gmail account(use accurate filter)
 
-.. cmdoption:: --no-gmail
+.. option:: --no-gmail
 
    msmtp log for non-gmail account
