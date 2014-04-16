@@ -81,7 +81,6 @@ def _colourise(text, colour):
     :param str colour: Colour to display text in
     :rtype: `str`
     :return: Colourised text, if possible
-
     """
     return getattr(T, colour.replace(' ', '_'))(text)
 
@@ -112,7 +111,6 @@ def parse_sent(path, all_recipients=False, addresses=None):
         specified
     :rtype: `dict` of `str` keys and `arrow.Arrow` values
     :return: Keys of email address, and values of seen date
-
     """
     path = os.path.expanduser(path)
     if not os.path.exists(path):
@@ -155,7 +153,6 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :param bool gmail: Log is for a gmail account
     :rtype: `dict` of `str` keys and `arrow.Arrow` values
     :return: Keys of email address, and values of seen date
-
     """
     if not os.path.exists(log):
         raise IOError(_('msmtp sent log %r not found') % log)
@@ -206,7 +203,6 @@ def parse_duration(duration):
     :rtype: `int`
     :return: Number of days in ``duration``
     :raise ValueError: Invalid value for ``duration``
-
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
@@ -223,7 +219,6 @@ def process_command_line():
 
     :rtype: `argparse.Namespace`
     :return: Parsed options and arguments
-
     """
     # XDG basedir config location, using the glib bindings to get this would be
     # easier but the dependency is a bit too large for just that
@@ -321,7 +316,6 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
     :param int urgency: Urgency state for message
     :param int expires: Time to show notification popup in milliseconds
     :raise OSError: Failure to show notification
-
     """
     if notify:
         note = pynotify.Notification(_('Hey, remember me?'),
@@ -370,7 +364,6 @@ class Contact(object):
         :rtype: `str`
         :return: Human readable string representation of `Contact` object
         :raise ValueError: Unknown value for ``format_spec``
-
         """
         if not format_spec:  # default format calls set format_spec to ''
             return str(self)
@@ -386,7 +379,6 @@ class Contact(object):
         :param sent: Address to last seen dictionary
         :rtype: `arrow.Arrow`
         :return: Date to start reminders on
-
         """
         match = sorted([v for k, v in sent.items() if k in self.addresses])[0]
         return arrow.get(*match.timetuple()[:3]).replace(days=self.frequency)
@@ -396,7 +388,6 @@ class Contact(object):
 
         :rtype: `str`
         :return: Stylised name for use with notifications
-
         """
         if 'body-hyperlinks' in pynotify.get_server_caps():
             name = "<a href='mailto:%s'>%s</a>" \
@@ -427,7 +418,6 @@ class Contacts(list):
 
         :rtype: `list` of `str`
         :return: Addresses of every `Contact`
-
         """
         return [address for contact in self for address in contact.addresses]
 
@@ -436,7 +426,6 @@ class Contacts(list):
 
         :param str addressbook: Location of the address book to useful
         :param str field: Address book field to use for contact frequency
-
         """
         addressbook = os.path.expanduser(addressbook)
         if not os.path.isfile(addressbook):
