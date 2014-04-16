@@ -79,7 +79,7 @@ Configuration
 :file:`${XDG_CONFIG_HOME}/blanco/config.ini` [#]_.
 
 The configuration file is a simple ``INI`` format file,   The file is processed
-with the configparser_ module, the documentation for which will describe some of
+with the configobj_ module, the documentation for which will describe some of
 the advanced features available within the configuration file.
 
 You can specify command line options in the configuration file as defaults, and
@@ -103,5 +103,5 @@ An example configuration file is below:
 .. _google: http://google.com/
 .. _abook: http://abook.sourceforge.net/
 .. _ini: http://www.cloanto.com/specs/ini/
-.. _configparser: http://docs.python.org/library/configparser.html
+.. _configobj: http://www.voidspace.org.uk/python/configobj.html
 .. _XDG base directory specification: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html

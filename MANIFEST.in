@@ -1,7 +1,6 @@
 include COPYING
 include *.rst
 include blanco.py
-include blanco/config
 include blanco/locale/blanco.pot
 include blanco/locale/*/LC_MESSAGES/*.mo
 include blanco/locale/*/LC_MESSAGES/*.po
