@@ -71,6 +71,7 @@ T = blessings.Terminal()
 
 
 # Set up informational message functions
+COLOUR = True
 def _colourise(text, colour):
     """Colour text, if possible.
 
@@ -79,7 +80,10 @@ def _colourise(text, colour):
     :rtype: `str`
     :return: Colourised text, if possible
     """
-    return getattr(T, colour.replace(' ', '_'))(text)
+    if COLOUR:
+        return getattr(T, colour.replace(' ', '_'))(text)
+    else:
+        return text
 
 
 def success(text):
@@ -245,7 +249,8 @@ def process_command_line():
         raise SyntaxError(_('Invalid configuration file %r') % config_file)
 
     if not config['colour'] or os.getenv('NO_COLOUR'):
-        utils._colourise = lambda s, colour: s
+        global COLOUR
+        COLOUR = False
 
     parser = argparse.ArgumentParser(
         description=USAGE,
