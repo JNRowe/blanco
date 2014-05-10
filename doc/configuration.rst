@@ -103,5 +103,5 @@ An example configuration file is below:
 .. _google: http://google.com/
 .. _abook: http://abook.sourceforge.net/
 .. _ini: http://www.cloanto.com/specs/ini/
-.. _configobj: http://www.voidspace.org.uk/python/configobj.html
+.. _configobj: http://configobj.readthedocs.org/
 .. _XDG base directory specification: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
