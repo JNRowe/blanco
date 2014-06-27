@@ -27,6 +27,7 @@ except ImportError:
     from io import StringIO  # NOQA
 
 from expecter import expect
+from hiro import Timeline
 from mock import patch
 from nose2.tools import params
 
@@ -71,28 +72,21 @@ def test_missing_msmtp_log():
         parse_msmtp('None')
 
 
-# The following test is handling year-less dates, so we'll work around that
-# here instead of doing convoluted tests for just the month and day
-YEAR = date.today().year
-if date.today() < date(YEAR, 2, 9):
-    YEAR = YEAR - 1
-
-
 @params(
     ('tests/data/sent.msmtp', False, None, False, {
-        'nobody@example.com': date(YEAR, 2, 9),
-        'test@example.com': date(YEAR, 2, 9),
-        'joe@example.com': date(YEAR, 2, 9),
+        'nobody@example.com': date(2013, 2, 9),
+        'test@example.com': date(2013, 2, 9),
+        'joe@example.com': date(2013, 2, 9),
     }),
     ('tests/data/sent.msmtp', True, None, False, {
-        'nobody@example.com': date(YEAR, 2, 9),
-        'max@example.com': date(YEAR, 2, 9),
-        'test@example.com': date(YEAR, 2, 9),
-        'steven@example.com': date(YEAR, 2, 9),
-        'joe@example.com': date(YEAR, 2, 9),
+        'nobody@example.com': date(2013, 2, 9),
+        'max@example.com': date(2013, 2, 9),
+        'test@example.com': date(2013, 2, 9),
+        'steven@example.com': date(2013, 2, 9),
+        'joe@example.com': date(2013, 2, 9),
     }),
     ('tests/data/sent.msmtp', False, ['nobody@example.com', ], False, {
-        'nobody@example.com': date(YEAR, 2, 9),
+        'nobody@example.com': date(2013, 2, 9),
     }),
     ('tests/data/sent_gmail.msmtp', False, None, True, {
         'nobody@example.com': date(2000, 2, 9),
@@ -101,7 +95,8 @@ if date.today() < date(YEAR, 2, 9):
     }),
 )
 def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
-    expect(parse_msmtp(log, all_recipients, addresses, gmail)) == result
+    with Timeline().freeze(date(2014, 6, 27)):
+        expect(parse_msmtp(log, all_recipients, addresses, gmail)) == result
 
 
 def test_invalid_duration():
