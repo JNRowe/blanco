@@ -27,7 +27,6 @@ except ImportError:
     from io import StringIO  # NOQA
 
 from hiro import Timeline
-from mock import patch
 from pytest import (mark, raises)
 
 from blanco import (Contact, Contacts, PY2, parse_duration, parse_msmtp,
@@ -117,12 +116,12 @@ def test_parse_duration(duration, result):
     assert parse_duration(duration) == result
 
 
-@patch('sys.stdout', new_callable=StringIO)
-def test_show_note(stdout):
+def test_show_note(capsys):
     show_note(False, 'Note for %s',
               Contact('James Rowe', 'jnrowe@gmail.com', 200))
+    out, _ = capsys.readouterr()
     # Use contains to avoid having to mess around with {,no-}colour options
-    assert 'Note for James Rowe' in stdout.getvalue()
+    assert 'Note for James Rowe' in out
 
 
 class ContactTest:
@@ -156,11 +155,10 @@ class ContactTest:
             'jnrowe@gmail.com': date(1942, 1, 1)}
         ) == date(1942, 7, 20)
 
-    @patch('blanco.pynotify')
-    def notify_str(self, pynotify):
-        pynotify.get_server_caps.return_value = []
+    def notify_str(self, monkeypatch):
+        monkeypatch('pynotify.get_server_caps', lambda: [])
         assert self.contact.notify_str() == 'James Rowe'
-        pynotify.get_server_caps.return_value = ['body-hyperlinks', ]
+        monkeypatch('pynotify.get_server_caps', lambda: ['body-hyperlinks', ])
         assert self.contact.notify_str() == \
             "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
 

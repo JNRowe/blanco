@@ -1,5 +1,4 @@
 -r requirements.txt
 hiro>=0.1.7
-mock>=0.7.1
 pytest>=2.5.2
 pytest-cov>=1.6
