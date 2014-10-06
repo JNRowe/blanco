@@ -9,5 +9,5 @@ Command line
   :mod:`blanco`, and can be skipped if you are simply using the tool from the
   command line.
 
-.. autofunction:: process_command_line
+.. autofunction:: process_config
 .. autofunction:: main

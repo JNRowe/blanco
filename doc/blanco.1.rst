@@ -26,56 +26,38 @@ a quick solution to a simple problem, as long as you use `abook
 OPTIONS
 -------
 
+-a, --addressbook FILENAME
+    Address book to read contacts from.
+
+-t, --sent-type [mailbox|msmtp]
+    Sent source type.
+
+-r, --all / --no-all
+    Include all recipients(CC and BCC fields).
+
+-m, --mbox FILENAME
+    Mailbox used to store sent mail.
+
+-l, --log FILENAME
+    msmtp log to parse.
+
+-g, --gmail / --no-gmail
+    Log from a gmail account(use accurate filter).
+
+-s, --field TEXT
+    Addressbook field to use for frequency value.
+
+-n, --notify / --no-notify
+    Display reminders using notification popups.
+
+-v, --verbose / --no-verbose
+    Produce verbose output.
+
 --version
-    Show program's version number and exit
+    Show the version and exit.
 
--h, --help
-    Show this help message and exit
-
--a <file>, --addressbook=<file>
-    Address book to read contacts from
-
--t <mailbox|msmtp>, --sent-type=<mailbox|msmtp>
-    Sent source type(mailbox or msmtp)
-
--r, --all
-    Include all recipients(CC and BCC fields)
-
---no-all
-    Include only the first recipient(TO field)
-
--s <name>, --field=<name>
-    Addressbook field to use for frequency value
-
--n, --notify
-    Display reminders using notification popups
-
---no-notify
-    Display reminders on standard out
-
--v, --verbose
-    Produce verbose output
-
--q, --quiet
-    Output only matches and errors
-
-Mailbox options
-~~~~~~~~~~~~~~~
-
--m <mailbox>, --mbox=<mailbox>
-    Mailbox used to store sent mail
-
-msmtp log options
-~~~~~~~~~~~~~~~~~
-
--l <file>, --log=<file>
-    msmtp log to parse
-
--g, --gmail
-    Log from a gmail account(use accurate filter)
-
---no-gmail
-    msmtp log for non-gmail account
+--help
+    Show this message and exit.
 
 CONFIGURATION FILE
 ------------------

@@ -38,7 +38,6 @@ Check sent mail to make sure you're keeping in contact with your friends.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
-import argparse
 import errno
 import mailbox
 import operator
@@ -49,6 +48,7 @@ import sys
 from email.utils import (formataddr, getaddresses)
 
 import arrow
+import click
 import configobj
 import validate
 
@@ -186,11 +186,11 @@ def parse_duration(duration):
     return int(float(value) * multiplier[units])
 
 
-def process_command_line():
-    """Main command line interface.
+def process_config():
+    """Main configuration file.
 
-    :rtype: `argparse.Namespace`
-    :return: Parsed options and arguments
+    :rtype: `configobj.ConfigObj`
+    :return: Parsed configuration file
     """
     config_file = os.path.join(xdg_basedir.user_config('blanco'), 'config.ini')
     config_spec = [
@@ -218,67 +218,7 @@ def process_command_line():
         global COLOUR
         COLOUR = False
 
-    parser = argparse.ArgumentParser(
-        description=USAGE,
-        epilog=_('Please report bugs to jnrowe@gmail.com'))
-    parser.add_argument('--version', action='version',
-                        version='%(prog)s v' + __version__)
-
-    parser.set_defaults(addressbook=os.path.expanduser(config['addressbook']),
-                        sent_type=config['sent type'],
-                        all=config['all'],
-                        mbox=os.path.expanduser(config['mbox']),
-                        log=os.path.expanduser(config['log']),
-                        gmail=config['gmail'],
-                        field=config['field'],
-                        notify=config['notify'],
-                        verbose=config['verbose'])
-
-    parser.add_argument('-a', '--addressbook', metavar=config['addressbook'],
-                        help=_('address book to read contacts from'))
-
-    parser.add_argument('-t', '--sent-type', choices=('mailbox', 'msmtp'),
-                        metavar=config['sent type'],
-                        help=_('sent source type(mailbox or msmtp)'))
-    parser.add_argument('-r', '--all', action='store_true',
-                        help=_('include all recipients(CC and BCC fields)'))
-    parser.add_argument('--no-all', action='store_false', dest='all',
-                        help=_('include only the first recipient(TO field)'))
-
-    mbox_opts = parser.add_argument_group('Mailbox options')
-    parser.add_argument_group(mbox_opts)
-    mbox_opts.add_argument('-m', '--mbox', metavar=config['mbox'],
-                           help=_('mailbox used to store sent mail'))
-
-    msmtp_opts = parser.add_argument_group('msmtp log options')
-    parser.add_argument_group(msmtp_opts)
-    msmtp_opts.add_argument('-l', '--log', metavar=config['log'],
-                            help=_('msmtp log to parse'))
-    msmtp_opts.add_argument('-g', '--gmail', action='store_true',
-                            help=_('log from a gmail account(use accurate '
-                                   'filter)'))
-    msmtp_opts.add_argument('--no-gmail', action='store_false', dest='gmail',
-                            help=_('msmtp log for non-gmail account'))
-
-    parser.add_argument('-s', '--field', metavar=config['field'],
-                        help=_('addressbook field to use for frequency value'))
-    parser.add_argument('-n', '--notify', action='store_true',
-                        help=_('display reminders using notification popups'))
-    parser.add_argument('--no-notify', action='store_false', dest='notify',
-                        help=_('display reminders on standard out'))
-
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help=_('produce verbose output'))
-    parser.add_argument('-q', '--quiet', action='store_false', dest='verbose',
-                        help=_('output only matches and errors'))
-
-    args = parser.parse_args()
-    if args.notify and pynotify is _Fake_PyNotify:
-        parser.exit(errno.ENOENT,
-                    colourise.fail(_('Notification popups require the '
-                                     'notify-python package') + '\n'))
-
-    return args
+    return config
 
 
 def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
@@ -413,23 +353,65 @@ class Contacts(list):
                                 parse_duration(entry[field])))
 
 
-def main():
+@click.command(help=USAGE, epilog=_('Please report bugs to jnrowe@gmail.com'))
+@click.option('-a', '--addressbook', metavar='FILENAME',
+              help=_('Address book to read contacts from.'))
+@click.option('-t', '--sent-type', type=click.Choice(['mailbox', 'msmtp']),
+              help=_('Sent source type.'))
+@click.option('-r', '--all/--no-all',
+              help=_('Include all recipients(CC and BCC fields).'))
+@click.option('-m', '--mbox', metavar='FILENAME',
+              help=_('Mailbox used to store sent mail.'))
+@click.option('-l', '--log', metavar='FILENAME', help=_('msmtp log to parse.'))
+@click.option('-g', '--gmail/--no-gmail',
+              help=_('Log from a gmail account(use accurate filter).'))
+@click.option('-s', '--field',
+              help=_('Addressbook field to use for frequency value.'))
+@click.option('-n', '--notify/--no-notify',
+              help=_('Display reminders using notification popups.'))
+@click.option('-v', '--verbose/--no-verbose',
+              help=_('Produce verbose output.'))
+@click.version_option(_version.dotted)
+def main(addressbook, sent_type, all, mbox, log, gmail, field, notify,
+         verbose):
     """Main script."""
-    args = process_command_line()
+    config = process_config()
+    if not addressbook:
+        addressbook = os.path.expanduser(config.get('addressbook'))
+    if not sent_type:
+        sent_type = config.get('sent type')
+    if not all:
+        all = config.get('all')
+    if not mbox:
+        mbox = os.path.expanduser(config.get('mbox'))
+    if not log:
+        log = os.path.expanduser(config.get('log'))
+    if not gmail:
+        gmail = config.get('gmail')
+    if not field:
+        field = config.get('field')
+    if not notify:
+        notify = config.get('notify')
+    if not verbose:
+        verbose = config.get('verbose')
 
-    if args.notify:
+    if notify and pynotify is _Fake_PyNotify:
+        raise click.UsageError(colourise.fail(_('Notification popups require '
+                                                'the notify-python package')
+                                              + '\n'))
+
+    if notify:
         if not pynotify.init(sys.argv[0]):
             colourise.pfail(_('Unable to initialise pynotify!'))
             return errno.EIO
 
     contacts = Contacts()
-    contacts.parse(args.addressbook, args.field)
+    contacts.parse(addressbook, field)
     try:
-        if args.sent_type == 'msmtp':
-            sent = parse_msmtp(args.log, args.all, contacts.addresses(),
-                               args.gmail)
+        if sent_type == 'msmtp':
+            sent = parse_msmtp(log, all, contacts.addresses(), gmail)
         else:
-            sent = parse_sent(args.mbox, args.all, contacts.addresses())
+            sent = parse_sent(mbox, all, contacts.addresses())
     except IOError as e:
         colourise.pfail(e.args[0])
         return errno.EPERM
@@ -437,7 +419,7 @@ def main():
     now = arrow.now()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(args.notify, _('No mail record for %s'), contact)
+            show_note(notify, _('No mail record for %s'), contact)
         elif now > contact.trigger(sent):
-            show_note(args.notify, _('Mail due for %s'), contact,
+            show_note(notify, _('Mail due for %s'), contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
