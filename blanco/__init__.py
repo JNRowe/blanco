@@ -63,7 +63,7 @@ except ImportError:  # pragma: no cover
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from jnrbase import (colourise, compat, i18n)
+from jnrbase import (colourise, compat, i18n, xdg_basedir)
 
 
 _, N_ = i18n.setup(_version)
@@ -192,12 +192,7 @@ def process_command_line():
     :rtype: `argparse.Namespace`
     :return: Parsed options and arguments
     """
-    # XDG basedir config location, using the glib bindings to get this would be
-    # easier but the dependency is a bit too large for just that
-    xdg_config_dir = os.environ.get('XDG_CONFIG_HOME',
-                                    os.path.join(os.environ.get('HOME', '/'),
-                                                 '.config'))
-    config_file = os.path.join(xdg_config_dir, 'blanco', 'config.ini')
+    config_file = os.path.join(xdg_basedir.user_config('blanco'), 'config.ini')
     config_spec = [
         'colour = boolean(default=True)',
         "addressbook = string(default='~/.abook/addressbook')",
