@@ -63,10 +63,9 @@ except ImportError:  # pragma: no cover
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from jnrbase import colourise
+from jnrbase import (colourise, compat)
 
 from .i18n import _
-from .compat import (PY2, basestring, mangle_repr_type, open)
 
 
 USAGE = _("Check sent mail to make sure you're keeping in contact with your "
@@ -96,7 +95,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    if PY2:
+    if compat.PY2:
         mbox = mtype(path.encode(), factory=None, create=False)
     else:
         mbox = mtype(path, factory=None, create=False)
@@ -137,7 +136,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed([line for line in open(log)
+    for line in reversed([line for line in compat.open(log)
                           if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
@@ -313,7 +312,7 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             colourise.pwarn(message % contact.name)
 
 
-@mangle_repr_type
+@compat.mangle_repr_type
 class Contact(object):
 
     """Simple contact class."""
@@ -321,7 +320,7 @@ class Contact(object):
     def __init__(self, name, addresses, frequency):
         """Initialise a new `Contact` object."""
         self.name = name
-        if isinstance(addresses, basestring):
+        if isinstance(addresses, compat.basestring):
             self.addresses = [addresses.lower(), ]
         else:
             self.addresses = [s.lower() for s in addresses]
@@ -377,7 +376,7 @@ class Contact(object):
         return name
 
 
-@mangle_repr_type
+@compat.mangle_repr_type
 class Contacts(list):
 
     """Group of `Contact`."""
