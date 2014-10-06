@@ -49,7 +49,6 @@ import sys
 from email.utils import (formataddr, getaddresses)
 
 import arrow
-import blessings
 import configobj
 import validate
 
@@ -64,38 +63,10 @@ except ImportError:  # pragma: no cover
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from .i18n import _
-from .compat import (PY2, basestring, mangle_repr_type, open)
-
-T = blessings.Terminal()
+from jnrbase import (colourise, compat, i18n, xdg_basedir)
 
 
-# Set up informational message functions
-COLOUR = True
-def _colourise(text, colour):
-    """Colour text, if possible.
-
-    :param str text: Text to colourise
-    :param str colour: Colour to display text in
-    :rtype: `str`
-    :return: Colourised text, if possible
-    """
-    if COLOUR:
-        return getattr(T, colour.replace(' ', '_'))(text)
-    else:
-        return text
-
-
-def success(text):
-    return _colourise(text, 'bright green')
-
-
-def fail(text):
-    return _colourise(text, 'bright red')
-
-
-def warn(text):
-    return _colourise(text, 'bright yellow')
+_, N_ = i18n.setup(_version)
 
 
 USAGE = _("Check sent mail to make sure you're keeping in contact with your "
@@ -125,7 +96,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    if PY2:
+    if compat.PY2:
         mbox = mtype(path.encode(), factory=None, create=False)
     else:
         mbox = mtype(path, factory=None, create=False)
@@ -166,7 +137,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed([line for line in open(log)
+    for line in reversed([line for line in compat.open(log)
                           if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
@@ -221,12 +192,7 @@ def process_command_line():
     :rtype: `argparse.Namespace`
     :return: Parsed options and arguments
     """
-    # XDG basedir config location, using the glib bindings to get this would be
-    # easier but the dependency is a bit too large for just that
-    xdg_config_dir = os.environ.get('XDG_CONFIG_HOME',
-                                    os.path.join(os.environ.get('HOME', '/'),
-                                                 '.config'))
-    config_file = os.path.join(xdg_config_dir, 'blanco', 'config.ini')
+    config_file = os.path.join(xdg_basedir.user_config('blanco'), 'config.ini')
     config_spec = [
         'colour = boolean(default=True)',
         "addressbook = string(default='~/.abook/addressbook')",
@@ -245,7 +211,7 @@ def process_command_line():
         for key in results:
             if results[key]:
                 continue
-            print(fail(_('Config value for %r is invalid') % key))
+            colourise.pfail(_('Config value for %r is invalid') % key)
         raise SyntaxError(_('Invalid configuration file %r') % config_file)
 
     if not config['colour'] or os.getenv('NO_COLOUR'):
@@ -309,8 +275,8 @@ def process_command_line():
     args = parser.parse_args()
     if args.notify and pynotify is _Fake_PyNotify:
         parser.exit(errno.ENOENT,
-                    fail(_('Notification popups require the notify-python '
-                           'package') + '\n'))
+                    colourise.fail(_('Notification popups require the '
+                                     'notify-python package') + '\n'))
 
     return args
 
@@ -337,12 +303,12 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            print(success(message % contact.name))
+            colourise.psuccess(message % contact.name)
         else:
-            print(warn(message % contact.name))
+            colourise.pwarn(message % contact.name)
 
 
-@mangle_repr_type
+@compat.mangle_repr_type
 class Contact(object):
 
     """Simple contact class."""
@@ -350,7 +316,7 @@ class Contact(object):
     def __init__(self, name, addresses, frequency):
         """Initialise a new `Contact` object."""
         self.name = name
-        if isinstance(addresses, basestring):
+        if isinstance(addresses, compat.basestring):
             self.addresses = [addresses.lower(), ]
         else:
             self.addresses = [s.lower() for s in addresses]
@@ -406,7 +372,7 @@ class Contact(object):
         return name
 
 
-@mangle_repr_type
+@compat.mangle_repr_type
 class Contacts(list):
 
     """Group of `Contact`."""
@@ -453,7 +419,7 @@ def main():
 
     if args.notify:
         if not pynotify.init(sys.argv[0]):
-            print(fail(_('Unable to initialise pynotify!')))
+            colourise.pfail(_('Unable to initialise pynotify!'))
             return errno.EIO
 
     contacts = Contacts()
@@ -465,7 +431,7 @@ def main():
         else:
             sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
-        print(fail(e.args[0]))
+        colourise.pfail(e.args[0])
         return errno.EPERM
 
     now = arrow.now()

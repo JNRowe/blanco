@@ -7,11 +7,11 @@ You can download releases from the `downloads page`_ on GitHub_.
 
 * arrow_
 * configobj_
+* jnrbase_
 
 The following optional packages will be used if available:
 
 * `libnotify Python bindings`_ for popup notifications
-* blessings_ for coloured output in the terminal
 
 If you're using Gentoo_ the hard dependencies are available from the main tree,
 and the optional dependencies are available from a combination of the main tree
@@ -32,7 +32,7 @@ steps::
 .. _Python: http://www.python.org/
 .. _arrow: https://crate.io/packages/arrow/
 .. _configobj: https://crate.io/packages/configobj/
+.. _jnrbase: https://crate.io/packages/jnrbase/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
-.. _blessings: https://crate.io/packages/blessings/
 .. _Gentoo: http://www.gentoo.org/
 .. _my overlay: http://github.com/JNRowe/misc-overlay

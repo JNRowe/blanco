@@ -27,9 +27,10 @@ except ImportError:
     from io import StringIO  # NOQA
 
 from hiro import Timeline
+from jnrbase import compat
 from pytest import (mark, raises)
 
-from blanco import (Contact, Contacts, PY2, parse_duration, parse_msmtp,
+from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
                     parse_sent, show_note)
 
 
@@ -188,4 +189,4 @@ class ContactsTest(TestCase):
              "Contact(u'Bill', [u'test@example.com'], 30), "
              "Contact(u'Joe', [u'joe@example.com'], 30), "
              "Contact(u'Steven', [u'steven@example.com'], 365)"
-             '])'.replace("u'", "u'" if PY2 else "'"))
+             '])'.replace("u'", "u'" if compat.PY2 else "'"))
