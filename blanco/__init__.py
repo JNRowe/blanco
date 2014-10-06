@@ -49,7 +49,6 @@ import sys
 from email.utils import (formataddr, getaddresses)
 
 import arrow
-import blessings
 import configobj
 import validate
 
@@ -64,38 +63,10 @@ except ImportError:  # pragma: no cover
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
+from jnrbase import colourise
+
 from .i18n import _
 from .compat import (PY2, basestring, mangle_repr_type, open)
-
-T = blessings.Terminal()
-
-
-# Set up informational message functions
-COLOUR = True
-def _colourise(text, colour):
-    """Colour text, if possible.
-
-    :param str text: Text to colourise
-    :param str colour: Colour to display text in
-    :rtype: `str`
-    :return: Colourised text, if possible
-    """
-    if COLOUR:
-        return getattr(T, colour.replace(' ', '_'))(text)
-    else:
-        return text
-
-
-def success(text):
-    return _colourise(text, 'bright green')
-
-
-def fail(text):
-    return _colourise(text, 'bright red')
-
-
-def warn(text):
-    return _colourise(text, 'bright yellow')
 
 
 USAGE = _("Check sent mail to make sure you're keeping in contact with your "
@@ -245,7 +216,7 @@ def process_command_line():
         for key in results:
             if results[key]:
                 continue
-            print(fail(_('Config value for %r is invalid') % key))
+            colourise.pfail(_('Config value for %r is invalid') % key)
         raise SyntaxError(_('Invalid configuration file %r') % config_file)
 
     if not config['colour'] or os.getenv('NO_COLOUR'):
@@ -309,8 +280,8 @@ def process_command_line():
     args = parser.parse_args()
     if args.notify and pynotify is _Fake_PyNotify:
         parser.exit(errno.ENOENT,
-                    fail(_('Notification popups require the notify-python '
-                           'package') + '\n'))
+                    colourise.fail(_('Notification popups require the '
+                                     'notify-python package') + '\n'))
 
     return args
 
@@ -337,9 +308,9 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            print(success(message % contact.name))
+            colourise.psuccess(message % contact.name)
         else:
-            print(warn(message % contact.name))
+            colourise.pwarn(message % contact.name)
 
 
 @mangle_repr_type
@@ -453,7 +424,7 @@ def main():
 
     if args.notify:
         if not pynotify.init(sys.argv[0]):
-            print(fail(_('Unable to initialise pynotify!')))
+            colourise.pfail(_('Unable to initialise pynotify!'))
             return errno.EIO
 
     contacts = Contacts()
@@ -465,7 +436,7 @@ def main():
         else:
             sent = parse_sent(args.mbox, args.all, contacts.addresses())
     except IOError as e:
-        print(fail(e.args[0]))
+        colourise.pfail(e.args[0])
         return errno.EPERM
 
     now = arrow.now()
