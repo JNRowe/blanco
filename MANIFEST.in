@@ -10,7 +10,6 @@ include extra/_blanco
 include extra/doap.rdf
 include extra/docrunner.py
 include extra/requirements*.txt
-include nose2.cfg
 
 include tests/*.py
 include tests/data/blanco.conf

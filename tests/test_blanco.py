@@ -29,7 +29,7 @@ except ImportError:
 from expecter import expect
 from hiro import Timeline
 from mock import patch
-from nose2.tools import params
+from pytest import mark
 
 from blanco import (Contact, Contacts, PY2, parse_duration, parse_msmtp,
                     parse_sent, show_note)
@@ -45,7 +45,7 @@ def test_unknown_mailbox_format():
         parse_sent('/dev/null')
 
 
-@params(
+@mark.parametrize('mbox, recipients, addresses, result', [
     ('tests/data/sent.maildir', True, None, {
         'nobody@example.com': date(2000, 2, 9),
         'max@example.com': date(2000, 2, 9),
@@ -62,7 +62,7 @@ def test_unknown_mailbox_format():
     ('tests/data/sent.mbox', False, 'joe@example.com', {
         'joe@example.com': date(2000, 2, 9),
     }),
-)
+])
 def test_parse_sent(mbox, recipients, addresses, result):
     expect(parse_sent(mbox, recipients, addresses)) == result
 
@@ -72,7 +72,7 @@ def test_missing_msmtp_log():
         parse_msmtp('None')
 
 
-@params(
+@mark.parametrize('log, all_recipients, addresses, gmail, result', [
     ('tests/data/sent.msmtp', False, None, False, {
         'nobody@example.com': date(2013, 2, 9),
         'test@example.com': date(2013, 2, 9),
@@ -93,7 +93,7 @@ def test_missing_msmtp_log():
         'test@example.com': date(2010, 2, 9),
         'joe@example.com': date(2000, 2, 9),
     }),
-)
+])
 def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
     with Timeline().freeze(date(2014, 6, 27)):
         expect(parse_msmtp(log, all_recipients, addresses, gmail)) == result
@@ -104,12 +104,12 @@ def test_invalid_duration():
         parse_duration('1 k')
 
 
-@params(
+@mark.parametrize('duration, result', [
     ('1d', 1),
     ('1 d', 1),
     ('0.5 y', 182),
     ('0.5 Y', 182),
-)
+])
 def test_parse_duration(duration, result):
     expect(parse_duration(duration)) == result
 
