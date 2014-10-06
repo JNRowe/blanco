@@ -23,68 +23,35 @@ Options
 
 .. program:: blanco.py
 
+.. option:: -a, --addressbook FILENAME
+    Address book to read contacts from.
+
+.. option:: -t, --sent-type [mailbox|msmtp]
+    Sent source type.
+
+.. option:: -r, --all / --no-all
+    Include all recipients(CC and BCC fields).
+
+.. option:: -m, --mbox FILENAME
+    Mailbox used to store sent mail.
+
+.. option:: -l, --log FILENAME
+    msmtp log to parse.
+
+.. option:: -g, --gmail / --no-gmail
+    Log from a gmail account(use accurate filter).
+
+.. option:: -s, --field TEXT
+    Addressbook field to use for frequency value.
+
+.. option:: -n, --notify / --no-notify
+    Display reminders using notification popups.
+
+.. option:: -v, --verbose / --no-verbose
+    Produce verbose output.
+
 .. option:: --version
+    Show the version and exit.
 
-   Show program's version number and exit
-
-.. option:: -h, --help
-
-   Show this help message and exit
-
-.. option:: -a <file>, --addressbook=<file>
-
-   Address book to read contacts from
-
-.. option:: -t <mailbox|msmtp>, --sent-type=<mailbox|msmtp>
-
-   Sent source type(mailbox or msmtp)
-
-.. option:: -r, --all
-
-   Include all recipients(CC and BCC fields)
-
-.. option:: --no-all
-
-   Include only the first recipient(TO field)
-
-.. option:: -s <name>, --field=<name>
-
-   Addressbook field to use for frequency value
-
-.. option:: -n, --notify
-
-   Display reminders using notification popups
-
-.. option:: --no-notify
-
-   Display reminders on standard out
-
-.. option:: -v, --verbose
-
-   Produce verbose output
-
-.. option:: -q, --quiet
-
-   Output only matches and errors
-
-Mailbox options
-~~~~~~~~~~~~~~~
-
-.. option:: -m <mailbox>, --mbox=<mailbox>
-
-   Mailbox used to store sent mail
-
-msmtp log options
-~~~~~~~~~~~~~~~~~
-
-.. option:: -l <file>, --log=<file>
-
-   msmtp log to parse
-
-.. option:: -g, --gmail
-
-   Log from a gmail account(use accurate filter)
-
-.. option:: --no-gmail
-
-   msmtp log for non-gmail account
+.. option:: --help
+    Show this message and exit.
