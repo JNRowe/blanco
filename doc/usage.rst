@@ -6,9 +6,9 @@ notifications.
 
 .. code-block:: sh
 
-    Ξ Desktop/blanco git:(master) ▶ blanco.py
+    $ blanco
     Mail due for Luke Legate
-    Ξ Desktop/blanco git:(master) ▶
+    $
 
 If the :option:`--notify <-n>` option is specified popups will be displayed on
 the desktop, see the example below.
