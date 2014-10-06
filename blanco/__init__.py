@@ -63,9 +63,10 @@ except ImportError:  # pragma: no cover
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from jnrbase import (colourise, compat)
+from jnrbase import (colourise, compat, i18n)
 
-from .i18n import _
+
+_, N_ = i18n.setup(_version)
 
 
 USAGE = _("Check sent mail to make sure you're keeping in contact with your "
