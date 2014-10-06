@@ -26,23 +26,24 @@ try:
 except ImportError:
     from io import StringIO  # NOQA
 
-from expecter import expect
 from hiro import Timeline
 from mock import patch
-from pytest import mark
+from pytest import (mark, raises)
 
 from blanco import (Contact, Contacts, PY2, parse_duration, parse_msmtp,
                     parse_sent, show_note)
 
 
 def test_missing_mailbox():
-    with expect.raises(IOError, "Sent mailbox 'None' not found"):
+    with raises(IOError) as err:
         parse_sent('None')
+    assert err.value.message == "Sent mailbox 'None' not found"
 
 
 def test_unknown_mailbox_format():
-    with expect.raises(ValueError, "Unknown mailbox format for '/dev/null'"):
+    with raises(ValueError) as err:
         parse_sent('/dev/null')
+    assert err.value.message == "Unknown mailbox format for '/dev/null'"
 
 
 @mark.parametrize('mbox, recipients, addresses, result', [
@@ -64,12 +65,13 @@ def test_unknown_mailbox_format():
     }),
 ])
 def test_parse_sent(mbox, recipients, addresses, result):
-    expect(parse_sent(mbox, recipients, addresses)) == result
+    assert parse_sent(mbox, recipients, addresses) == result
 
 
 def test_missing_msmtp_log():
-    with expect.raises(IOError, "msmtp sent log 'None' not found"):
+    with raises(IOError) as err:
         parse_msmtp('None')
+    assert err.value.message == "msmtp sent log 'None' not found"
 
 
 @mark.parametrize('log, all_recipients, addresses, gmail, result', [
@@ -96,12 +98,13 @@ def test_missing_msmtp_log():
 ])
 def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
     with Timeline().freeze(date(2014, 6, 27)):
-        expect(parse_msmtp(log, all_recipients, addresses, gmail)) == result
+        assert parse_msmtp(log, all_recipients, addresses, gmail) == result
 
 
 def test_invalid_duration():
-    with expect.raises(ValueError, "Invalid duration value '1 k'"):
+    with raises(ValueError) as err:
         parse_duration('1 k')
+    assert err.value.message == "Invalid duration value '1 k'"
 
 
 @mark.parametrize('duration, result', [
@@ -111,7 +114,7 @@ def test_invalid_duration():
     ('0.5 Y', 182),
 ])
 def test_parse_duration(duration, result):
-    expect(parse_duration(duration)) == result
+    assert parse_duration(duration) == result
 
 
 @patch('sys.stdout', new_callable=StringIO)
@@ -119,7 +122,7 @@ def test_show_note(stdout):
     show_note(False, 'Note for %s',
               Contact('James Rowe', 'jnrowe@gmail.com', 200))
     # Use contains to avoid having to mess around with {,no-}colour options
-    expect(stdout.getvalue()).contains('Note for James Rowe')
+    assert 'Note for James Rowe' in stdout.getvalue()
 
 
 class ContactTest:
@@ -127,46 +130,46 @@ class ContactTest:
         self.contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 
     def test___repr__(self):
-        expect(repr(self.contact)) == \
+        assert repr(self.contact) == \
             "Contact('James Rowe', ['jnrowe@gmail.com'], 200)"
 
     def test___str__(self):
-        expect(str(self.contact)) == \
+        assert str(self.contact) == \
             'James Rowe <jnrowe@gmail.com> (200 days)'
-        expect(str(Contact(
+        assert str(Contact(
             'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'],
-            200))) == \
+            200)) == \
             'James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)'
 
     def test___format__(self):
-        expect(format(self.contact)) == \
+        assert format(self.contact) == \
             'James Rowe <jnrowe@gmail.com> (200 days)'
-        expect(format(self.contact, 'email')) == \
+        assert format(self.contact, 'email') == \
             'James Rowe <jnrowe@gmail.com>'
-        expect(format(Contact, 'email'(
+        assert format(Contact, 'email'(
             'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'],
-            200))) == \
+            200)) == \
             'James Rowe <jnrowe@gmail.com>'
 
     def trigger(self, sent):
-        expect(self.contact.trigger({
+        assert self.contact.trigger({
             'jnrowe@gmail.com': date(1942, 1, 1)}
-        )) == date(1942, 7, 20)
+        ) == date(1942, 7, 20)
 
     @patch('blanco.pynotify')
     def notify_str(self, pynotify):
         pynotify.get_server_caps.return_value = []
-        expect(self.contact.notify_str()) == 'James Rowe'
+        assert self.contact.notify_str() == 'James Rowe'
         pynotify.get_server_caps.return_value = ['body-hyperlinks', ]
-        expect(self.contact.notify_str()) == \
+        assert self.contact.notify_str() == \
             "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
 
 
 class ContactsTest(TestCase):
     def test___repr__(self):
-        expect(repr(Contacts([
+        assert repr(Contacts([
             Contact('James Rowe', 'jnrowe@gmail.com', 200),
-        ]))) == \
+        ])) == \
             "Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])"
 
     def test_addresses(self):
@@ -174,15 +177,15 @@ class ContactsTest(TestCase):
             Contact('Bill', ['test@example.com', 'new@example.com'], 30),
             Contact('Joe', ['joe@example.com'], 30)
         ])
-        expect(p.addresses()) == ['test@example.com', 'new@example.com',
-                                  'joe@example.com']
+        assert p.addresses() == ['test@example.com', 'new@example.com',
+                                 'joe@example.com']
 
     def test_parse(self):
         contacts = Contacts()
         contacts.parse('tests/data/blanco.conf', 'frequency')
 
         # Dirty, dirty, way to handle Unicode type repr differences... sorry
-        expect(repr(contacts)) == \
+        assert repr(contacts) == \
             ('Contacts(['
              "Contact(u'Bill', [u'test@example.com'], 30), "
              "Contact(u'Joe', [u'joe@example.com'], 30), "
