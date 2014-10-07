@@ -251,3 +251,9 @@ class TestContacts:
              "Contact(u'Joe', [u'joe@example.com'], 30), "
              "Contact(u'Steven', [u'steven@example.com'], 365)"
              '])'.replace("u'", "u'" if compat.PY2 else "'"))
+
+    def test_parse_missing_file(self, tmpdir):
+        contacts = Contacts()
+        with raises(IOError) as err:
+            contacts.parse(str(tmpdir.join('no_such_file')), 'frequency')
+        assert 'Addressbook file not found' in err.value.message
