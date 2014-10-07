@@ -31,7 +31,7 @@ from jnrbase import compat
 from pytest import (mark, raises)
 
 from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
-                    parse_sent, process_config, show_note)
+                    parse_sent, process_config, pynotify, show_note)
 
 
 def test_missing_mailbox():
@@ -139,12 +139,51 @@ def test_process_config_invalid(monkeypatch):
     assert 'Invalid configuration file' in err.value.message
 
 
-def test_show_note(capsys):
-    show_note(False, 'Note for %s',
-              Contact('James Rowe', 'jnrowe@gmail.com', 200))
-    out, _ = capsys.readouterr()
-    # Use contains to avoid having to mess around with {,no-}colour options
-    assert 'Note for James Rowe' in out
+class TestShowNote:
+    @classmethod
+    def setup_class(cls):
+        cls.contact1 = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+
+    @mark.parametrize('urgency', [
+        pynotify.URGENCY_NORMAL,
+        pynotify.URGENCY_CRITICAL,
+    ])
+    def test_show_note(self, urgency, capsys):
+        show_note(False, 'Note for %s', self.contact1, urgency=urgency)
+        out, _ = capsys.readouterr()
+        # Use contains to avoid having to mess around with {,no-}colour options
+        assert 'Note for James Rowe' in out
+
+    @mark.parametrize('show_succeeds', [True, False])
+    def test_show_note_pynotify(self, show_succeeds, monkeypatch):
+        class Notification:
+            titles = bodies = icons = []
+
+            def __init__(self, t, s, i):
+                self.titles.append(t)
+                self.bodies.append(s)
+                self.icons.append(i)
+
+            def set_urgency(self, u):
+                self.u = u
+
+            def set_timeout(self, o):
+                self.o = o
+
+            def show(self):
+                return True
+        monkeypatch.setattr(pynotify, 'Notification', Notification,
+                            raising=False)
+        monkeypatch.setattr(pynotify, 'get_server_caps',
+                            staticmethod(lambda: []), raising=False)
+        if show_succeeds:
+            show_note(True, 'Note for %s', self.contact1)
+            assert 'Note for James Rowe' in Notification.bodies
+        else:
+            monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
+            with raises(OSError) as err:
+                show_note(True, 'Broken note for %s', self.contact1)
+            assert err.value.message == 'Notification failed to display!'
 
 
 class ContactTest:
