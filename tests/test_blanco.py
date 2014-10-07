@@ -25,6 +25,7 @@ try:
 except ImportError:
     from io import StringIO  # NOQA
 
+from arrow import Arrow
 from hiro import Timeline
 from jnrbase import compat
 from pytest import (mark, raises)
@@ -186,43 +187,52 @@ class TestShowNote:
 
 
 class TestContact:
-    def setUp(self):  # NOQA
-        self.contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+    @classmethod
+    def setup_class(cls):
+        cls.contact1 = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+        cls.contact2 = Contact('James Rowe',
+                               ['jnrowe@gmail.com', 'jnrowe@example.com'],
+                               200)
 
     def test___repr__(self):
-        assert repr(self.contact) == \
+        assert repr(self.contact1) == \
             "Contact('James Rowe', ['jnrowe@gmail.com'], 200)"
 
-    def test___str__(self):
-        assert str(self.contact) == \
-            'James Rowe <jnrowe@gmail.com> (200 days)'
-        assert str(Contact(
-            'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'],
-            200)) == \
-            'James Rowe <jnrowe@gmail.com, jnrowe@example.com> (200 days)'
+    @mark.parametrize('contact, expected', [
+        ('contact1', 'James Rowe <jnrowe@gmail.com> (200 days)'),
+        ('contact2', 'James Rowe <jnrowe@gmail.com, jnrowe@example.com> '
+                     '(200 days)'),
+    ])
+    def test___str__(self, contact, expected):
+        assert str(getattr(self, contact)) == expected
 
-    def test___format__(self):
-        assert format(self.contact) == \
-            'James Rowe <jnrowe@gmail.com> (200 days)'
-        assert format(self.contact, 'email') == \
-            'James Rowe <jnrowe@gmail.com>'
-        assert format(Contact, 'email'(
-            'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'],
-            200)) == \
-            'James Rowe <jnrowe@gmail.com>'
+    @mark.parametrize('contact, spec, expected', [
+        ('contact1', '', 'James Rowe <jnrowe@gmail.com> (200 days)'),
+        ('contact1', 'email', 'James Rowe <jnrowe@gmail.com>'),
+        ('contact2', 'email', 'James Rowe <jnrowe@gmail.com>'),
+    ])
+    def test___format__(self, contact, spec, expected):
+        assert format(getattr(self, contact), spec) == expected
 
-    def trigger(self, sent):
-        assert self.contact.trigger({
-            'jnrowe@gmail.com': date(1942, 1, 1)}
-        ) == date(1942, 7, 20)
+    def test___format___invalid_type(self):
+        with raises(ValueError) as err:
+            format(self.contact1, 'hat style')
+        assert err.value.message == "Unknown format_spec 'hat style'"
 
-    def notify_str(self, monkeypatch):
-        monkeypatch('pynotify.get_server_caps', lambda: [])
-        assert self.contact.notify_str() == 'James Rowe'
-        monkeypatch('pynotify.get_server_caps', lambda: ['body-hyperlinks', ])
-        assert self.contact.notify_str() == \
-            "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
+    def test_trigger(self):
+        assert self.contact1.trigger({
+            'jnrowe@gmail.com': date(1942, 1, 1),
+        }) == Arrow(1942, 7, 20)
 
+    @mark.parametrize('server_caps, expected', [
+        ([], 'James Rowe'),
+        (['body-hyperlinks'],
+         "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
+    ])
+    def test_notify_str(self, server_caps, expected, monkeypatch):
+        monkeypatch.setattr(pynotify, 'get_server_caps',
+                            staticmethod(lambda: server_caps), raising=False)
+        assert self.contact1.notify_str() == expected
 
 
 class TestContacts:
