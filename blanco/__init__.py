@@ -379,19 +379,19 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     if not sent_type:
         sent_type = config.get('sent type')
     if not all:
-        all = config.get('all')
+        all = config.as_bool('all')
     if not mbox:
         mbox = os.path.expanduser(config.get('mbox'))
     if not log:
         log = os.path.expanduser(config.get('log'))
     if not gmail:
-        gmail = config.get('gmail')
+        gmail = config.as_bool('gmail')
     if not field:
         field = config.get('field')
     if not notify:
-        notify = config.get('notify')
+        notify = config.as_bool('notify')
     if not verbose:
-        verbose = config.get('verbose')
+        verbose = config.as_bool('verbose')
     if colour is None:
         if 'color' in config:
             config['colour'] = config['color']
