@@ -399,9 +399,9 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     colourise.COLOUR = colour
 
     if notify and pynotify is _Fake_PyNotify:
-        raise click.UsageError(colourise.fail(_('Notification popups require '
-                                                'the notify-python package')
-                                              + '\n'))
+        raise click.UsageError(
+            colourise.fail(_('Notification popups require the notify-python '
+                             'package') + '\n'))
 
     if notify:
         if not pynotify.init(sys.argv[0]):
