@@ -214,10 +214,6 @@ def process_config():
             colourise.pfail(_('Config value for %r is invalid') % key)
         raise SyntaxError(_('Invalid configuration file %r') % config_file)
 
-    if not config['colour'] or os.getenv('NO_COLOUR'):
-        global COLOUR
-        COLOUR = False
-
     return config
 
 
@@ -369,10 +365,12 @@ class Contacts(list):
               help=_('Addressbook field to use for frequency value.'))
 @click.option('-n', '--notify/--no-notify',
               help=_('Display reminders using notification popups.'))
+@click.option('--colour/--no-colour', envvar='BLANCO_COLOUR', default=None,
+              help=_('Output colourised informational text.'))
 @click.option('-v', '--verbose/--no-verbose',
               help=_('Produce verbose output.'))
 @click.version_option(_version.dotted)
-def main(addressbook, sent_type, all, mbox, log, gmail, field, notify,
+def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
          verbose):
     """Main script."""
     config = process_config()
@@ -394,6 +392,11 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify,
         notify = config.get('notify')
     if not verbose:
         verbose = config.get('verbose')
+    if colour is None:
+        if 'color' in config:
+            config['colour'] = config['color']
+        colour = config.as_bool('colour')
+    colourise.COLOUR = colour
 
     if notify and pynotify is _Fake_PyNotify:
         raise click.UsageError(colourise.fail(_('Notification popups require '
