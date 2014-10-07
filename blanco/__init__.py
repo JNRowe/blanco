@@ -239,7 +239,7 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            colourise.psuccess(message % contact.name)
+            colourise.pfail(message % contact.name)
         else:
             colourise.pwarn(message % contact.name)
 
