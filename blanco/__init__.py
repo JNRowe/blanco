@@ -54,7 +54,7 @@ import validate
 
 try:
     import pynotify
-except ImportError:  # pragma: no cover
+except ImportError:
     class _Fake_PyNotify(object):  # NOQA
         URGENCY_CRITICAL = 2
         URGENCY_NORMAL = 1
@@ -96,9 +96,9 @@ def parse_sent(path, all_recipients=False, addresses=None):
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    if compat.PY2:
+    if compat.PY2:  # pragma: Python 2
         mbox = mtype(path.encode(), factory=None, create=False)
-    else:
+    else:  # pragma: Python 3
         mbox = mtype(path, factory=None, create=False)
 
     contacts = []
@@ -371,7 +371,7 @@ class Contacts(list):
               help=_('Produce verbose output.'))
 @click.version_option(_version.dotted)
 def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
-         verbose):
+         verbose):  # pragma: no cover
     """Main script."""
     config = process_config()
     if not addressbook:
