@@ -19,7 +19,6 @@
 
 
 from datetime import date
-from unittest import TestCase
 
 try:
     from StringIO import StringIO
@@ -186,7 +185,7 @@ class TestShowNote:
             assert err.value.message == 'Notification failed to display!'
 
 
-class ContactTest:
+class TestContact:
     def setUp(self):  # NOQA
         self.contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 
@@ -225,7 +224,8 @@ class ContactTest:
             "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"
 
 
-class ContactsTest(TestCase):
+
+class TestContacts:
     def test___repr__(self):
         assert repr(Contacts([
             Contact('James Rowe', 'jnrowe@gmail.com', 200),
