@@ -101,6 +101,13 @@ def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
         assert parse_msmtp(log, all_recipients, addresses, gmail) == result
 
 
+def test_parse_msmtp_invalid_gmail():
+    with Timeline().freeze(date(2014, 6, 27)):
+        with raises(ValueError) as err:
+            parse_msmtp('tests/data/sent.msmtp', False, None, True)
+        assert 'not in gmail format' in err.value.message
+
+
 def test_invalid_duration():
     with raises(ValueError) as err:
         parse_duration('1 k')
