@@ -31,7 +31,7 @@ from jnrbase import compat
 from pytest import (mark, raises)
 
 from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
-                    parse_sent, show_note)
+                    parse_sent, process_config, show_note)
 
 
 def test_missing_mailbox():
@@ -122,6 +122,21 @@ def test_invalid_duration():
 ])
 def test_parse_duration(duration, result):
     assert parse_duration(duration) == result
+
+
+def test_process_config(monkeypatch):
+    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
+                        lambda s: 'tests/data/valid')
+    conf = process_config()
+    assert conf.get('colour') is False
+
+
+def test_process_config_invalid(monkeypatch):
+    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
+                        lambda s: 'tests/data/invalid')
+    with raises(SyntaxError) as err:
+        process_config()
+    assert 'Invalid configuration file' in err.value.message
 
 
 def test_show_note(capsys):
