@@ -28,4 +28,4 @@ Examples
 
     >>> contact = Contact('James Rowe', 'jnrowe@gmail.com', 200)
     >>> contact.trigger({'jnrowe@gmail.com': datetime.date(1942, 1, 1)})
-    <Arrow [1942-07-20T00:00:00+00:00]>
+    datetime.date(1942, 7, 20)

@@ -29,16 +29,17 @@ __license__ = 'GNU General Public License Version 3'
 __credits__ = ''
 __history__ = 'See git repository'
 
+import datetime
 import errno
 import mailbox
 import operator
 import os
 import re
 import sys
+import time
 
-from email.utils import (formataddr, getaddresses)
+from email.utils import (formataddr, getaddresses, parsedate)
 
-import arrow
 import click
 import configobj
 import validate
@@ -72,7 +73,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
         results, or just the first
     :param list addresses: Addresses to look for in sent mail, all if not
         specified
-    :rtype: `dict` of `str` keys and `arrow.Arrow` values
+    :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
     """
     path = os.path.expanduser(path)
@@ -96,7 +97,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
             fields.extend(message.get_all('cc', []))
             fields.extend(message.get_all('bcc', []))
         results = [x[1].lower() for x in getaddresses(fields)]
-        date = arrow.get(message['date'], 'ddd, DD MMM YYYY HH:mm:ss Z')
+        date = datetime.datetime(*parsedate(message['date'])[:-2])
         contacts.extend([(address, date.date()) for address in results
                          if not addresses or address in addresses])
     return dict(sorted(contacts, key=operator.itemgetter(1)))
@@ -111,7 +112,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :param list addresses: Addresses to look for in sent mail, all if not
         specified
     :param bool gmail: Log is for a gmail account
-    :rtype: `dict` of `str` keys and `arrow.Arrow` values
+    :rtype: `dict` of `str` keys and `datetime.datetime` values
     :return: Keys of email address, and values of seen date
     """
     if not os.path.exists(log):
@@ -120,7 +121,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
 
-    start = arrow.get(os.path.getmtime(log))
+    start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
 
     year = start.year
     md = start.month, start.day
@@ -131,15 +132,14 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
             gd = gmail_date.search(line)
             try:
                 ts = int(gd.groups()[0])
-                parsed = arrow.get(ts)
+                parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
                 raise ValueError(
                     _('msmtp {!r} log is not in gmail format').format(log))
             year = parsed.year
             md = parsed.month, parsed.day
         else:
-            parsed = arrow.get(line[:6], 'MMM DD')
-            date = parsed.month, parsed.day
+            date = time.strptime(line[:6], '%b %d')[1:3]
             if date > md:
                 year = year - 1
             md = date
@@ -148,7 +148,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
         results = [s.lower() for s in recips.groups()[0].split(',')]
         if not all_recipients:
             results = [results[0], ]
-        contacts.extend([(address, arrow.get(year, *md).date())
+        contacts.extend([(address, datetime.datetime(year, *md).date())
                          for address in results
                          if not addresses or address in addresses])
     # Sorting prior to making the dictionary means we only use the latest
@@ -275,13 +275,13 @@ class Contact:
     def trigger(self, sent):
         """Calculate trigger date for contact.
 
-        :type sent: `dict` of `str` keys and `arrow.Arrow` values
+        :type sent: `dict` of `str` keys and `datetime.datetime values
         :param sent: Address to last seen dictionary
-        :rtype: `arrow.Arrow`
+        :rtype: `datetime.datetime`
         :return: Date to start reminders on
         """
         match = sorted([v for k, v in sent.items() if k in self.addresses])[0]
-        return arrow.get(*match.timetuple()[:3]).replace(days=self.frequency)
+        return match + datetime.timedelta(days=self.frequency)
 
     def notify_str(self):
         """Calculate trigger date for contact.
@@ -408,7 +408,7 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
         colourise.pfail(e.args[0])
         return errno.EPERM
 
-    now = arrow.now()
+    now = datetime.datetime.utcnow()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
             show_note(notify, _('No mail record for {}'), contact)

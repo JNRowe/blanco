@@ -21,7 +21,6 @@ from datetime import date
 
 from io import StringIO
 
-from arrow import Arrow
 from hiro import Timeline
 from pytest import (mark, raises)
 
@@ -217,7 +216,7 @@ class TestContact:
     def test_trigger(self):
         assert self.contact1.trigger({
             'jnrowe@gmail.com': date(1942, 1, 1),
-        }) == Arrow(1942, 7, 20)
+        }) == date(1942, 7, 20)
 
     @mark.parametrize('server_caps, expected', [
         ([], 'James Rowe'),

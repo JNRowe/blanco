@@ -5,7 +5,6 @@ You can download releases from the `downloads page`_ on GitHub_.
 
 ``blanco`` requires Python_ v2.6(or newer) and the following Python modules:
 
-* arrow_
 * configobj_
 * jnrbase_
 
@@ -30,7 +29,6 @@ steps::
 .. _downloads page: https://github.com/JNRowe/blanco/downloads
 .. _GitHub: https://github.com/
 .. _Python: http://www.python.org/
-.. _arrow: https://crate.io/packages/arrow/
 .. _configobj: https://crate.io/packages/configobj/
 .. _jnrbase: https://crate.io/packages/jnrbase/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
