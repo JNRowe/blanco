@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# coding=utf-8
 """blanco - Keep in touch, barely."""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #

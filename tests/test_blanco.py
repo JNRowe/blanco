@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """test_blanco - Test blanco functionality"""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #

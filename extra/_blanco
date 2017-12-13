@@ -1,5 +1,4 @@
 #compdef blanco blanco.py
-# coding=utf-8
 # blanco - ZSH completion support for blanco
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #

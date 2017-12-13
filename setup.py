@@ -1,5 +1,4 @@
 #! /usr/bin/python -tt
-# coding=utf-8
 """setup.py - Setuptools tasks and config for blanco"""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
