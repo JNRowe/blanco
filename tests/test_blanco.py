@@ -19,8 +19,6 @@
 from configparser import MissingSectionHeaderError
 from datetime import date
 
-from io import StringIO
-
 from hiro import Timeline
 from pytest import (mark, raises)
 
