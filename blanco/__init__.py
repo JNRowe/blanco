@@ -52,7 +52,7 @@ import validate
 try:
     import pynotify
 except ImportError:
-    class _Fake_PyNotify(object):  # NOQA
+    class _Fake_PyNotify:  # NOQA
         URGENCY_CRITICAL = 2
         URGENCY_NORMAL = 1
         URGENCY_LOW = 0
@@ -238,7 +238,7 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             colourise.pwarn(message % contact.name)
 
 
-class Contact(object):
+class Contact:
 
     """Simple contact class."""
 
