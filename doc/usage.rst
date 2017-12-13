@@ -16,7 +16,7 @@ the desktop, see the example below.
 .. figure:: .static/luke.png
 
 The :option:`--notify <-n>` mode is specifically meant from a desktop startup
-sequence, and that is how :mod:`blanco`'s author normally uses it.
+sequence, and that is how :mod:`blanco`’s author normally uses it.
 
 Options
 '''''''

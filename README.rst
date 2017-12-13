@@ -5,7 +5,7 @@ Introduction
 ------------
 
 ``blanco`` is a simple tool to help you, or more specifically *me*, keep in
-touch with people.  All it does is notify you if you're failing to keep in
+touch with people.  All it does is notify you if you’re failing to keep in
 contact.  It is just a quick solution to a simple problem, as long as you use
 abook_ and your sent mail is locally accessible.
 
@@ -15,13 +15,13 @@ Configuration
 -------------
 
 ``blanco`` expects your abook_ entries to have a frequency value in the
-``frequency`` field [#]_.  The format is "<n> <units>", where ``n`` is a number
+``frequency`` field [#]_.  The format is “<n> <units>”, where ``n`` is a number
 and ``units`` is a character from the set ``[dwmy]``.  For example, an entry
-with a frequency of ``3 m`` will be triggered if there hasn't been a mail sent
+with a frequency of ``3 m`` will be triggered if there hasn’t been a mail sent
 to that address in three months.
 
 If you add the following snippet to your ``~/.abook/abookrc`` the abook_
-interface will display "Frequency" in the interface when editing the ``other``
+interface will display “Frequency” in the interface when editing the ``other``
 tab for a contact.
 
 ::
@@ -37,7 +37,7 @@ Example
 -------
 
 ``blanco`` expects you to give it the location of an abook_ addressbook file and
-the location of your sent mail in mbox format, and informs you if you're
+the location of your sent mail in mbox format, and informs you if you’re
 forgetting to contact somebody.
 
 ::
@@ -85,8 +85,8 @@ Ideas
 
 * Morgan Lane
 
-If I've forgotten to include your name I wholeheartedly apologise.  Just drop me
-an mail_ and I'll update the list!
+If I’ve forgotten to include your name I wholeheartedly apologise.  Just drop me
+an mail_ and I’ll update the list!
 
 Bugs
 ----
@@ -94,7 +94,7 @@ Bugs
 If you find any problems, bugs or just have a question about this package either
 file an issue_ or drop me a mail_.
 
-If you've found a bug please attempt to include a minimal testcase so I can
+If you’ve found a bug please attempt to include a minimal testcase so I can
 reproduce the problem, or even better a patch!
 
 .. _abook: http://abook.sourceforge.net/

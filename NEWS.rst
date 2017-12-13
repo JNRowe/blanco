@@ -9,7 +9,7 @@ User-visible changes
 0.6.0 - 2014-01-28
 ------------------
 
-* Now defaults to ``frequency`` field in addressbook, favouring abook_ 0.6's new
+* Now defaults to ``frequency`` field in addressbook, favouring abook_ 0.6’s new
   custom field support
 * arrow_ is now required
 * New support files to handle dependencies for pip_ users in ``extra/``

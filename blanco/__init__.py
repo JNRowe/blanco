@@ -1,5 +1,8 @@
 #! /usr/bin/python -tt
-"""blanco - Keep in touch, barely."""
+"""blanco - Keep in touch, barely.
+
+Check sent mail to make sure you’re keeping in contact with your friends.
+"""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -25,15 +28,6 @@ __copyright__ = 'Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>'
 __license__ = 'GNU General Public License Version 3'
 __credits__ = ''
 __history__ = 'See git repository'
-
-from email.utils import parseaddr
-
-__doc__ += """.
-
-Check sent mail to make sure you're keeping in contact with your friends.
-
-.. moduleauthor:: `%s <mailto:%s>`__
-""" % parseaddr(__author__)
 
 import errno
 import mailbox
@@ -66,7 +60,7 @@ from jnrbase import (colourise, i18n, xdg_basedir)
 _, N_ = i18n.setup(_version)
 
 
-USAGE = _("Check sent mail to make sure you're keeping in contact with your "
+USAGE = _("Check sent mail to make sure you’re keeping in contact with your "
           "friends.")
 
 
@@ -83,7 +77,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     """
     path = os.path.expanduser(path)
     if not os.path.exists(path):
-        raise IOError(_('Sent mailbox {!r} not found').format(path))
+        raise IOError(_('Sent mailbox ‘{}’ not found').format(path))
     if os.path.isdir('{}/new'.format(path)):
         mtype = mailbox.Maildir
     elif os.path.exists('{}/.mh_sequences'.format(path)):
@@ -91,7 +85,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     elif os.path.isfile(path):
         mtype = mailbox.mbox
     else:
-        raise ValueError(_('Unknown mailbox format for {!r}').format(path))
+        raise ValueError(_('Unknown mailbox format for ‘{}’').format(path))
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = mtype(path, factory=None, create=False)
 
@@ -121,7 +115,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :return: Keys of email address, and values of seen date
     """
     if not os.path.exists(log):
-        raise IOError(_('msmtp sent log {!r} not found').format(log))
+        raise IOError(_('msmtp sent log ‘{}’ not found').format(log))
 
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
@@ -172,7 +166,7 @@ def parse_duration(duration):
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
-        raise ValueError(_('Invalid duration value {!r}').format(duration))
+        raise ValueError(_('Invalid duration value ‘{}’').format(duration))
     value, units = match.groups()
     units = 'dwmy'.index(units.lower())
     # days per day/week/month/year

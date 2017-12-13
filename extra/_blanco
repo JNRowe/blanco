@@ -18,7 +18,7 @@
 
 # Most of this file is generated from blanco/__init__.py, but feel free to
 # customise it!  If you make improvements, open a pull request against
-# `JNRowe/blanco' with your super changes attached.
+# ‘JNRowe/blanco’ with your super changes attached.
 
 (( $+functions[__blanco_list_abook_fields] )) ||
 __blanco_list_abook_fields() {
@@ -33,7 +33,7 @@ __blanco_list_abook_fields() {
 
 
 _arguments '--help[show help message and exit]' \
-    "--version[show program's version number and exit]" \
+    "--version[show program’s version number and exit]" \
     "--addressbook[address book to read contacts from]:select file:_files" \
     "--sent-type[sent source type]:select type:(major minor micro patch)" \
     "--all[include all recipients(CC and BCC fields)]" \
