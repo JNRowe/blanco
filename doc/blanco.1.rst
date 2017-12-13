@@ -19,7 +19,7 @@ DESCRIPTION
 -----------
 
 A simple tool to help you, or more specifically *me*, keep in touch with people.
-All it does is notify you if you're failing to keep in contact.  It is just
+All it does is notify you if you’re failing to keep in contact.  It is just
 a quick solution to a simple problem, as long as you use `abook
 <http://abook.sourceforge.net/>`_ and your sent mail is easily accessible.
 
@@ -72,7 +72,7 @@ For example:
     field = custom5
 
 With the above configuration file the default sent mail source will be a msmtp
-logfile, and frequency information will be stored in abook's ``custom5`` field.
+logfile, and frequency information will be stored in abook’s ``custom5`` field.
 
 BUGS
 ----

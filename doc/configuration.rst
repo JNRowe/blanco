@@ -5,7 +5,7 @@ Setup
 times, and also access to a map of contact-to-frequency for calculating
 forgotten people.
 
-If you can't fulfil the requirements in the following two sections then
+If you can’t fulfil the requirements in the following two sections then
 :program:`blanco` is not for you!
 
 Sent mail
@@ -18,8 +18,8 @@ msmtp_ logs are also supported, and using them is the preferred method.  Parsing
 simple log entries is appreciably faster than processing mailboxes, and this
 method should be chosen if at all possible.
 
-There is also a faster gmail_ specific option when you're using the msmtp_ log
-method, which takes advantage of the extra data included in Google_'s responses
+There is also a faster gmail_ specific option when you’re using the msmtp_ log
+method, which takes advantage of the extra data included in Google_’s responses
 to calculate the date a mail was sent.
 
 Addressbook
@@ -29,9 +29,9 @@ The default addressbook format is the format used by abook_, where one of the
 custom fields allowed by abook_ is used to store frequency information.
 
 ``blanco`` expects your abook_ entries to have a frequency value in the
-``frequency`` field [#]_.  The format is "<n> <units>", where ``n`` is a number
+``frequency`` field [#]_.  The format is “<n> <units>”, where ``n`` is a number
 and ``units`` is a character from the set ``[dwmy]``.  For example, an entry
-with a frequency of ``3 m`` will be triggered if there hasn't been a mail sent
+with a frequency of ``3 m`` will be triggered if there hasn’t been a mail sent
 to that address in three months.
 
 You can add the following snippet to your :file:`~/.abook/abookrc` file to
@@ -94,7 +94,7 @@ An example configuration file is below:
     field = custom5
 
 .. [#] The default value for ``${XDG_CONFIG_HOME}`` is system dependent, but
-       likely to be ``~/.config`` if you haven't set it.  For more information
+       likely to be ``~/.config`` if you haven’t set it.  For more information
        see `XDG base directory specification`_.
 
 .. _mailbox: http://docs.python.org/library/mailbox.html
