@@ -28,7 +28,7 @@ steps::
 .. _downloads page: https://github.com/JNRowe/blanco/downloads
 .. _GitHub: https://github.com/
 .. _Python: http://www.python.org/
-.. _jnrbase: https://crate.io/packages/jnrbase/
+.. _jnrbase: https://pypi.python.org/pypi/jnrbase/
 .. _libnotify Python bindings: http://www.galago-project.org/downloads.php
 .. _Gentoo: http://www.gentoo.org/
 .. _my overlay: http://github.com/JNRowe/misc-overlay

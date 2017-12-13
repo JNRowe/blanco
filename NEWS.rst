@@ -18,11 +18,11 @@ User-visible changes
 * i18n support, open a PR with your translations now! ;)
 
 .. _abook: http://abook.sourceforge.net/
-.. _arrow: https://crate.io/packages/arrow/
-.. _pip: https://crate.io/packages/pip/
+.. _arrow: https://pypi.python.org/pypi/arrow/
+.. _pip: https://pypi.python.org/pypi/pip/
 .. _pep-3101: http://www.python.org/dev/peps/pep-3101/
-.. _expecter: https://crate.io/packages/expecter/
-.. _nose2: https://crate.io/packages/nose2/
+.. _expecter: https://pypi.python.org/pypi/expecter/
+.. _nose2: https://pypi.python.org/pypi/nose2/
 
 0.5.0 - 2010-05-16
 ------------------
