@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from __future__ import print_function
-
 from . import _version
 
 __version__ = _version.dotted
@@ -63,7 +61,7 @@ except ImportError:
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from jnrbase import (colourise, compat, i18n, xdg_basedir)
+from jnrbase import (colourise, i18n, xdg_basedir)
 
 
 _, N_ = i18n.setup(_version)
@@ -96,10 +94,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     else:
         raise ValueError(_('Unknown mailbox format for %r') % path)
     # Use factory=None to work around the rfc822.Message default for Maildir.
-    if compat.PY2:  # pragma: Python 2
-        mbox = mtype(path.encode(), factory=None, create=False)
-    else:  # pragma: Python 3
-        mbox = mtype(path, factory=None, create=False)
+    mbox = mtype(path, factory=None, create=False)
 
     contacts = []
     for message in mbox:
@@ -137,7 +132,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed([line for line in compat.open(log)
+    for line in reversed([line for line in open(log)
                           if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
@@ -244,7 +239,6 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             colourise.pwarn(message % contact.name)
 
 
-@compat.mangle_repr_type
 class Contact(object):
 
     """Simple contact class."""
@@ -252,7 +246,7 @@ class Contact(object):
     def __init__(self, name, addresses, frequency):
         """Initialise a new `Contact` object."""
         self.name = name
-        if isinstance(addresses, compat.basestring):
+        if isinstance(addresses, str):
             self.addresses = [addresses.lower(), ]
         else:
             self.addresses = [s.lower() for s in addresses]
@@ -308,7 +302,6 @@ class Contact(object):
         return name
 
 
-@compat.mangle_repr_type
 class Contacts(list):
 
     """Group of `Contact`."""

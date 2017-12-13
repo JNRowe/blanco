@@ -20,14 +20,10 @@
 
 from datetime import date
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO  # NOQA
+from io import StringIO
 
 from arrow import Arrow
 from hiro import Timeline
-from jnrbase import compat
 from pytest import (mark, raises)
 
 from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
@@ -37,13 +33,13 @@ from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
 def test_missing_mailbox():
     with raises(IOError) as err:
         parse_sent('None')
-    assert err.value.message == "Sent mailbox 'None' not found"
+    assert str(err.value) == "Sent mailbox 'None' not found"
 
 
 def test_unknown_mailbox_format():
     with raises(ValueError) as err:
         parse_sent('/dev/null')
-    assert err.value.message == "Unknown mailbox format for '/dev/null'"
+    assert str(err.value) == "Unknown mailbox format for '/dev/null'"
 
 
 @mark.parametrize('mbox, recipients, addresses, result', [
@@ -71,7 +67,7 @@ def test_parse_sent(mbox, recipients, addresses, result):
 def test_missing_msmtp_log():
     with raises(IOError) as err:
         parse_msmtp('None')
-    assert err.value.message == "msmtp sent log 'None' not found"
+    assert str(err.value) == "msmtp sent log 'None' not found"
 
 
 @mark.parametrize('log, all_recipients, addresses, gmail, result', [
@@ -105,13 +101,13 @@ def test_parse_msmtp_invalid_gmail():
     with Timeline().freeze(date(2014, 6, 27)):
         with raises(ValueError) as err:
             parse_msmtp('tests/data/sent.msmtp', False, None, True)
-        assert 'not in gmail format' in err.value.message
+        assert 'not in gmail format' in str(err.value)
 
 
 def test_invalid_duration():
     with raises(ValueError) as err:
         parse_duration('1 k')
-    assert err.value.message == "Invalid duration value '1 k'"
+    assert str(err.value) == "Invalid duration value '1 k'"
 
 
 @mark.parametrize('duration, result', [
@@ -136,7 +132,7 @@ def test_process_config_invalid(monkeypatch):
                         lambda s: 'tests/data/invalid')
     with raises(SyntaxError) as err:
         process_config()
-    assert 'Invalid configuration file' in err.value.message
+    assert 'Invalid configuration file' in str(err.value)
 
 
 class TestShowNote:
@@ -183,7 +179,7 @@ class TestShowNote:
             monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
             with raises(OSError) as err:
                 show_note(True, 'Broken note for %s', self.contact1)
-            assert err.value.message == 'Notification failed to display!'
+            assert str(err.value) == 'Notification failed to display!'
 
 
 class TestContact:
@@ -217,7 +213,7 @@ class TestContact:
     def test___format___invalid_type(self):
         with raises(ValueError) as err:
             format(self.contact1, 'hat style')
-        assert err.value.message == "Unknown format_spec 'hat style'"
+        assert str(err.value) == "Unknown format_spec 'hat style'"
 
     def test_trigger(self):
         assert self.contact1.trigger({
@@ -254,16 +250,15 @@ class TestContacts:
         contacts = Contacts()
         contacts.parse('tests/data/blanco.conf', 'frequency')
 
-        # Dirty, dirty, way to handle Unicode type repr differences... sorry
         assert repr(contacts) == \
             ('Contacts(['
-             "Contact(u'Bill', [u'test@example.com'], 30), "
-             "Contact(u'Joe', [u'joe@example.com'], 30), "
-             "Contact(u'Steven', [u'steven@example.com'], 365)"
-             '])'.replace("u'", "u'" if compat.PY2 else "'"))
+             "Contact('Bill', ['test@example.com'], 30), "
+             "Contact('Joe', ['joe@example.com'], 30), "
+             "Contact('Steven', ['steven@example.com'], 365)"
+             '])')
 
     def test_parse_missing_file(self, tmpdir):
         contacts = Contacts()
         with raises(IOError) as err:
             contacts.parse(str(tmpdir.join('no_such_file')), 'frequency')
-        assert 'Addressbook file not found' in err.value.message
+        assert 'Addressbook file not found' in str(err.value)
