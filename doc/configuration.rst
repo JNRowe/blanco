@@ -1,8 +1,8 @@
 Setup
 -----
 
-:program:`blanco` requires access to your sent mail for calculating last contact
-times, and also access to a map of contact-to-frequency for calculating
+:program:`blanco` requires access to your sent mail for calculating last
+contact times, and also access to a map of contact-to-frequency for calculating
 forgotten people.
 
 If you can’t fulfil the requirements in the following two sections then
@@ -11,7 +11,7 @@ If you can’t fulfil the requirements in the following two sections then
 Sent mail
 '''''''''
 
-``mbox``, ``maildir`` and ``MH`` mailbox formats are supported, thanks to the
+mbox_, maildir_ and MH_ mailbox formats are supported, thanks to the
 wonderful mailbox_ Python module.
 
 msmtp_ logs are also supported, and using them is the preferred method.  Parsing
@@ -26,13 +26,14 @@ Addressbook
 '''''''''''
 
 The default addressbook format is the format used by abook_, where one of the
-custom fields allowed by abook_ is used to store frequency information.
+custom fields allowed by :program:`abook` is used to store frequency
+information.
 
-``blanco`` expects your abook_ entries to have a frequency value in the
-``frequency`` field [#]_.  The format is “<n> <units>”, where ``n`` is a number
-and ``units`` is a character from the set ``[dwmy]``.  For example, an entry
-with a frequency of ``3 m`` will be triggered if there hasn’t been a mail sent
-to that address in three months.
+:program:`blanco` expects your :program:`abook` entries to have a frequency
+value in the ``frequency`` field [#]_.  The format is “<n> <units>”, where
+``n`` is a number and ``units`` is a character from the set ``[dwmy]``.  For
+example, an entry with a frequency of ``3 m`` will be triggered if there hasn’t
+been a mail sent to that address in three months.
 
 You can add the following snippet to your :file:`~/.abook/abookrc` file to
 display a frequency field in the ``other`` tab::
@@ -43,12 +44,12 @@ display a frequency field in the ``other`` tab::
 
 .. figure:: .static/abook_rach.png
 
-You do *not* need to set this for ``blanco`` to work, but it makes the purpose
-of the field clearer.
+You do *not* need to set this for :program:`blanco` to work, but it makes the
+purpose of the field clearer.
 
-``blanco`` can be used without abook_, as it only requires a ini_ formatted
-contacts file.  To create your own contacts file without abook follow the format
-below:
+:program:`blanco` can be used without :program:`abook`, as it only requires
+a ini_ formatted contacts file.  To create your own contacts file without abook
+follow the format below:
 
 .. code-block:: ini
 
@@ -63,11 +64,11 @@ below:
     freq=30d
 
 If you use the layout above you should specify ``--field=freq`` when calling
-``blanco``.
+:program:`blanco`.
 
-Another alternative would be to use abook_ just to convert your current address
-book in to a suitable format.  Check the output of ``abook --formats`` for the
-file formats supported by your version of abook_.
+Another alternative would be to use :program:`abook` just to convert your
+current address book in to a suitable format.  Check the output of ``abook
+--formats`` for the file formats supported by your version of :program:`abook`.
 
 .. [#] You can select a different field using the :option:`--field <-s>` option
        to ``blanco``.
@@ -97,6 +98,9 @@ An example configuration file is below:
        likely to be ``~/.config`` if you haven’t set it.  For more information
        see `XDG base directory specification`_.
 
+.. _mbox: https://en.m.wikipedia.org/wiki/Mbox
+.. _maildir: https://en.m.wikipedia.org/wiki/Maildir
+.. _mh: https://en.m.wikipedia.org/wiki/MH_Message_Handling_System
 .. _mailbox: http://docs.python.org/library/mailbox.html
 .. _msmtp: http://msmtp.sourceforge.net/
 .. _gmail: http://mail.google.com/

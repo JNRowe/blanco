@@ -1,5 +1,3 @@
-.. _blanco-label:
-
 :mod:`blanco`
 =============
 
@@ -12,7 +10,7 @@ touch with people.  All it does is notify you if you’re failing to keep in
 contact.  It is just a quick solution to a simple problem, as long as you use
 abook_ and your sent mail is easily accessible that is.
 
-It is written in Python_, and requires v2.6 or later.  :mod:`blanco` is released
+It is written in Python_, and requires v3.5 or later.  :mod:`blanco` is released
 under the `GPL v3`_
 
 Contents:

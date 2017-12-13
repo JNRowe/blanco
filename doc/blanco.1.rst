@@ -1,5 +1,5 @@
-blanco.py
-=========
+blanco
+======
 
 *“Hey, remember me?”*
 """""""""""""""""""""
@@ -13,14 +13,14 @@ blanco.py
 SYNOPSIS
 --------
 
-    blanco.py [option]...
+    blanco [option]...
 
 DESCRIPTION
 -----------
 
-A simple tool to help you, or more specifically *me*, keep in touch with people.
-All it does is notify you if you’re failing to keep in contact.  It is just
-a quick solution to a simple problem, as long as you use `abook
+A simple tool to help you, or more specifically *me*, keep in touch with
+people.  All it does is notify you if you’re failing to keep in contact.  It is
+just a quick solution to a simple problem, as long as you use `abook
 <http://abook.sourceforge.net/>`_ and your sent mail is easily accessible.
 
 OPTIONS
@@ -62,9 +62,9 @@ OPTIONS
 CONFIGURATION FILE
 ------------------
 
-The configuration file, **${XDG_CONFIG_HOME:-~/.config}/blanco/config.ini**, is
-a simple **INI** format file for storing defaults for the command line options.
-For example:
+The configuration file,
+:file:`${XDG_CONFIG_HOME:-~/.config}/blanco/config.ini`, is a simple ``INI``
+format file for storing defaults for the command line options.  For example:
 
 .. code-block:: ini
 
@@ -72,7 +72,8 @@ For example:
     field = custom5
 
 With the above configuration file the default sent mail source will be a msmtp
-logfile, and frequency information will be stored in abook’s ``custom5`` field.
+logfile, and frequency information will be stored in :program:`abook`’s
+``custom5`` field.
 
 BUGS
 ----
