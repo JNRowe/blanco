@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
+from configparser import MissingSectionHeaderError
 from datetime import date
 
 from io import StringIO
@@ -123,15 +123,23 @@ def test_process_config(monkeypatch):
     monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
                         lambda s: 'tests/data/valid')
     conf = process_config()
-    assert conf.get('colour') is False
+    assert conf['colour'] is False
 
 
 def test_process_config_invalid(monkeypatch):
     monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
                         lambda s: 'tests/data/invalid')
-    with raises(SyntaxError) as err:
+    with raises(MissingSectionHeaderError) as err:
         process_config()
-    assert 'Invalid configuration file' in str(err.value)
+    assert 'File contains no section headers.' in str(err.value)
+
+
+def test_process_config_invalid_types(monkeypatch):
+    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
+                        lambda s: 'tests/data/invalid_values')
+    with raises(ValueError) as err:
+        process_config()
+    assert str(err.value) == "Config value for 'colour' must be a bool"
 
 
 class TestShowNote:
