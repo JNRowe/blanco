@@ -144,7 +144,7 @@ class TestShowNote:
         pynotify.URGENCY_CRITICAL,
     ])
     def test_show_note(self, urgency, capsys):
-        show_note(False, 'Note for %s', self.contact1, urgency=urgency)
+        show_note(False, 'Note for {}', self.contact1, urgency=urgency)
         out, _ = capsys.readouterr()
         # Use contains to avoid having to mess around with {,no-}colour options
         assert 'Note for James Rowe' in out
@@ -172,12 +172,12 @@ class TestShowNote:
         monkeypatch.setattr(pynotify, 'get_server_caps',
                             staticmethod(lambda: []), raising=False)
         if show_succeeds:
-            show_note(True, 'Note for %s', self.contact1)
+            show_note(True, 'Note for {}', self.contact1)
             assert 'Note for James Rowe' in Notification.bodies
         else:
             monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
             with raises(OSError) as err:
-                show_note(True, 'Broken note for %s', self.contact1)
+                show_note(True, 'Broken note for {}', self.contact1)
             assert str(err.value) == 'Notification failed to display!'
 
 

@@ -83,15 +83,15 @@ def parse_sent(path, all_recipients=False, addresses=None):
     """
     path = os.path.expanduser(path)
     if not os.path.exists(path):
-        raise IOError(_('Sent mailbox %r not found') % path)
-    if os.path.isdir('%s/new' % path):
+        raise IOError(_('Sent mailbox {!r} not found').format(path))
+    if os.path.isdir('{}/new'.format(path)):
         mtype = mailbox.Maildir
-    elif os.path.exists('%s/.mh_sequences' % path):
+    elif os.path.exists('{}/.mh_sequences'.format(path)):
         mtype = mailbox.MH
     elif os.path.isfile(path):
         mtype = mailbox.mbox
     else:
-        raise ValueError(_('Unknown mailbox format for %r') % path)
+        raise ValueError(_('Unknown mailbox format for {!r}').format(path))
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = mtype(path, factory=None, create=False)
 
@@ -121,7 +121,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :return: Keys of email address, and values of seen date
     """
     if not os.path.exists(log):
-        raise IOError(_('msmtp sent log %r not found') % log)
+        raise IOError(_('msmtp sent log {!r} not found').format(log))
 
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
@@ -139,8 +139,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 ts = int(gd.groups()[0])
                 parsed = arrow.get(ts)
             except AttributeError:
-                raise ValueError(_('msmtp %r log is not in gmail format')
-                                 % log)
+                raise ValueError(
+                    _('msmtp {!r} log is not in gmail format').format(log))
             year = parsed.year
             md = parsed.month, parsed.day
         else:
@@ -172,7 +172,7 @@ def parse_duration(duration):
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
-        raise ValueError(_('Invalid duration value %r') % duration)
+        raise ValueError(_('Invalid duration value {!r}').format(duration))
     value, units = match.groups()
     units = 'dwmy'.index(units.lower())
     # days per day/week/month/year
@@ -205,8 +205,9 @@ def process_config():
         for key in results:
             if results[key]:
                 continue
-            colourise.pfail(_('Config value for %r is invalid') % key)
-        raise SyntaxError(_('Invalid configuration file %r') % config_file)
+            colourise.pfail(_('Config value for {!r} is invalid').format(key))
+        raise SyntaxError(
+            _('Invalid configuration file {!r}').format(config_file))
 
     return config
 
@@ -224,7 +225,7 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
     """
     if notify:
         note = pynotify.Notification(_('Hey, remember me?'),
-                                     message % contact.notify_str(),
+                                     message.format(contact.notify_str()),
                                      'stock_person')
         note.set_urgency(urgency)
         note.set_timeout(expires)
@@ -233,9 +234,9 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
             raise OSError(_('Notification failed to display!'))
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
-            colourise.pfail(message % contact.name)
+            colourise.pfail(message.format(contact.name))
         else:
-            colourise.pwarn(message % contact.name)
+            colourise.pwarn(message.format(contact.name))
 
 
 class Contact:
@@ -253,13 +254,14 @@ class Contact:
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '%s(%r, %r, %r)' % (self.__class__.__name__, self.name,
-                                   self.addresses, self.frequency)
+        return '{}({!r}, {!r}, {!r})'.format(self.__class__.__name__,
+                                             self.name, self.addresses,
+                                             self.frequency)
 
     def __str__(self):
         """Pretty printed contact string."""
-        return '%s <%s> (%i days)' % (self.name, ', '.join(self.addresses),
-                                      self.frequency)
+        return '{} <{}> ({} days)'.format(self.name, ', '.join(self.addresses),
+                                          self.frequency)
 
     def __format__(self, format_spec):
         """Extended pretty printing for `Contact` strings.
@@ -274,7 +276,7 @@ class Contact:
         elif format_spec == 'email':
             return formataddr((self.name, self.addresses[0]))
         else:
-            raise ValueError(_('Unknown format_spec %r') % format_spec)
+            raise ValueError(_('Unknown format_spec {!r}').format(format_spec))
 
     def trigger(self, sent):
         """Calculate trigger date for contact.
@@ -294,8 +296,8 @@ class Contact:
         :return: Stylised name for use with notifications
         """
         if 'body-hyperlinks' in pynotify.get_server_caps():
-            name = "<a href='mailto:%s'>%s</a>" \
-                % (self.addresses[0], self.name)
+            name = "<a href='mailto:{}'>{}</a>".format(self.addresses[0],
+                                                       self.name)
         else:
             name = self.name
         return name
@@ -313,8 +315,9 @@ class Contacts(list):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '%s(%r)' % (self.__class__.__name__,
-                           sorted(self[:], key=operator.attrgetter('name')))
+        return '{}({!r})'.format(self.__class__.__name__,
+                                 sorted(self[:],
+                                        key=operator.attrgetter('name')))
 
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
@@ -331,7 +334,7 @@ class Contacts(list):
         :param str field: Address book field to use for contact frequency
         """
         if not os.path.isfile(addressbook):
-            raise IOError('Addressbook file not found %r' % addressbook)
+            raise IOError('Addressbook file not found {!r}'.format(addressbook))
         config = configobj.ConfigObj(os.path.expanduser(addressbook))
 
         for entry in config.values():
@@ -414,7 +417,7 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     now = arrow.now()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(notify, _('No mail record for %s'), contact)
+            show_note(notify, _('No mail record for {}'), contact)
         elif now > contact.trigger(sent):
-            show_note(notify, _('Mail due for %s'), contact,
+            show_note(notify, _('Mail due for {}'), contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
