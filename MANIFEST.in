@@ -1,9 +1,6 @@
 include COPYING
 include *.rst
 include blanco.py
-include blanco/locale/blanco.pot
-include blanco/locale/*/LC_MESSAGES/*.mo
-include blanco/locale/*/LC_MESSAGES/*.po
 include doc/conf.py
 include doc/wordlist.txt
 include extra/README.pip

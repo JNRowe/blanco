@@ -51,14 +51,7 @@ except ImportError:
         EXPIRES_NEVER = 0
     pynotify = _Fake_PyNotify  # NOQA
 
-from jnrbase import (colourise, i18n, xdg_basedir)
-
-
-_, N_ = i18n.setup(_version)
-
-
-USAGE = _("Check sent mail to make sure you’re keeping in contact with your "
-          "friends.")
+from jnrbase import (colourise, xdg_basedir)
 
 
 def parse_sent(path, all_recipients=False, addresses=None):
@@ -74,7 +67,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     """
     path = os.path.expanduser(path)
     if not os.path.exists(path):
-        raise IOError(_('Sent mailbox ‘{}’ not found').format(path))
+        raise IOError('Sent mailbox ‘{}’ not found'.format(path))
     if os.path.isdir('{}/new'.format(path)):
         mtype = mailbox.Maildir
     elif os.path.exists('{}/.mh_sequences'.format(path)):
@@ -82,7 +75,7 @@ def parse_sent(path, all_recipients=False, addresses=None):
     elif os.path.isfile(path):
         mtype = mailbox.mbox
     else:
-        raise ValueError(_('Unknown mailbox format for ‘{}’').format(path))
+        raise ValueError('Unknown mailbox format for ‘{}’'.format(path))
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = mtype(path, factory=None, create=False)
 
@@ -112,7 +105,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :return: Keys of email address, and values of seen date
     """
     if not os.path.exists(log):
-        raise IOError(_('msmtp sent log ‘{}’ not found').format(log))
+        raise IOError('msmtp sent log ‘{}’ not found'.format(log))
 
     matcher = re.compile('recipients=([^ ]+)')
     gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
@@ -131,7 +124,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 parsed = datetime.datetime.utcfromtimestamp(ts)
             except AttributeError:
                 raise ValueError(
-                    _('msmtp {!r} log is not in gmail format').format(log))
+                    'msmtp {!r} log is not in gmail format'.format(log))
             year = parsed.year
             md = parsed.month, parsed.day
         else:
@@ -162,7 +155,7 @@ def parse_duration(duration):
     """
     match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
     if not match:
-        raise ValueError(_('Invalid duration value ‘{}’').format(duration))
+        raise ValueError('Invalid duration value ‘{}’'.format(duration))
     value, units = match.groups()
     units = 'dwmy'.index(units.lower())
     # days per day/week/month/year
@@ -195,9 +188,9 @@ def process_config():
         for key in results:
             if results[key]:
                 continue
-            colourise.pfail(_('Config value for {!r} is invalid').format(key))
+            colourise.pfail('Config value for {!r} is invalid'.format(key))
         raise SyntaxError(
-            _('Invalid configuration file {!r}').format(config_file))
+            'Invalid configuration file {!r}'.format(config_file))
 
     return config
 
@@ -214,14 +207,14 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
     :raise OSError: Failure to show notification
     """
     if notify:
-        note = pynotify.Notification(_('Hey, remember me?'),
+        note = pynotify.Notification('Hey, remember me?',
                                      message.format(contact.notify_str()),
                                      'stock_person')
         note.set_urgency(urgency)
         note.set_timeout(expires)
 
         if not note.show():
-            raise OSError(_('Notification failed to display!'))
+            raise OSError('Notification failed to display!')
     else:
         if urgency == pynotify.URGENCY_CRITICAL:
             colourise.pfail(message.format(contact.name))
@@ -266,7 +259,7 @@ class Contact:
         elif format_spec == 'email':
             return formataddr((self.name, self.addresses[0]))
         else:
-            raise ValueError(_('Unknown format_spec {!r}').format(format_spec))
+            raise ValueError('Unknown format_spec {!r}'.format(format_spec))
 
     def trigger(self, sent):
         """Calculate trigger date for contact.
@@ -334,26 +327,28 @@ class Contacts(list):
                                 parse_duration(entry[field])))
 
 
-@click.command(help=USAGE, epilog=_('Please report bugs to jnrowe@gmail.com'))
+@click.command(help='Check sent mail to make sure you’re keeping in contact '
+                    'with your friends.',
+               epilog='Please report bugs to jnrowe@gmail.com')
 @click.option('-a', '--addressbook', metavar='FILENAME',
-              help=_('Address book to read contacts from.'))
+              help='Address book to read contacts from.')
 @click.option('-t', '--sent-type', type=click.Choice(['mailbox', 'msmtp']),
-              help=_('Sent source type.'))
+              help='Sent source type.')
 @click.option('-r', '--all/--no-all',
-              help=_('Include all recipients(CC and BCC fields).'))
+              help='Include all recipients(CC and BCC fields).')
 @click.option('-m', '--mbox', metavar='FILENAME',
-              help=_('Mailbox used to store sent mail.'))
-@click.option('-l', '--log', metavar='FILENAME', help=_('msmtp log to parse.'))
+              help='Mailbox used to store sent mail.')
+@click.option('-l', '--log', metavar='FILENAME', help='msmtp log to parse.')
 @click.option('-g', '--gmail/--no-gmail',
-              help=_('Log from a gmail account(use accurate filter).'))
+              help='Log from a gmail account(use accurate filter).')
 @click.option('-s', '--field',
-              help=_('Addressbook field to use for frequency value.'))
+              help='Addressbook field to use for frequency value.')
 @click.option('-n', '--notify/--no-notify',
-              help=_('Display reminders using notification popups.'))
+              help='Display reminders using notification popups.')
 @click.option('--colour/--no-colour', envvar='BLANCO_COLOUR', default=None,
-              help=_('Output colourised informational text.'))
+              help='Output colourised informational text.')
 @click.option('-v', '--verbose/--no-verbose',
-              help=_('Produce verbose output.'))
+              help='Produce verbose output.')
 @click.version_option(_version.dotted)
 def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
          verbose):  # pragma: no cover
@@ -385,12 +380,12 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
 
     if notify and pynotify is _Fake_PyNotify:
         raise click.UsageError(
-            colourise.fail(_('Notification popups require the notify-python '
-                             'package') + '\n'))
+            colourise.fail(
+                'Notification popups require the notify-python package\n'))
 
     if notify:
         if not pynotify.init(sys.argv[0]):
-            colourise.pfail(_('Unable to initialise pynotify!'))
+            colourise.pfail('Unable to initialise pynotify!')
             return errno.EIO
 
     contacts = Contacts()
@@ -407,7 +402,7 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     now = datetime.datetime.utcnow()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
-            show_note(notify, _('No mail record for {}'), contact)
+            show_note(notify, 'No mail record for {}', contact)
         elif now > contact.trigger(sent):
-            show_note(notify, _('Mail due for {}'), contact,
+            show_note(notify, 'Mail due for {}', contact,
                       pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)

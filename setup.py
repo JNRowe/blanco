@@ -54,7 +54,6 @@ setup(
     keywords='reminder mail contact',
     packages=['blanco', ],
     include_package_data=True,
-    package_data={'': ['blanco/locale/*/LC_MESSAGES/*.mo']},
     entry_points={'console_scripts': ['blanco = blanco:main', ]},
     install_requires=install_requires,
     tests_require=['pytest'],
