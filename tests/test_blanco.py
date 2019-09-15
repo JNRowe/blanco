@@ -37,13 +37,13 @@ TEST_CONTACT2 = Contact('James Rowe',
 def test_missing_mailbox():
     with raises(IOError) as err:
         parse_sent('None')
-    assert str(err.value) == "Sent mailbox ‘None’ not found"
+    assert str(err.value) == 'Sent mailbox ‘None’ not found'
 
 
 def test_unknown_mailbox_format():
     with raises(ValueError) as err:
         parse_sent('/dev/null')
-    assert str(err.value) == "Unknown mailbox format for ‘/dev/null’"
+    assert str(err.value) == 'Unknown mailbox format for ‘/dev/null’'
 
 
 @mark.parametrize('mbox, recipients, addresses, result', [
@@ -71,7 +71,7 @@ def test_parse_sent(mbox, recipients, addresses, result):
 def test_missing_msmtp_log():
     with raises(IOError) as err:
         parse_msmtp('None')
-    assert str(err.value) == "msmtp sent log ‘None’ not found"
+    assert str(err.value) == 'msmtp sent log ‘None’ not found'
 
 
 @mark.parametrize('log, all_recipients, addresses, gmail, result', [
@@ -111,7 +111,7 @@ def test_parse_msmtp_invalid_gmail():
 def test_invalid_duration():
     with raises(ValueError) as err:
         parse_duration('1 k')
-    assert str(err.value) == "Invalid duration value ‘1 k’"
+    assert str(err.value) == 'Invalid duration value ‘1 k’'
 
 
 @mark.parametrize('duration, result', [
