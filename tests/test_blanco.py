@@ -28,6 +28,12 @@ from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
                     parse_sent, process_config, pynotify, show_note)
 
 
+TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+TEST_CONTACT2 = Contact('James Rowe',
+                        ['jnrowe@gmail.com', 'jnrowe@example.com'],
+                        200)
+
+
 def test_missing_mailbox():
     with raises(IOError) as err:
         parse_sent('None')
@@ -133,130 +139,123 @@ def test_process_config_invalid(monkeypatch):
     assert 'Invalid configuration file' in str(err.value)
 
 
-class TestShowNote:
-    @classmethod
-    def setup_class(cls):
-        cls.contact1 = Contact('James Rowe', 'jnrowe@gmail.com', 200)
+@mark.parametrize('urgency', [
+    pynotify.URGENCY_NORMAL,
+    pynotify.URGENCY_CRITICAL,
+])
+def test_show_note(urgency, capsys):
+    show_note(False, 'Note for {}', TEST_CONTACT, urgency=urgency)
+    _, err = capsys.readouterr()
+    # Use contains to avoid having to mess around with {,no-}colour options
+    assert 'Note for James Rowe' in err
 
-    @mark.parametrize('urgency', [
-        pynotify.URGENCY_NORMAL,
-        pynotify.URGENCY_CRITICAL,
+
+@mark.parametrize('show_succeeds', [True, False])
+def test_show_note_pynotify(show_succeeds, monkeypatch):
+    class Notification:
+        titles = bodies = icons = []
+
+        def __init__(self, t, s, i):
+            self.titles.append(t)
+            self.bodies.append(s)
+            self.icons.append(i)
+
+        def set_urgency(self, u):
+            self.u = u
+
+        def set_timeout(self, o):
+            self.o = o
+
+        def show(self):
+            return True
+    monkeypatch.setattr(pynotify, 'Notification', Notification,
+                        raising=False)
+    monkeypatch.setattr(pynotify, 'get_server_caps',
+                        staticmethod(lambda: []), raising=False)
+    if show_succeeds:
+        show_note(True, 'Note for {}', TEST_CONTACT)
+        assert 'Note for James Rowe' in Notification.bodies
+    else:
+        monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
+        with raises(OSError) as err:
+            show_note(True, 'Broken note for {}', TEST_CONTACT)
+        assert str(err.value) == 'Notification failed to display!'
+
+
+def test_Contact__repr__():
+    assert repr(TEST_CONTACT) == \
+        "Contact('James Rowe', ['jnrowe@gmail.com'], 200)"
+
+
+@mark.parametrize('contact, expected', [
+    (TEST_CONTACT, 'James Rowe <jnrowe@gmail.com> (200 days)'),
+    (TEST_CONTACT2, 'James Rowe <jnrowe@gmail.com, jnrowe@example.com> '
+                    '(200 days)'),
+])
+def test_Contact__str__(contact, expected):
+    assert str(contact) == expected
+
+
+@mark.parametrize('contact, spec, expected', [
+    (TEST_CONTACT, '', 'James Rowe <jnrowe@gmail.com> (200 days)'),
+    (TEST_CONTACT, 'email', 'James Rowe <jnrowe@gmail.com>'),
+    (TEST_CONTACT2, 'email', 'James Rowe <jnrowe@gmail.com>'),
+])
+def test_Contact__format__(contact, spec, expected):
+    assert format(contact, spec) == expected
+
+
+def test_Contact__format___invalid_type():
+    with raises(ValueError) as err:
+        format(TEST_CONTACT, 'hat style')
+    assert str(err.value) == "Unknown format_spec 'hat style'"
+
+
+def test_trigger():
+    assert TEST_CONTACT.trigger({
+        'jnrowe@gmail.com': date(1942, 1, 1),
+    }) == date(1942, 7, 20)
+
+
+@mark.parametrize('server_caps, expected', [
+    ([], 'James Rowe'),
+    (['body-hyperlinks'],
+        "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
+])
+def test_notify_str(server_caps, expected, monkeypatch):
+    monkeypatch.setattr(pynotify, 'get_server_caps',
+                        staticmethod(lambda: server_caps), raising=False)
+    assert TEST_CONTACT.notify_str() == expected
+
+
+def test_Contacts__repr__():
+    assert repr(Contacts([TEST_CONTACT, ])) == \
+        "Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])"
+
+
+def test_Contacts_addresses():
+    p = Contacts([
+        Contact('Bill', ['test@example.com', 'new@example.com'], 30),
+        Contact('Joe', ['joe@example.com'], 30)
     ])
-    def test_show_note(self, urgency, capsys):
-        show_note(False, 'Note for {}', self.contact1, urgency=urgency)
-        _, err = capsys.readouterr()
-        # Use contains to avoid having to mess around with {,no-}colour options
-        assert 'Note for James Rowe' in err
-
-    @mark.parametrize('show_succeeds', [True, False])
-    def test_show_note_pynotify(self, show_succeeds, monkeypatch):
-        class Notification:
-            titles = bodies = icons = []
-
-            def __init__(self, t, s, i):
-                self.titles.append(t)
-                self.bodies.append(s)
-                self.icons.append(i)
-
-            def set_urgency(self, u):
-                self.u = u
-
-            def set_timeout(self, o):
-                self.o = o
-
-            def show(self):
-                return True
-        monkeypatch.setattr(pynotify, 'Notification', Notification,
-                            raising=False)
-        monkeypatch.setattr(pynotify, 'get_server_caps',
-                            staticmethod(lambda: []), raising=False)
-        if show_succeeds:
-            show_note(True, 'Note for {}', self.contact1)
-            assert 'Note for James Rowe' in Notification.bodies
-        else:
-            monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
-            with raises(OSError) as err:
-                show_note(True, 'Broken note for {}', self.contact1)
-            assert str(err.value) == 'Notification failed to display!'
+    assert p.addresses() == ['test@example.com', 'new@example.com',
+                             'joe@example.com']
 
 
-class TestContact:
-    @classmethod
-    def setup_class(cls):
-        cls.contact1 = Contact('James Rowe', 'jnrowe@gmail.com', 200)
-        cls.contact2 = Contact('James Rowe',
-                               ['jnrowe@gmail.com', 'jnrowe@example.com'],
-                               200)
+def test_parse():
+    contacts = Contacts()
+    contacts.parse('tests/data/blanco.conf', 'frequency')
 
-    def test___repr__(self):
-        assert repr(self.contact1) == \
-            "Contact('James Rowe', ['jnrowe@gmail.com'], 200)"
-
-    @mark.parametrize('contact, expected', [
-        ('contact1', 'James Rowe <jnrowe@gmail.com> (200 days)'),
-        ('contact2', 'James Rowe <jnrowe@gmail.com, jnrowe@example.com> '
-                     '(200 days)'),
-    ])
-    def test___str__(self, contact, expected):
-        assert str(getattr(self, contact)) == expected
-
-    @mark.parametrize('contact, spec, expected', [
-        ('contact1', '', 'James Rowe <jnrowe@gmail.com> (200 days)'),
-        ('contact1', 'email', 'James Rowe <jnrowe@gmail.com>'),
-        ('contact2', 'email', 'James Rowe <jnrowe@gmail.com>'),
-    ])
-    def test___format__(self, contact, spec, expected):
-        assert format(getattr(self, contact), spec) == expected
-
-    def test___format___invalid_type(self):
-        with raises(ValueError) as err:
-            format(self.contact1, 'hat style')
-        assert str(err.value) == "Unknown format_spec 'hat style'"
-
-    def test_trigger(self):
-        assert self.contact1.trigger({
-            'jnrowe@gmail.com': date(1942, 1, 1),
-        }) == date(1942, 7, 20)
-
-    @mark.parametrize('server_caps, expected', [
-        ([], 'James Rowe'),
-        (['body-hyperlinks'],
-         "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
-    ])
-    def test_notify_str(self, server_caps, expected, monkeypatch):
-        monkeypatch.setattr(pynotify, 'get_server_caps',
-                            staticmethod(lambda: server_caps), raising=False)
-        assert self.contact1.notify_str() == expected
+    assert repr(contacts) == \
+        ('Contacts(['
+            "Contact('Bill', ['test@example.com'], 30), "
+            "Contact('Joe', ['joe@example.com'], 30), "
+            "Contact('Steven', ['steven@example.com'], 365)"
+            '])')
 
 
-class TestContacts:
-    def test___repr__(self):
-        assert repr(Contacts([
-            Contact('James Rowe', 'jnrowe@gmail.com', 200),
-        ])) == \
-            "Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])"
-
-    def test_addresses(self):
-        p = Contacts([
-            Contact('Bill', ['test@example.com', 'new@example.com'], 30),
-            Contact('Joe', ['joe@example.com'], 30)
-        ])
-        assert p.addresses() == ['test@example.com', 'new@example.com',
-                                 'joe@example.com']
-
-    def test_parse(self):
-        contacts = Contacts()
-        contacts.parse('tests/data/blanco.conf', 'frequency')
-
-        assert repr(contacts) == \
-            ('Contacts(['
-             "Contact('Bill', ['test@example.com'], 30), "
-             "Contact('Joe', ['joe@example.com'], 30), "
-             "Contact('Steven', ['steven@example.com'], 365)"
-             '])')
-
-    def test_parse_missing_file(self, tmpdir):
-        contacts = Contacts()
-        with raises(IOError) as err:
-            contacts.parse(str(tmpdir.join('no_such_file')), 'frequency')
-        assert 'Addressbook file not found' in str(err.value)
+def test_parse_missing_file(tmpdir):
+    contacts = Contacts()
+    with raises(IOError) as err:
+        contacts.parse(str(tmpdir.join('no_such_file')), 'frequency')
+    assert 'Addressbook file not found' in str(err.value)
