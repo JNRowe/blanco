@@ -144,9 +144,9 @@ class TestShowNote:
     ])
     def test_show_note(self, urgency, capsys):
         show_note(False, 'Note for {}', self.contact1, urgency=urgency)
-        out, _ = capsys.readouterr()
+        _, err = capsys.readouterr()
         # Use contains to avoid having to mess around with {,no-}colour options
-        assert 'Note for James Rowe' in out
+        assert 'Note for James Rowe' in err
 
     @mark.parametrize('show_succeeds', [True, False])
     def test_show_note_pynotify(self, show_succeeds, monkeypatch):
