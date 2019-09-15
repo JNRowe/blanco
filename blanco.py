@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 """blanco - Keep in touch, barely."""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #

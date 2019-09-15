@@ -1,4 +1,4 @@
-#! /usr/bin/python -tt
+#! /usr/bin/env python3
 """setup.py - Setuptools tasks and config for blanco"""
 # Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
 #
