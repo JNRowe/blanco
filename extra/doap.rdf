@@ -14,7 +14,7 @@
         touch with people.  All it does is notify you if you’re failing to keep
         in contact.
     </description>
- 
+
     <homepage rdf:resource="https://github.com/JNRowe/blanco" />
     <bug-database rdf:resource="http://github.com/JNRowe/blanco/issues" />
     <repository>
@@ -26,7 +26,7 @@
     <created>2014-01-28</created>
     <license rdf:resource="http://spdx.org/licenses/GPL-3.0+" />
     <programming-language>Python</programming-language>
-   
+
     <maintainer>
         <foaf:Person>
             <foaf:name>James Rowe</foaf:name>
