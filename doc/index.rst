@@ -4,7 +4,7 @@
 =============
 
 .. module:: blanco
-   :synopsis: *"Hey, remember me?"*
+   :synopsis: *“Hey, remember me?”*
 .. moduleauthor:: James Rowe <jnrowe@gmail.com>
 
 :mod:`blanco` is a simple tool to help you, or more specifically *me*, keep in

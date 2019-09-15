@@ -1,7 +1,7 @@
 blanco.py
 =========
 
-*"Hey, remember me?"*
+*“Hey, remember me?”*
 """""""""""""""""""""
 
 :Author: James Rowe <jnrowe@gmail.com>

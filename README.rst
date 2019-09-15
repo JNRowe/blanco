@@ -1,4 +1,4 @@
-``blanco`` - *"Hey, remember me?"*
+``blanco`` - *“Hey, remember me?”*
 ==================================
 
 Introduction
@@ -78,7 +78,7 @@ file formats supported by your version of abook_.
 Contributors
 ------------
 
-I'd like to thank the following people who have contributed to this repository.
+I’d like to thank the following people who have contributed to this repository.
 
 Ideas
 '''''
