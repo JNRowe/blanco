@@ -9,7 +9,6 @@ include doc/wordlist.txt
 include extra/README.pip
 include extra/_blanco
 include extra/doap.rdf
-include extra/docrunner.py
 include extra/requirements*.txt
 
 include tests/*.py
