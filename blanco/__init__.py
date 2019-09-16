@@ -37,6 +37,7 @@ import time
 from email.utils import (formataddr, getaddresses, parsedate)
 from enum import Enum
 from types import ModuleType
+from typing import Dict, List, Optional, Union
 try:
     from importlib import resources
 except ImportError:  # pragma: no cover
@@ -61,7 +62,9 @@ except ImportError:
 from jnrbase import (colourise, xdg_basedir)
 
 
-def parse_sent(path, all_recipients=False, addresses=None):
+def parse_sent(path: pathlib.Path,
+               all_recipients: bool = False,
+               addresses: List[str] = None) -> Dict[str, datetime.datetime]:
     """Parse sent messages mailbox for contact details.
 
     Args:
@@ -101,7 +104,10 @@ def parse_sent(path, all_recipients=False, addresses=None):
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
-def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
+def parse_msmtp(log: pathlib.Path,
+                all_recipients: bool = False,
+                addresses: List[str] = None,
+                gmail: bool = False) -> Dict[str, datetime.datetime]:
     """Parse sent messages mailbox for contact details.
 
     Args:
@@ -156,7 +162,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     return dict(sorted(contacts, key=operator.itemgetter(1)))
 
 
-def parse_duration(duration):
+def parse_duration(duration: str) -> int:
     """Parse human readable duration.
 
     Args:
@@ -177,7 +183,7 @@ def parse_duration(duration):
     return int(match['value'] * multiplier[units])
 
 
-def process_config():
+def process_config() -> Dict[str, Union[bool, str]]:
     """Main configuration file.
 
     Returns:
@@ -200,11 +206,11 @@ def process_config():
     return parsed
 
 
-def show_note(notify,
-              message,
-              contact,
-              urgency=notify2.URGENCY_NORMAL,
-              expires=notify2.EXPIRES_DEFAULT):
+def show_note(notify: bool,
+              message: str,
+              contact: 'Contact',
+              urgency: int = notify2.URGENCY_NORMAL,
+              expires: int = notify2.EXPIRES_DEFAULT) -> None:
     """Display reminder.
 
     Args:
@@ -236,7 +242,8 @@ def show_note(notify,
 class Contact:
     """Simple contact class."""
 
-    def __init__(self, name, addresses, frequency):
+    def __init__(self, name: str, addresses: Union[str, List[str]],
+                 frequency: int):
         """Initialise a new `Contact` object."""
         self.name = name
         if isinstance(addresses, str):
@@ -247,17 +254,17 @@ class Contact:
             self.addresses = [s.lower() for s in addresses]
         self.frequency = frequency
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Self-documenting string representation."""
         return '{}({!r}, {!r}, {!r})'.format(
             self.__class__.__name__, self.name, self.addresses, self.frequency)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Pretty printed contact string."""
         return '{} <{}> ({} days)'.format(self.name, ', '.join(self.addresses),
                                           self.frequency)
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec: str) -> str:
         """Extended pretty printing for `Contact` strings.
 
         Args:
@@ -276,7 +283,7 @@ class Contact:
         else:
             raise ValueError(f'Unknown format_spec {format_spec!r}')
 
-    def trigger(self, sent):
+    def trigger(self, sent: Dict[str, datetime.datetime]) -> datetime.datetime:
         """Calculate trigger date for contact.
 
         Args:
@@ -288,7 +295,7 @@ class Contact:
         match = sorted([v for k, v in sent.items() if k in self.addresses])[0]
         return match + datetime.timedelta(days=self.frequency)
 
-    def notify_str(self):
+    def notify_str(self) -> str:
         """Calculate trigger date for contact.
 
         Returns:
@@ -304,19 +311,19 @@ class Contact:
 class Contacts(list):
     """Group of `Contact`."""
 
-    def __init__(self, contacts=None):
+    def __init__(self, contacts: Optional[Contact] = None):
         """Initialise a new `Contacts` object."""
         super(Contacts, self).__init__()
         if contacts:
             self.extend(contacts)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Self-documenting string representation."""
         return '{}({!r})'.format(
             self.__class__.__name__,
             sorted(self[:], key=operator.attrgetter('name')))
 
-    def addresses(self):
+    def addresses(self) -> List[str]:
         """Fetch all addresses of all `Contact` objects.
 
         Returns:
@@ -324,7 +331,7 @@ class Contacts(list):
         """
         return [address for contact in self for address in contact.addresses]
 
-    def parse(self, addressbook, field):
+    def parse(self, addressbook: pathlib.Path, field: str) -> None:
         """Parse address book for usable entries.
 
         Args:
@@ -378,8 +385,10 @@ class Contacts(list):
               help='Output colourised informational text.')
 @click.option('-v', '--verbose/--no-verbose', help='Produce verbose output.')
 @click.version_option(_version.dotted)
-def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
-         verbose):  # pragma: no cover
+def main(addressbook: pathlib.Path, sent_type: str, all: bool,
+         mbox: pathlib.Path, log: pathlib.Path, gmail: bool, field: str,
+         notify: bool, colour: bool,
+         verbose: bool) -> Optional[int]:  # pragma: no cover
     """Main script."""
     config = process_config()
     if not addressbook:
