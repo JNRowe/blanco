@@ -47,6 +47,9 @@ display a frequency field in the ``other`` tab::
 You do *not* need to set this for :program:`blanco` to work, but it makes the
 purpose of the field clearer.
 
+If you wish to use custom icons for contact reminders you can specify a local
+image location with an  ``image`` field in your addressbook.
+
 :program:`blanco` can be used without :program:`abook`, as it only requires
 a ini_ formatted contacts file.  To create your own contacts file without abook
 follow the format below:
@@ -56,6 +59,7 @@ follow the format below:
     [0]
     name=Bill
     email=test@example.com
+    image=/var/cache/avatars/55502f40dc8b7c769880b10874abc9d0.png
     freq=30d
 
     [1]

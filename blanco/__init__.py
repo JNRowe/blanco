@@ -224,9 +224,13 @@ def show_note(notify: bool,
         OSError: Failure to show notification
     """
     if notify:
+        if contact.image:
+            image = contact.image
+        else:
+            image = 'stock_person'
         note = notify2.Notification('Hey, remember me?',
                                     message.format(contact.notify_str()),
-                                    'stock_person')
+                                    image)
         note.set_urgency(urgency)
         note.set_timeout(expires)
 
@@ -242,8 +246,11 @@ def show_note(notify: bool,
 class Contact:
     """Simple contact class."""
 
-    def __init__(self, name: str, addresses: Union[str, List[str]],
-                 frequency: int):
+    def __init__(self,
+                 name: str,
+                 addresses: Union[str, List[str]],
+                 frequency: int,
+                 image: Optional[str] = None):
         """Initialise a new `Contact` object."""
         self.name = name
         if isinstance(addresses, str):
@@ -253,11 +260,13 @@ class Contact:
         else:
             self.addresses = [s.lower() for s in addresses]
         self.frequency = frequency
+        self.image = image
 
     def __repr__(self) -> str:
         """Self-documenting string representation."""
-        return '{}({!r}, {!r}, {!r})'.format(
-            self.__class__.__name__, self.name, self.addresses, self.frequency)
+        return '{}({!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__,
+                                                   self.name, self.addresses,
+                                                   self.frequency, self.image)
 
     def __str__(self) -> str:
         """Pretty printed contact string."""
@@ -348,7 +357,7 @@ class Contacts(list):
                 continue
             self.append(
                 Contact(entry.get('name'), entry.get('email'),
-                        parse_duration(entry.get(field))))
+                        parse_duration(entry.get(field)), entry.get('image')))
 
 
 @click.command(help='Check sent mail to make sure you’re keeping in contact '

@@ -28,7 +28,28 @@ from blanco import (Contact, Contacts, notify2, parse_duration, parse_msmtp,
 
 TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 TEST_CONTACT2 = Contact('James Rowe',
-                        ['jnrowe@gmail.com', 'jnrowe@example.com'], 200)
+                        ['jnrowe@gmail.com', 'jnrowe@example.com'], 200,
+                        'james.png')
+
+
+class MockNotification:
+    titles = []
+    bodies = []
+    icons = []
+
+    def __init__(self, t, s, i):
+        self.titles.append(t)
+        self.bodies.append(s)
+        self.icons.append(i)
+
+    def set_urgency(self, u):
+        self.u = u
+
+    def set_timeout(self, o):
+        self.o = o
+
+    def show(self):
+        return True
 
 
 def test_missing_mailbox():
@@ -159,28 +180,12 @@ def test_show_note(urgency, capsys):
 
 @mark.parametrize('show_succeeds', [True, False])
 def test_show_note_notify2(show_succeeds, monkeypatch):
-    class Notification:
-        titles = bodies = icons = []
-
-        def __init__(self, t, s, i):
-            self.titles.append(t)
-            self.bodies.append(s)
-            self.icons.append(i)
-
-        def set_urgency(self, u):
-            self.u = u
-
-        def set_timeout(self, o):
-            self.o = o
-
-        def show(self):
-            return True
-
-    monkeypatch.setattr(notify2, 'Notification', Notification, raising=False)
+    monkeypatch.setattr(notify2, 'Notification', MockNotification,
+                        raising=False)
     monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
     if show_succeeds:
         show_note(True, 'Note for {}', TEST_CONTACT)
-        assert 'Note for James Rowe' in Notification.bodies
+        assert 'Note for James Rowe' in MockNotification.bodies
     else:
         monkeypatch.setattr(notify2.Notification, 'show', lambda s: False)
         with raises(OSError) as err:
@@ -188,9 +193,21 @@ def test_show_note_notify2(show_succeeds, monkeypatch):
         assert str(err.value) == 'Notification failed to display!'
 
 
+@mark.parametrize('contact', [TEST_CONTACT, TEST_CONTACT2])
+def test_show_note_notify2_icons(contact, monkeypatch):
+    monkeypatch.setattr(notify2, 'Notification', MockNotification, raising=False)
+    monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
+    show_note(True, '{}', contact)
+    assert contact.name in MockNotification.bodies
+    if TEST_CONTACT.image:
+        assert TEST_CONTACT.image in MockNotification.icons
+    else:
+        assert TEST_CONTACT.image not in MockNotification.icons
+
+
 def test_Contact__repr__():
     assert repr(TEST_CONTACT) == \
-        "Contact('James Rowe', ['jnrowe@gmail.com'], 200)"
+        "Contact('James Rowe', ['jnrowe@gmail.com'], 200, None)"
 
 
 @mark.parametrize('contact, expected', [
@@ -235,7 +252,7 @@ def test_notify_str(server_caps, expected, monkeypatch):
 
 def test_Contacts__repr__():
     assert repr(Contacts([TEST_CONTACT, ])) == \
-        "Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200)])"
+        "Contacts([Contact('James Rowe', ['jnrowe@gmail.com'], 200, None)])"
 
 
 def test_Contacts_addresses():
@@ -254,9 +271,9 @@ def test_parse():
 
     assert repr(contacts) == \
         ('Contacts(['
-            "Contact('Bill', ['test@example.com'], 30), "
-            "Contact('Joe', ['joe@example.com'], 30), "
-            "Contact('Steven', ['steven@example.com'], 365)"
+            "Contact('Bill', ['test@example.com'], 30, None), "
+            "Contact('Joe', ['joe@example.com'], 30, None), "
+            "Contact('Steven', ['steven@example.com'], 365, None)"
             '])')
 
 
