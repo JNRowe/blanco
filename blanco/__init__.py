@@ -31,7 +31,6 @@ import errno
 import mailbox
 import operator
 import os
-import re
 import sys
 import time
 
@@ -44,6 +43,7 @@ except ImportError:  # pragma: no cover
     import importlib_resources as resources
 
 import click
+import parse
 
 try:
     import notify2
@@ -112,8 +112,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     if not os.path.exists(log):
         raise IOError('msmtp sent log ‘{}’ not found'.format(log))
 
-    matcher = re.compile('recipients=([^ ]+)')
-    gmail_date = re.compile('smtpmsg.*OK +([^ ]+)')
+    matcher = parse.compile(' recipients={recip:S} ')
+    gmail_date = parse.compile(' OK {timestamp:d} ')
 
     start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
 
@@ -124,10 +124,9 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                           if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
-            try:
-                ts = int(gd.groups()[0])
-                parsed = datetime.datetime.utcfromtimestamp(ts)
-            except AttributeError:
+            if gd:
+                parsed = datetime.datetime.utcfromtimestamp(gd['timestamp'])
+            else:
                 raise ValueError(
                     'msmtp {!r} log is not in gmail format'.format(log))
             year = parsed.year
@@ -138,8 +137,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
                 year = year - 1
             md = date
 
-        recips = matcher.search(line, re.DOTALL)
-        results = [s.lower() for s in recips.groups()[0].split(',')]
+        results = [s.lower() for s in matcher.search(line)['recip'].split(',')]
         if not all_recipients:
             results = [results[0], ]
         contacts.extend([(address, datetime.datetime(year, *md).date())
@@ -158,14 +156,13 @@ def parse_duration(duration):
     :return: Number of days in ``duration``
     :raise ValueError: Invalid value for ``duration``
     """
-    match = re.match('^(\d+(?:|\.\d+)) *([dwmy])$', duration, re.IGNORECASE)
-    if not match:
+    match = parse.parse('{value:g}{units:^w}', duration)
+    if not match or not match['units'].lower() in ('dwmy'):
         raise ValueError('Invalid duration value ‘{}’'.format(duration))
-    value, units = match.groups()
-    units = 'dwmy'.index(units.lower())
+    units = 'dwmy'.index(match['units'].lower())
     # days per day/week/month/year
     multiplier = (1, 7, 28, 365)
-    return int(float(value) * multiplier[units])
+    return int(match['value'] * multiplier[units])
 
 
 def process_config():
