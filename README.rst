@@ -106,16 +106,12 @@ reproduce the problem, or even better a patch!
 .. _issue: https://github.com/JNRowe/blanco/issues
 .. _ini: http://www.cloanto.com/specs/ini/
 
+.. |status| image:: https://img.shields.io/pypi/status/blanco.png
+   :alt: Development status
+
 .. |travis| image:: https://img.shields.io/travis/JNRowe/blanco.png
    :target: https://travis-ci.org/JNRowe/blanco
    :alt: Test state on master
-
-.. |develop| image:: https://img.shields.io/github/commits-since/JNRowe/blanco/latest.png
-   :target: https://github.com/JNRowe/blanco
-   :alt: Recent developments
-
-.. |status| image:: https://img.shields.io/pypi/status/blanco.png
-   :alt: Development status
 
 .. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/blanco/master.png
    :target: https://coveralls.io/repos/JNRowe/blanco
@@ -124,3 +120,7 @@ reproduce the problem, or even better a patch!
 .. |readthedocs| image:: https://img.shields.io/readthedocs/blanco/stable.png
    :target: https://blanco.readthedocs.io/
    :alt: Documentation
+
+.. |develop| image:: https://img.shields.io/github/commits-since/JNRowe/blanco/latest.png
+   :target: https://github.com/JNRowe/blanco
+   :alt: Recent developments
