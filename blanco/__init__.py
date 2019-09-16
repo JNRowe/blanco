@@ -25,6 +25,7 @@ __version__ = _version.dotted
 __date__ = _version.date
 __copyright__ = 'Copyright (C) 2010-2014  James Rowe <jnrowe@gmail.com>'
 
+import configparser
 import datetime
 import errno
 import mailbox
@@ -35,10 +36,12 @@ import sys
 import time
 
 from email.utils import (formataddr, getaddresses, parsedate)
+try:
+    from importlib import resources
+except ImportError:  # pragma: no cover
+    import importlib_resources as resources
 
 import click
-import configobj
-import validate
 
 try:
     import pynotify
@@ -166,33 +169,25 @@ def parse_duration(duration):
 def process_config():
     """Main configuration file.
 
-    :rtype: `configobj.ConfigObj`
+    :rtype: `dict`
     :return: Parsed configuration file
     """
     config_file = os.path.join(xdg_basedir.user_config('blanco'), 'config.ini')
-    config_spec = [
-        'colour = boolean(default=True)',
-        "addressbook = string(default='~/.abook/addressbook')",
-        "sent type = string(default='mailbox')",
-        'all = boolean(default=False)',
-        "mbox = string(default='~/Mail/Sent')",
-        "log = string(default='~/Mail/.logs/gmail.log')",
-        'gmail = boolean(default=True)',
-        "field = string(default='frequency')",
-        'notify = boolean(default=False)',
-        'verbose = boolean(default=False)',
-    ]
-    config = configobj.ConfigObj(config_file, configspec=config_spec)
-    results = config.validate(validate.Validator())
-    if results is not True:
-        for key in results:
-            if results[key]:
-                continue
-            colourise.pfail('Config value for {!r} is invalid'.format(key))
-        raise SyntaxError(
-            'Invalid configuration file {!r}'.format(config_file))
-
-    return config
+    bool_keys = ['all', 'colour', 'gmail', 'notify', 'verbose']
+    config = configparser.ConfigParser()
+    config.read_string(resources.read_text('blanco', 'config'), 'pkg config')
+    config.read(config_file)
+    parsed = {}
+    for key, value in config['blanco'].items():
+        if key in bool_keys:
+            try:
+                parsed[key] = config.getboolean('blanco', key)
+            except ValueError:
+                raise ValueError(
+                    'Config value for {!r} must be a bool'.format(key))
+        else:
+            parsed[key] = config.get('blanco', key)
+    return parsed
 
 
 def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
@@ -318,13 +313,14 @@ class Contacts(list):
         """
         if not os.path.isfile(addressbook):
             raise IOError('Addressbook file not found {!r}'.format(addressbook))
-        config = configobj.ConfigObj(os.path.expanduser(addressbook))
+        config = configparser.ConfigParser()
+        config.read(os.path.expanduser(addressbook))
 
         for entry in config.values():
             if not field in entry:
                 continue
-            self.append(Contact(entry['name'], entry['email'],
-                                parse_duration(entry[field])))
+            self.append(Contact(entry.get('name'), entry.get('email'),
+                                parse_duration(entry.get(field))))
 
 
 @click.command(help='Check sent mail to make sure you’re keeping in contact '
@@ -355,27 +351,27 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
     """Main script."""
     config = process_config()
     if not addressbook:
-        addressbook = os.path.expanduser(config.get('addressbook'))
+        addressbook = os.path.expanduser(config['addressbook'])
     if not sent_type:
-        sent_type = config.get('sent type')
+        sent_type = config['sent type']
     if not all:
-        all = config.as_bool('all')
+        all = config['all']
     if not mbox:
-        mbox = os.path.expanduser(config.get('mbox'))
+        mbox = os.path.expanduser(config['mbox'])
     if not log:
-        log = os.path.expanduser(config.get('log'))
+        log = os.path.expanduser(config['log'])
     if not gmail:
-        gmail = config.as_bool('gmail')
+        gmail = config['gmail']
     if not field:
-        field = config.get('field')
+        field = config['field']
     if not notify:
-        notify = config.as_bool('notify')
+        notify = config['notify']
     if not verbose:
-        verbose = config.as_bool('verbose')
+        verbose = config['verbose']
     if colour is None:
         if 'color' in config:
             config['colour'] = config['color']
-        colour = config.as_bool('colour')
+        colour = config['colour']
     colourise.COLOUR = colour
 
     if notify and pynotify is _Fake_PyNotify:

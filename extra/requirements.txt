@@ -1,3 +1,2 @@
 click>=3.0
 jnrbase[colour]>=0.5.0
-configobj>=0.5.0
