@@ -64,13 +64,15 @@ from jnrbase import (colourise, xdg_basedir)
 def parse_sent(path, all_recipients=False, addresses=None):
     """Parse sent messages mailbox for contact details.
 
-    :param str path: Location of the sent mailbox
-    :param bool all_recipients: Whether to include CC and BCC addresses in
-        results, or just the first
-    :param list addresses: Addresses to look for in sent mail, all if not
-        specified
-    :rtype: `dict` of `str` keys and `datetime.datetime` values
-    :return: Keys of email address, and values of seen date
+    Args:
+        path: Location of the sent mailbox
+        all_recipients: Whether to include CC and BCC addresses in
+            results, or just the first
+        addresses: Addresses to look for in sent mail, all if not
+            specified
+
+    Returns:
+        Keys of email address, and values of seen date
     """
     path = pathlib.Path(path).expanduser()
     if not path.exists():
@@ -102,14 +104,16 @@ def parse_sent(path, all_recipients=False, addresses=None):
 def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     """Parse sent messages mailbox for contact details.
 
-    :param str log: Location of the msmtp logfile
-    :param bool all_recipients: Whether to include all recipients in results,
-        or just the first
-    :param list addresses: Addresses to look for in sent mail, all if not
-        specified
-    :param bool gmail: Log is for a gmail account
-    :rtype: `dict` of `str` keys and `datetime.datetime` values
-    :return: Keys of email address, and values of seen date
+    Args:
+        log: Location of the msmtp logfile
+        all_recipients: Whether to include all recipients in results,
+            or just the first
+        addresses: Addresses to look for in sent mail, all if not
+            specified
+        gmail: Log is for a gmail account
+
+    Returns:
+        Keys of email address, and values of seen date
     """
     log = pathlib.Path(log).expanduser()
     if not log.exists():
@@ -155,10 +159,14 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 def parse_duration(duration):
     """Parse human readable duration.
 
-    :param str duration: Duration definition
-    :rtype: `int`
-    :return: Number of days in ``duration``
-    :raise ValueError: Invalid value for ``duration``
+    Args:
+        duration: Duration definition
+
+    Returns:
+        Number of days in ``duration``
+
+    Raises:
+        ValueError: Invalid value for ``duration``
     """
     match = parse.parse('{value:g}{units:^w}', duration)
     if not match or not match['units'].lower() in ('dwmy'):
@@ -172,8 +180,8 @@ def parse_duration(duration):
 def process_config():
     """Main configuration file.
 
-    :rtype: `dict`
-    :return: Parsed configuration file
+    Returns:
+        Parsed configuration file
     """
     conf_file = pathlib.Path(xdg_basedir.user_config('blanco')) / 'config.ini'
     bool_keys = ['all', 'colour', 'gmail', 'notify', 'verbose']
@@ -199,12 +207,15 @@ def show_note(notify,
               expires=notify2.EXPIRES_DEFAULT):
     """Display reminder.
 
-    :param bool notify: Whether to use notification popup
-    :param str message: Message string to show
-    :param Contact contact: Contact to show message for
-    :param int urgency: Urgency state for message
-    :param int expires: Time to show notification popup in milliseconds
-    :raise OSError: Failure to show notification
+    Args:
+        notify: Whether to use notification popup
+        message: Message string to show
+        contact: Contact to show message for
+        urgency: Urgency state for message
+        expires: Time to show notification popup in milliseconds
+
+    Raises
+        OSError: Failure to show notification
     """
     if notify:
         note = notify2.Notification('Hey, remember me?',
@@ -249,10 +260,14 @@ class Contact:
     def __format__(self, format_spec):
         """Extended pretty printing for `Contact` strings.
 
-        :param str format_spec: Coordinate formatting system to use
-        :rtype: `str`
-        :return: Human readable string representation of `Contact` object
-        :raise ValueError: Unknown value for ``format_spec``
+        Args:
+            format_spec: Coordinate formatting system to use
+
+        Returns:
+            Human readable string representation of `Contact` object
+
+        Raises:
+            ValueError: Unknown value for ``format_spec``
         """
         if not format_spec:  # default format calls set format_spec to ''
             return str(self)
@@ -264,10 +279,11 @@ class Contact:
     def trigger(self, sent):
         """Calculate trigger date for contact.
 
-        :type sent: `dict` of `str` keys and `datetime.datetime values
-        :param sent: Address to last seen dictionary
-        :rtype: `datetime.datetime`
-        :return: Date to start reminders on
+        Args:
+            sent: Address to last seen dictionary
+
+        Returns:
+            Date to start reminders on
         """
         match = sorted([v for k, v in sent.items() if k in self.addresses])[0]
         return match + datetime.timedelta(days=self.frequency)
@@ -275,8 +291,8 @@ class Contact:
     def notify_str(self):
         """Calculate trigger date for contact.
 
-        :rtype: `str`
-        :return: Stylised name for use with notifications
+        Returns:
+            Stylised name for use with notifications
         """
         if 'body-hyperlinks' in notify2.get_server_caps():
             name = f"<a href='mailto:{self.addresses[0]}'>{self.name}</a>"
@@ -303,16 +319,17 @@ class Contacts(list):
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
 
-        :rtype: `list` of `str`
-        :return: Addresses of every `Contact`
+        Returns:
+            Addresses of every `Contact`
         """
         return [address for contact in self for address in contact.addresses]
 
     def parse(self, addressbook, field):
         """Parse address book for usable entries.
 
-        :param str addressbook: Location of the address book to useful
-        :param str field: Address book field to use for contact frequency
+        Args:
+            addressbook: Location of the address book to useful
+            field: Address book field to use for contact frequency
         """
         if not addressbook.is_file():
             raise IOError(f'Addressbook file not found {addressbook!r}')
