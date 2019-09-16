@@ -48,12 +48,14 @@ import parse
 try:
     import notify2
 except ImportError:
+
     class _Fake_Notify2(Enum):  # NOQA
         URGENCY_CRITICAL = 2
         URGENCY_NORMAL = 1
         URGENCY_LOW = 0
         EXPIRES_DEFAULT = -1
         EXPIRES_NEVER = 0
+
     notify2 = _Fake_Notify2  # NOQA
 
 from jnrbase import (colourise, xdg_basedir)
@@ -121,8 +123,8 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed([line for line in log.open()
-                          if line.endswith('exitcode=EX_OK\n')]):
+    for line in reversed(
+        [line for line in log.open() if line.endswith('exitcode=EX_OK\n')]):
         if gmail:
             gd = gmail_date.search(line)
             if gd:
@@ -139,7 +141,9 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
 
         results = [s.lower() for s in matcher.search(line)['recip'].split(',')]
         if not all_recipients:
-            results = [results[0], ]
+            results = [
+                results[0],
+            ]
         contacts.extend([(address, datetime.datetime(year, *md).date())
                          for address in results
                          if not addresses or address in addresses])
@@ -188,7 +192,10 @@ def process_config():
     return parsed
 
 
-def show_note(notify, message, contact, urgency=notify2.URGENCY_NORMAL,
+def show_note(notify,
+              message,
+              contact,
+              urgency=notify2.URGENCY_NORMAL,
               expires=notify2.EXPIRES_DEFAULT):
     """Display reminder.
 
@@ -216,23 +223,23 @@ def show_note(notify, message, contact, urgency=notify2.URGENCY_NORMAL,
 
 
 class Contact:
-
     """Simple contact class."""
 
     def __init__(self, name, addresses, frequency):
         """Initialise a new `Contact` object."""
         self.name = name
         if isinstance(addresses, str):
-            self.addresses = [addresses.lower(), ]
+            self.addresses = [
+                addresses.lower(),
+            ]
         else:
             self.addresses = [s.lower() for s in addresses]
         self.frequency = frequency
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '{}({!r}, {!r}, {!r})'.format(self.__class__.__name__,
-                                             self.name, self.addresses,
-                                             self.frequency)
+        return '{}({!r}, {!r}, {!r})'.format(
+            self.__class__.__name__, self.name, self.addresses, self.frequency)
 
     def __str__(self):
         """Pretty printed contact string."""
@@ -279,7 +286,6 @@ class Contact:
 
 
 class Contacts(list):
-
     """Group of `Contact`."""
 
     def __init__(self, contacts=None):
@@ -290,9 +296,9 @@ class Contacts(list):
 
     def __repr__(self):
         """Self-documenting string representation."""
-        return '{}({!r})'.format(self.__class__.__name__,
-                                 sorted(self[:],
-                                        key=operator.attrgetter('name')))
+        return '{}({!r})'.format(
+            self.__class__.__name__,
+            sorted(self[:], key=operator.attrgetter('name')))
 
     def addresses(self):
         """Fetch all addresses of all `Contact` objects.
@@ -316,32 +322,44 @@ class Contacts(list):
         for entry in config.values():
             if not field in entry:
                 continue
-            self.append(Contact(entry.get('name'), entry.get('email'),
-                                parse_duration(entry.get(field))))
+            self.append(
+                Contact(entry.get('name'), entry.get('email'),
+                        parse_duration(entry.get(field))))
 
 
 @click.command(help='Check sent mail to make sure you’re keeping in contact '
-                    'with your friends.',
+               'with your friends.',
                epilog='Please report bugs to jnrowe@gmail.com')
-@click.option('-a', '--addressbook', metavar='FILENAME',
+@click.option('-a',
+              '--addressbook',
+              metavar='FILENAME',
               help='Address book to read contacts from.')
-@click.option('-t', '--sent-type', type=click.Choice(['mailbox', 'msmtp']),
+@click.option('-t',
+              '--sent-type',
+              type=click.Choice(['mailbox', 'msmtp']),
               help='Sent source type.')
-@click.option('-r', '--all/--no-all',
+@click.option('-r',
+              '--all/--no-all',
               help='Include all recipients(CC and BCC fields).')
-@click.option('-m', '--mbox', metavar='FILENAME',
+@click.option('-m',
+              '--mbox',
+              metavar='FILENAME',
               help='Mailbox used to store sent mail.')
 @click.option('-l', '--log', metavar='FILENAME', help='msmtp log to parse.')
-@click.option('-g', '--gmail/--no-gmail',
+@click.option('-g',
+              '--gmail/--no-gmail',
               help='Log from a gmail account(use accurate filter).')
-@click.option('-s', '--field',
+@click.option('-s',
+              '--field',
               help='Addressbook field to use for frequency value.')
-@click.option('-n', '--notify/--no-notify',
+@click.option('-n',
+              '--notify/--no-notify',
               help='Display reminders using notification popups.')
-@click.option('--colour/--no-colour', envvar='BLANCO_COLOUR', default=None,
+@click.option('--colour/--no-colour',
+              envvar='BLANCO_COLOUR',
+              default=None,
               help='Output colourised informational text.')
-@click.option('-v', '--verbose/--no-verbose',
-              help='Produce verbose output.')
+@click.option('-v', '--verbose/--no-verbose', help='Produce verbose output.')
 @click.version_option(_version.dotted)
 def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
          verbose):  # pragma: no cover

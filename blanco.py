@@ -20,5 +20,4 @@ import sys
 
 from blanco import main
 
-
 sys.exit(main())

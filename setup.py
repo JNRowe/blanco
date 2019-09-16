@@ -25,7 +25,9 @@ from setuptools.command.test import test
 class PytestTest(test):
     def finalize_options(self):
         test.finalize_options(self)
-        self.test_args = ['tests/', ]
+        self.test_args = [
+            'tests/',
+        ]
         self.test_suite = True
 
     def run_tests(self):
@@ -52,9 +54,13 @@ setup(
     url='https://github.com/JNRowe/blanco',
     license='GPL-3',
     keywords='reminder mail contact',
-    packages=['blanco', ],
+    packages=[
+        'blanco',
+    ],
     include_package_data=True,
-    entry_points={'console_scripts': ['blanco = blanco:main', ]},
+    entry_points={'console_scripts': [
+        'blanco = blanco:main',
+    ]},
     install_requires=install_requires,
     tests_require=['pytest'],
     cmdclass={'test': PytestTest},

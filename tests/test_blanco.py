@@ -26,11 +26,9 @@ from pytest import (mark, raises)
 from blanco import (Contact, Contacts, notify2, parse_duration, parse_msmtp,
                     parse_sent, process_config, show_note)
 
-
 TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 TEST_CONTACT2 = Contact('James Rowe',
-                        ['jnrowe@gmail.com', 'jnrowe@example.com'],
-                        200)
+                        ['jnrowe@gmail.com', 'jnrowe@example.com'], 200)
 
 
 def test_missing_mailbox():
@@ -86,7 +84,9 @@ def test_missing_msmtp_log():
         'steven@example.com': date(2013, 2, 9),
         'joe@example.com': date(2013, 2, 9),
     }),
-    ('tests/data/sent.msmtp', False, ['nobody@example.com', ], False, {
+    ('tests/data/sent.msmtp', False, [
+        'nobody@example.com',
+    ], False, {
         'nobody@example.com': date(2013, 2, 9),
     }),
     ('tests/data/sent_gmail.msmtp', False, None, True, {
@@ -124,23 +124,23 @@ def test_parse_duration(duration, result):
 
 
 def test_process_config(monkeypatch):
-    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
-                        lambda s: 'tests/data/valid')
+    monkeypatch.setattr(
+        'jnrbase.xdg_basedir.user_config', lambda s: 'tests/data/valid')
     conf = process_config()
     assert conf['colour'] is False
 
 
 def test_process_config_invalid(monkeypatch):
-    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
-                        lambda s: 'tests/data/invalid')
+    monkeypatch.setattr(
+        'jnrbase.xdg_basedir.user_config', lambda s: 'tests/data/invalid')
     with raises(MissingSectionHeaderError) as err:
         process_config()
     assert 'File contains no section headers.' in str(err.value)
 
 
 def test_process_config_invalid_types(monkeypatch):
-    monkeypatch.setattr('jnrbase.xdg_basedir.user_config',
-                        lambda s: 'tests/data/invalid_values')
+    monkeypatch.setattr('jnrbase.xdg_basedir.user_config', lambda s:
+                        'tests/data/invalid_values')
     with raises(ValueError) as err:
         process_config()
     assert str(err.value) == "Config value for 'colour' must be a bool"
@@ -175,6 +175,7 @@ def test_show_note_notify2(show_succeeds, monkeypatch):
 
         def show(self):
             return True
+
     monkeypatch.setattr(notify2, 'Notification', Notification, raising=False)
     monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
     if show_succeeds:
@@ -195,7 +196,7 @@ def test_Contact__repr__():
 @mark.parametrize('contact, expected', [
     (TEST_CONTACT, 'James Rowe <jnrowe@gmail.com> (200 days)'),
     (TEST_CONTACT2, 'James Rowe <jnrowe@gmail.com, jnrowe@example.com> '
-                    '(200 days)'),
+     '(200 days)'),
 ])
 def test_Contact__str__(contact, expected):
     assert str(contact) == expected
@@ -224,12 +225,11 @@ def test_trigger():
 
 @mark.parametrize('server_caps, expected', [
     ([], 'James Rowe'),
-    (['body-hyperlinks'],
-        "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
+    (['body-hyperlinks'], "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
 ])
 def test_notify_str(server_caps, expected, monkeypatch):
-    monkeypatch.setattr(notify2, 'get_server_caps',
-                        lambda: server_caps, raising=False)
+    monkeypatch.setattr(
+        notify2, 'get_server_caps', lambda: server_caps, raising=False)
     assert TEST_CONTACT.notify_str() == expected
 
 
@@ -243,8 +243,9 @@ def test_Contacts_addresses():
         Contact('Bill', ['test@example.com', 'new@example.com'], 30),
         Contact('Joe', ['joe@example.com'], 30)
     ])
-    assert p.addresses() == ['test@example.com', 'new@example.com',
-                             'joe@example.com']
+    assert p.addresses() == [
+        'test@example.com', 'new@example.com', 'joe@example.com'
+    ]
 
 
 def test_parse():
