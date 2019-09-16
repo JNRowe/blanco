@@ -30,7 +30,6 @@ import datetime
 import errno
 import mailbox
 import operator
-import os
 import pathlib
 import sys
 import time
@@ -78,7 +77,6 @@ def parse_sent(path: pathlib.Path,
     Returns:
         Keys of email address, and values of seen date
     """
-    path = pathlib.Path(path).expanduser()
     if not path.exists():
         raise IOError(f'Sent mailbox ‘{path}’ not found')
     if path.is_file():
@@ -122,7 +120,6 @@ def parse_msmtp(log: pathlib.Path,
     Returns:
         Keys of email address, and values of seen date
     """
-    log = pathlib.Path(log).expanduser()
     if not log.exists():
         raise IOError(f'msmtp sent log ‘{log}’ not found')
 
@@ -371,7 +368,7 @@ CONFIG_DATA: Dict[str, Union[bool, str]] = process_config()
               '--addressbook',
               type=pathlib.Path,
               metavar='FILENAME',
-              default=os.path.expanduser(CONFIG_DATA['addressbook']),
+              default=CONFIG_DATA['addressbook'],
               help='Address book to read contacts from.')
 @click.option('-t',
               '--sent-type',
@@ -386,13 +383,13 @@ CONFIG_DATA: Dict[str, Union[bool, str]] = process_config()
               '--mbox',
               type=pathlib.Path,
               metavar='FILENAME',
-              default=os.path.expanduser(CONFIG_DATA['mbox']),
+              default=CONFIG_DATA['mbox'],
               help='Mailbox used to store sent mail.')
 @click.option('-l',
               '--log',
               type=pathlib.Path,
               metavar='FILENAME',
-              default=os.path.expanduser(CONFIG_DATA['log']),
+              default=CONFIG_DATA['log'],
               help='msmtp log to parse.')
 @click.option('-g',
               '--gmail/--no-gmail',
@@ -430,12 +427,13 @@ def main(addressbook: pathlib.Path, sent_type: str, all: bool,
             return errno.EIO
 
     contacts = Contacts()
-    contacts.parse(addressbook, field)
+    contacts.parse(addressbook.expanduser(), field)
     try:
         if sent_type == 'msmtp':
-            sent = parse_msmtp(log, all, contacts.addresses(), gmail)
+            sent = parse_msmtp(log.expanduser(), all, contacts.addresses(),
+                               gmail)
         else:
-            sent = parse_sent(mbox, all, contacts.addresses())
+            sent = parse_sent(mbox.expanduser(), all, contacts.addresses())
     except IOError as e:
         colourise.pfail(e.args[0])
         return errno.EPERM
