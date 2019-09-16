@@ -5,7 +5,7 @@ Installation
 
 You can download releases from the `downloads page`_ on GitHub_.
 
-``blanco`` requires Python_ v3.5(or newer) and the following Python modules:
+``blanco`` requires Python_ v3.6(or newer) and the following Python modules:
 
 * jnrbase_
 
