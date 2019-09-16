@@ -73,6 +73,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Communications :: Email',
         'Topic :: Communications :: Email :: Address Book',
         'Topic :: Communications :: Email :: Filters',
