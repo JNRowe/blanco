@@ -211,8 +211,8 @@ def test_Contact__repr__():
 
 
 @mark.parametrize('contact, expected', [
-    (TEST_CONTACT, 'James Rowe <jnrowe@gmail.com> (200 days)'),
-    (TEST_CONTACT2, 'James Rowe <jnrowe@gmail.com, jnrowe@example.com> '
+    (TEST_CONTACT, 'James Rowe [jnrowe@gmail.com] (200 days)'),
+    (TEST_CONTACT2, 'James Rowe [jnrowe@gmail.com, jnrowe@example.com] '
      '(200 days)'),
 ])
 def test_Contact__str__(contact, expected):
@@ -220,7 +220,7 @@ def test_Contact__str__(contact, expected):
 
 
 @mark.parametrize('contact, spec, expected', [
-    (TEST_CONTACT, '', 'James Rowe <jnrowe@gmail.com> (200 days)'),
+    (TEST_CONTACT, '', 'James Rowe [jnrowe@gmail.com] (200 days)'),
     (TEST_CONTACT, 'email', 'James Rowe <jnrowe@gmail.com>'),
     (TEST_CONTACT2, 'email', 'James Rowe <jnrowe@gmail.com>'),
 ])

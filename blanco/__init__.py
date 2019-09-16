@@ -271,7 +271,7 @@ class Contact:
 
     def __str__(self) -> str:
         """Pretty printed contact string."""
-        return '{} <{}> ({} days)'.format(self.name, ', '.join(self.addresses),
+        return '{} [{}] ({} days)'.format(self.name, ', '.join(self.addresses),
                                           self.frequency)
 
     def __format__(self, format_spec: str) -> str:
