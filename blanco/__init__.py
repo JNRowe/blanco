@@ -133,8 +133,8 @@ def parse_msmtp(log: pathlib.Path,
     year = start.year
     md = start.month, start.day
     contacts = []
-    for line in reversed(
-        [line for line in log.open() if line.endswith('exitcode=EX_OK\n')]):
+    for line in (line for line in reversed(log.open().readlines())
+                 if line.endswith('exitcode=EX_OK\n')):
         if gmail:
             gd = gmail_date.search(line)
             if gd:
