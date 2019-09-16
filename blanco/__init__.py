@@ -36,6 +36,8 @@ import sys
 import time
 
 from email.utils import (formataddr, getaddresses, parsedate)
+from enum import Enum
+from types import ModuleType
 try:
     from importlib import resources
 except ImportError:  # pragma: no cover
@@ -44,15 +46,15 @@ except ImportError:  # pragma: no cover
 import click
 
 try:
-    import pynotify
+    import notify2
 except ImportError:
-    class _Fake_PyNotify:  # NOQA
+    class _Fake_Notify2(Enum):  # NOQA
         URGENCY_CRITICAL = 2
         URGENCY_NORMAL = 1
         URGENCY_LOW = 0
         EXPIRES_DEFAULT = -1
         EXPIRES_NEVER = 0
-    pynotify = _Fake_PyNotify  # NOQA
+    notify2 = _Fake_Notify2  # NOQA
 
 from jnrbase import (colourise, xdg_basedir)
 
@@ -190,8 +192,8 @@ def process_config():
     return parsed
 
 
-def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
-              expires=pynotify.EXPIRES_DEFAULT):
+def show_note(notify, message, contact, urgency=notify2.URGENCY_NORMAL,
+              expires=notify2.EXPIRES_DEFAULT):
     """Display reminder.
 
     :param bool notify: Whether to use notification popup
@@ -202,16 +204,16 @@ def show_note(notify, message, contact, urgency=pynotify.URGENCY_NORMAL,
     :raise OSError: Failure to show notification
     """
     if notify:
-        note = pynotify.Notification('Hey, remember me?',
-                                     message.format(contact.notify_str()),
-                                     'stock_person')
+        note = notify2.Notification('Hey, remember me?',
+                                    message.format(contact.notify_str()),
+                                    'stock_person')
         note.set_urgency(urgency)
         note.set_timeout(expires)
 
         if not note.show():
             raise OSError('Notification failed to display!')
     else:
-        if urgency == pynotify.URGENCY_CRITICAL:
+        if urgency == notify2.URGENCY_CRITICAL:
             colourise.pfail(message.format(contact.name))
         else:
             colourise.pwarn(message.format(contact.name))
@@ -273,7 +275,7 @@ class Contact:
         :rtype: `str`
         :return: Stylised name for use with notifications
         """
-        if 'body-hyperlinks' in pynotify.get_server_caps():
+        if 'body-hyperlinks' in notify2.get_server_caps():
             name = "<a href='mailto:{}'>{}</a>".format(self.addresses[0],
                                                        self.name)
         else:
@@ -374,14 +376,14 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
         colour = config['colour']
     colourise.COLOUR = colour
 
-    if notify and pynotify is _Fake_PyNotify:
+    if notify and type(notify2) != ModuleType:
         raise click.UsageError(
             colourise.fail(
-                'Notification popups require the notify-python package\n'))
+                'Notification popups require the notify2 package\n'))
 
     if notify:
-        if not pynotify.init(sys.argv[0]):
-            colourise.pfail('Unable to initialise pynotify!')
+        if not notify2.init(sys.argv[0]):
+            colourise.pfail('Unable to initialise notify2!')
             return errno.EIO
 
     contacts = Contacts()
@@ -401,4 +403,4 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
             show_note(notify, 'No mail record for {}', contact)
         elif now > contact.trigger(sent):
             show_note(notify, 'Mail due for {}', contact,
-                      pynotify.URGENCY_CRITICAL, pynotify.EXPIRES_NEVER)
+                      notify2.URGENCY_CRITICAL, notify2.EXPIRES_NEVER)

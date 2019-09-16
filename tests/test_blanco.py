@@ -24,8 +24,8 @@ from io import StringIO
 from hiro import Timeline
 from pytest import (mark, raises)
 
-from blanco import (Contact, Contacts, parse_duration, parse_msmtp,
-                    parse_sent, process_config, pynotify, show_note)
+from blanco import (Contact, Contacts, notify2, parse_duration, parse_msmtp,
+                    parse_sent, process_config, show_note)
 
 
 TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
@@ -148,8 +148,8 @@ def test_process_config_invalid_types(monkeypatch):
 
 
 @mark.parametrize('urgency', [
-    pynotify.URGENCY_NORMAL,
-    pynotify.URGENCY_CRITICAL,
+    notify2.URGENCY_NORMAL,
+    notify2.URGENCY_CRITICAL,
 ])
 def test_show_note(urgency, capsys):
     show_note(False, 'Note for {}', TEST_CONTACT, urgency=urgency)
@@ -159,7 +159,7 @@ def test_show_note(urgency, capsys):
 
 
 @mark.parametrize('show_succeeds', [True, False])
-def test_show_note_pynotify(show_succeeds, monkeypatch):
+def test_show_note_notify2(show_succeeds, monkeypatch):
     class Notification:
         titles = bodies = icons = []
 
@@ -176,15 +176,13 @@ def test_show_note_pynotify(show_succeeds, monkeypatch):
 
         def show(self):
             return True
-    monkeypatch.setattr(pynotify, 'Notification', Notification,
-                        raising=False)
-    monkeypatch.setattr(pynotify, 'get_server_caps',
-                        staticmethod(lambda: []), raising=False)
+    monkeypatch.setattr(notify2, 'Notification', Notification, raising=False)
+    monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
     if show_succeeds:
         show_note(True, 'Note for {}', TEST_CONTACT)
         assert 'Note for James Rowe' in Notification.bodies
     else:
-        monkeypatch.setattr(pynotify.Notification, 'show', lambda s: False)
+        monkeypatch.setattr(notify2.Notification, 'show', lambda s: False)
         with raises(OSError) as err:
             show_note(True, 'Broken note for {}', TEST_CONTACT)
         assert str(err.value) == 'Notification failed to display!'
@@ -231,8 +229,8 @@ def test_trigger():
         "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
 ])
 def test_notify_str(server_caps, expected, monkeypatch):
-    monkeypatch.setattr(pynotify, 'get_server_caps',
-                        staticmethod(lambda: server_caps), raising=False)
+    monkeypatch.setattr(notify2, 'get_server_caps',
+                        lambda: server_caps, raising=False)
     assert TEST_CONTACT.notify_str() == expected
 
 
