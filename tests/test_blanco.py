@@ -52,65 +52,66 @@ class MockNotification:
         return True
 
 
-def test_missing_mailbox():
+def test_missing_mailbox(tmpdir):
     with raises(IOError) as err:
-        parse_sent('None')
-    assert str(err.value) == 'Sent mailbox ‘None’ not found'
+        parse_sent(Path(tmpdir.join('no_such_file')))
+    assert str(err.value).endswith(' not found')
 
 
 def test_unknown_mailbox_format():
     with raises(ValueError) as err:
-        parse_sent('/dev/null')
+        parse_sent(Path('/dev/null'))
     assert str(err.value) == 'Unknown mailbox format for ‘/dev/null’'
 
 
 @mark.parametrize('mbox, recipients, addresses, result', [
-    ('tests/data/sent.maildir', True, None, {
+    ('sent.maildir', True, None, {
         'nobody@example.com': date(2000, 2, 9),
         'max@example.com': date(2000, 2, 9),
         'test@example.com': date(2010, 2, 9),
         'steven@example.com': date(2000, 2, 9),
         'joe@example.com': date(2000, 2, 9),
     }),
-    ('tests/data/sent.mh', False, None, {
+    ('sent.mh', False, None, {
         'nobody@example.com': date(2000, 2, 9),
         'max@example.com': date(2000, 2, 9),
         'test@example.com': date(2010, 2, 9),
         'joe@example.com': date(2000, 2, 9),
     }),
-    ('tests/data/sent.mbox', False, 'joe@example.com', {
+    ('sent.mbox', False, 'joe@example.com', {
         'joe@example.com': date(2000, 2, 9),
     }),
 ])
 def test_parse_sent(mbox, recipients, addresses, result):
-    assert parse_sent(mbox, recipients, addresses) == result
+    assert parse_sent(Path('tests/data') / mbox, recipients, addresses) \
+        == result
 
 
-def test_missing_msmtp_log():
+def test_missing_msmtp_log(tmpdir):
     with raises(IOError) as err:
-        parse_msmtp('None')
-    assert str(err.value) == 'msmtp sent log ‘None’ not found'
+        parse_msmtp(Path(tmpdir.join('no_such_file')))
+    assert str(err.value).endswith(' not found')
 
 
 @mark.parametrize('log, all_recipients, addresses, gmail, result', [
-    ('tests/data/sent.msmtp', False, None, False, {
+    ('sent.msmtp', False, None, False, {
         'nobody@example.com': date(2013, 2, 9),
         'test@example.com': date(2013, 2, 9),
         'joe@example.com': date(2013, 2, 9),
     }),
-    ('tests/data/sent.msmtp', True, None, False, {
+    ('sent.msmtp', True, None, False, {
         'nobody@example.com': date(2013, 2, 9),
         'max@example.com': date(2013, 2, 9),
         'test@example.com': date(2013, 2, 9),
         'steven@example.com': date(2013, 2, 9),
         'joe@example.com': date(2013, 2, 9),
     }),
-    ('tests/data/sent.msmtp', False, [
+    ('sent.msmtp', False, [
         'nobody@example.com',
     ], False, {
         'nobody@example.com': date(2013, 2, 9),
     }),
-    ('tests/data/sent_gmail.msmtp', False, None, True, {
+    ('sent_gmail.msmtp', False, None, True, {
         'nobody@example.com': date(2000, 2, 9),
         'test@example.com': date(2010, 2, 9),
         'joe@example.com': date(2000, 2, 9),
@@ -118,13 +119,14 @@ def test_missing_msmtp_log():
 ])
 def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
     with Timeline().freeze(date(2014, 6, 27)):
-        assert parse_msmtp(log, all_recipients, addresses, gmail) == result
+        assert parse_msmtp(Path('tests/data') / log, all_recipients, addresses,
+                           gmail) == result
 
 
 def test_parse_msmtp_invalid_gmail():
     with Timeline().freeze(date(2014, 6, 27)):
         with raises(ValueError) as err:
-            parse_msmtp('tests/data/sent.msmtp', False, None, True)
+            parse_msmtp(Path('tests/data/sent.msmtp'), False, None, True)
         assert 'not in gmail format' in str(err.value)
 
 
