@@ -11,7 +11,7 @@ You can download releases from the `downloads page`_ on GitHub_.
 
 The following optional packages will be used if available:
 
-* `libnotify Python bindings`_ for popup notifications
+* notify2_ for popup notifications
 
 From source
 '''''''''''
@@ -27,4 +27,4 @@ steps::
 .. _GitHub: https://github.com/
 .. _Python: http://www.python.org/
 .. _jnrbase: https://pypi.python.org/pypi/jnrbase/
-.. _libnotify Python bindings: http://www.galago-project.org/downloads.php
+.. _notify2: https://pypi.python.org/pypi/notify2/
