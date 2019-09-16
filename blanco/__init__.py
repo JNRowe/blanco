@@ -344,7 +344,7 @@ class Contacts(list):
         config.read(addressbook.as_posix())
 
         for entry in config.values():
-            if not field in entry:
+            if field not in entry:
                 continue
             self.append(
                 Contact(entry.get('name'), entry.get('email'),
