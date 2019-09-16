@@ -18,6 +18,7 @@
 
 from configparser import MissingSectionHeaderError
 from datetime import date
+from pathlib import Path
 
 from hiro import Timeline
 from pytest import (mark, raises)
@@ -248,7 +249,7 @@ def test_Contacts_addresses():
 
 def test_parse():
     contacts = Contacts()
-    contacts.parse('tests/data/blanco.conf', 'frequency')
+    contacts.parse(Path('tests/data/blanco.conf'), 'frequency')
 
     assert repr(contacts) == \
         ('Contacts(['
@@ -261,5 +262,5 @@ def test_parse():
 def test_parse_missing_file(tmpdir):
     contacts = Contacts()
     with raises(IOError) as err:
-        contacts.parse(str(tmpdir.join('no_such_file')), 'frequency')
+        contacts.parse(Path(tmpdir.join('no_such_file')), 'frequency')
     assert 'Addressbook file not found' in str(err.value)
