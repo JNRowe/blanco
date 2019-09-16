@@ -395,7 +395,7 @@ def main(addressbook, sent_type, all, mbox, log, gmail, field, notify, colour,
         colourise.pfail(e.args[0])
         return errno.EPERM
 
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.utcnow().date()
     for contact in contacts:
         if not any(address in sent for address in contact.addresses):
             show_note(notify, 'No mail record for {}', contact)
