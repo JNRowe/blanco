@@ -111,7 +111,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
         raise IOError('msmtp sent log ‘{}’ not found'.format(log))
 
     matcher = re.compile('recipients=([^ ]+)')
-    gmail_date = re.compile('smtpmsg.*OK ([^ ]+)')
+    gmail_date = re.compile('smtpmsg.*OK +([^ ]+)')
 
     start = datetime.datetime.utcfromtimestamp(os.path.getmtime(log))
 
