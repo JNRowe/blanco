@@ -1,7 +1,7 @@
 ``blanco`` - *“Hey, remember me?”*
 ==================================
 
-|status| |travis| |coveralls| |pypi| |pyvers| |readthedocs| |develop|
+|status| |travis| |coveralls| |readthedocs| |develop|
 
 Introduction
 ------------
@@ -114,19 +114,12 @@ reproduce the problem, or even better a patch!
    :target: https://github.com/JNRowe/blanco
    :alt: Recent developments
 
-.. |pyvers| image:: https://img.shields.io/pypi/pyversions/blanco.png
-   :alt: Supported Python versions
-
 .. |status| image:: https://img.shields.io/pypi/status/blanco.png
    :alt: Development status
 
 .. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/blanco/master.png
    :target: https://coveralls.io/repos/JNRowe/blanco
    :alt: Coverage state on master
-
-.. |pypi| image:: https://img.shields.io/pypi/v/blanco.png
-   :target: https://pypi.org/project/blanco/
-   :alt: Current PyPI release
 
 .. |readthedocs| image:: https://img.shields.io/readthedocs/blanco/stable.png
    :target: https://blanco.readthedocs.io/
