@@ -30,6 +30,7 @@ import datetime
 import errno
 import mailbox
 import operator
+import os
 import pathlib
 import sys
 import time
@@ -360,37 +361,54 @@ class Contacts(list):
                         parse_duration(entry.get(field)), entry.get('image')))
 
 
+CONFIG_DATA: Dict[str, Union[bool, str]] = process_config()
+
+
 @click.command(help='Check sent mail to make sure you’re keeping in contact '
                'with your friends.',
                epilog='Please report bugs to jnrowe@gmail.com')
 @click.option('-a',
               '--addressbook',
+              type=pathlib.Path,
               metavar='FILENAME',
+              default=os.path.expanduser(CONFIG_DATA['addressbook']),
               help='Address book to read contacts from.')
 @click.option('-t',
               '--sent-type',
               type=click.Choice(['mailbox', 'msmtp']),
+              default=CONFIG_DATA['sent type'],
               help='Sent source type.')
 @click.option('-r',
               '--all/--no-all',
+              default=CONFIG_DATA['all'],
               help='Include all recipients(CC and BCC fields).')
 @click.option('-m',
               '--mbox',
+              type=pathlib.Path,
               metavar='FILENAME',
+              default=os.path.expanduser(CONFIG_DATA['mbox']),
               help='Mailbox used to store sent mail.')
-@click.option('-l', '--log', metavar='FILENAME', help='msmtp log to parse.')
+@click.option('-l',
+              '--log',
+              type=pathlib.Path,
+              metavar='FILENAME',
+              default=os.path.expanduser(CONFIG_DATA['log']),
+              help='msmtp log to parse.')
 @click.option('-g',
               '--gmail/--no-gmail',
+              default=CONFIG_DATA['gmail'],
               help='Log from a gmail account(use accurate filter).')
 @click.option('-s',
               '--field',
+              default=CONFIG_DATA['field'],
               help='Addressbook field to use for frequency value.')
 @click.option('-n',
               '--notify/--no-notify',
+              default=CONFIG_DATA['notify'],
               help='Display reminders using notification popups.')
 @click.option('--colour/--no-colour',
               envvar='BLANCO_COLOUR',
-              default=None,
+              default=CONFIG_DATA['colour'],
               help='Output colourised informational text.')
 @click.option('-v', '--verbose/--no-verbose', help='Produce verbose output.')
 @click.version_option(_version.dotted)
@@ -399,29 +417,6 @@ def main(addressbook: pathlib.Path, sent_type: str, all: bool,
          notify: bool, colour: bool,
          verbose: bool) -> Optional[int]:  # pragma: no cover
     """Main script."""
-    config = process_config()
-    if not addressbook:
-        addressbook = pathlib.Path(config['addressbook']).expanduser()
-    if not sent_type:
-        sent_type = config['sent type']
-    if not all:
-        all = config['all']
-    if not mbox:
-        mbox = pathlib.Path(config['mbox']).expanduser()
-    if not log:
-        log = pathlib.Path(config['log']).expanduser()
-    if not gmail:
-        gmail = config['gmail']
-    if not field:
-        field = config['field']
-    if not notify:
-        notify = config['notify']
-    if not verbose:
-        verbose = config['verbose']
-    if colour is None:
-        if 'color' in config:
-            config['colour'] = config['color']
-        colour = config['colour']
     colourise.COLOUR = colour
 
     if notify and type(notify2) != ModuleType:
