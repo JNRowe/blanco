@@ -72,15 +72,15 @@ def parse_sent(path, all_recipients=False, addresses=None):
     """
     path = os.path.expanduser(path)
     if not os.path.exists(path):
-        raise IOError('Sent mailbox ‘{}’ not found'.format(path))
-    if os.path.isdir('{}/new'.format(path)):
+        raise IOError(f'Sent mailbox ‘{path}’ not found')
+    if os.path.isdir(f'{path}/new'):
         mtype = mailbox.Maildir
-    elif os.path.exists('{}/.mh_sequences'.format(path)):
+    elif os.path.exists(f'{path}/.mh_sequences'):
         mtype = mailbox.MH
     elif os.path.isfile(path):
         mtype = mailbox.mbox
     else:
-        raise ValueError('Unknown mailbox format for ‘{}’'.format(path))
+        raise ValueError(f'Unknown mailbox format for ‘{path}’')
     # Use factory=None to work around the rfc822.Message default for Maildir.
     mbox = mtype(path, factory=None, create=False)
 
@@ -110,7 +110,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
     :return: Keys of email address, and values of seen date
     """
     if not os.path.exists(log):
-        raise IOError('msmtp sent log ‘{}’ not found'.format(log))
+        raise IOError(f'msmtp sent log ‘{log}’ not found')
 
     matcher = parse.compile(' recipients={recip:S} ')
     gmail_date = parse.compile(' OK {timestamp:d} ')
@@ -127,8 +127,7 @@ def parse_msmtp(log, all_recipients=False, addresses=None, gmail=False):
             if gd:
                 parsed = datetime.datetime.utcfromtimestamp(gd['timestamp'])
             else:
-                raise ValueError(
-                    'msmtp {!r} log is not in gmail format'.format(log))
+                raise ValueError(f'msmtp {log!r} log is not in gmail format')
             year = parsed.year
             md = parsed.month, parsed.day
         else:
@@ -158,7 +157,7 @@ def parse_duration(duration):
     """
     match = parse.parse('{value:g}{units:^w}', duration)
     if not match or not match['units'].lower() in ('dwmy'):
-        raise ValueError('Invalid duration value ‘{}’'.format(duration))
+        raise ValueError(f'Invalid duration value ‘{duration}’')
     units = 'dwmy'.index(match['units'].lower())
     # days per day/week/month/year
     multiplier = (1, 7, 28, 365)
@@ -182,8 +181,7 @@ def process_config():
             try:
                 parsed[key] = config.getboolean('blanco', key)
             except ValueError:
-                raise ValueError(
-                    'Config value for {!r} must be a bool'.format(key))
+                raise ValueError(f'Config value for {key!r} must be a bool')
         else:
             parsed[key] = config.get('blanco', key)
     return parsed
@@ -253,7 +251,7 @@ class Contact:
         elif format_spec == 'email':
             return formataddr((self.name, self.addresses[0]))
         else:
-            raise ValueError('Unknown format_spec {!r}'.format(format_spec))
+            raise ValueError(f'Unknown format_spec {format_spec!r}')
 
     def trigger(self, sent):
         """Calculate trigger date for contact.
@@ -273,8 +271,7 @@ class Contact:
         :return: Stylised name for use with notifications
         """
         if 'body-hyperlinks' in notify2.get_server_caps():
-            name = "<a href='mailto:{}'>{}</a>".format(self.addresses[0],
-                                                       self.name)
+            name = f"<a href='mailto:{self.addresses[0]}'>{self.name}</a>"
         else:
             name = self.name
         return name
@@ -311,7 +308,7 @@ class Contacts(list):
         :param str field: Address book field to use for contact frequency
         """
         if not os.path.isfile(addressbook):
-            raise IOError('Addressbook file not found {!r}'.format(addressbook))
+            raise IOError(f'Addressbook file not found {addressbook!r}')
         config = configparser.ConfigParser()
         config.read(os.path.expanduser(addressbook))
 
