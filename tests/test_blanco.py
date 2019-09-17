@@ -19,6 +19,7 @@
 from configparser import MissingSectionHeaderError
 from datetime import date
 from pathlib import Path
+from typing import Dict, List, Optional
 
 from hiro import Timeline
 from pytest import (mark, raises)
@@ -27,25 +28,24 @@ from blanco import (Contact, Contacts, notify2, parse_duration, parse_msmtp,
                     parse_sent, process_config, show_note)
 
 TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
-TEST_CONTACT2 = Contact('James Rowe',
-                        ['jnrowe@gmail.com', 'jnrowe@example.com'], 200,
-                        'james.png')
+TEST_CONTACT2 = Contact(
+    'James Rowe', ['jnrowe@gmail.com', 'jnrowe@example.com'], 200, 'james.png')
 
 
 class MockNotification:
-    titles = []
-    bodies = []
-    icons = []
+    titles: List[str] = []
+    bodies: List[str] = []
+    icons: List[str] = []
 
-    def __init__(self, t, s, i):
+    def __init__(self, t: str, s: str, i: str):
         self.titles.append(t)
         self.bodies.append(s)
         self.icons.append(i)
 
-    def set_urgency(self, u):
+    def set_urgency(self, u: int):
         self.u = u
 
-    def set_timeout(self, o):
+    def set_timeout(self, o: int):
         self.o = o
 
     def show(self):
@@ -82,7 +82,8 @@ def test_unknown_mailbox_format():
         'joe@example.com': date(2000, 2, 9),
     }),
 ])
-def test_parse_sent(mbox, recipients, addresses, result):
+def test_parse_sent(mbox: str, recipients: bool, addresses: Optional[str],
+                    result: Dict[str, date]):
     assert parse_sent(Path('tests/data') / mbox, recipients, addresses) \
         == result
 
@@ -117,10 +118,13 @@ def test_missing_msmtp_log(tmpdir):
         'joe@example.com': date(2000, 2, 9),
     }),
 ])
-def test_parse_msmtp(log, all_recipients, addresses, gmail, result):
+def test_parse_msmtp(log: str, all_recipients: bool,
+                     addresses: Optional[List[str]], gmail: bool,
+                     result: Dict[str, date]):
     with Timeline().freeze(date(2014, 6, 27)):
-        assert parse_msmtp(Path('tests/data') / log, all_recipients, addresses,
-                           gmail) == result
+        assert parse_msmtp(
+            Path('tests/data') / log, all_recipients, addresses,
+            gmail) == result
 
 
 def test_parse_msmtp_invalid_gmail():
@@ -142,7 +146,7 @@ def test_invalid_duration():
     ('0.5 y', 182),
     ('0.5 Y', 182),
 ])
-def test_parse_duration(duration, result):
+def test_parse_duration(duration: str, result: int):
     assert parse_duration(duration) == result
 
 
@@ -173,7 +177,7 @@ def test_process_config_invalid_types(monkeypatch):
     notify2.URGENCY_NORMAL,
     notify2.URGENCY_CRITICAL,
 ])
-def test_show_note(urgency, capsys):
+def test_show_note(urgency: int, capsys):
     show_note(False, 'Note for {}', TEST_CONTACT, urgency=urgency)
     _, err = capsys.readouterr()
     # Use contains to avoid having to mess around with {,no-}colour options
@@ -181,8 +185,10 @@ def test_show_note(urgency, capsys):
 
 
 @mark.parametrize('show_succeeds', [True, False])
-def test_show_note_notify2(show_succeeds, monkeypatch):
-    monkeypatch.setattr(notify2, 'Notification', MockNotification,
+def test_show_note_notify2(show_succeeds: bool, monkeypatch):
+    monkeypatch.setattr(notify2,
+                        'Notification',
+                        MockNotification,
                         raising=False)
     monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
     if show_succeeds:
@@ -196,8 +202,11 @@ def test_show_note_notify2(show_succeeds, monkeypatch):
 
 
 @mark.parametrize('contact', [TEST_CONTACT, TEST_CONTACT2])
-def test_show_note_notify2_icons(contact, monkeypatch):
-    monkeypatch.setattr(notify2, 'Notification', MockNotification, raising=False)
+def test_show_note_notify2_icons(contact: Contact, monkeypatch):
+    monkeypatch.setattr(notify2,
+                        'Notification',
+                        MockNotification,
+                        raising=False)
     monkeypatch.setattr(notify2, 'get_server_caps', lambda: [], raising=False)
     show_note(True, '{}', contact)
     assert contact.name in MockNotification.bodies
@@ -217,7 +226,7 @@ def test_Contact__repr__():
     (TEST_CONTACT2, 'James Rowe [jnrowe@gmail.com, jnrowe@example.com] '
      '(200 days)'),
 ])
-def test_Contact__str__(contact, expected):
+def test_Contact__str__(contact: Contact, expected: str):
     assert str(contact) == expected
 
 
@@ -226,7 +235,7 @@ def test_Contact__str__(contact, expected):
     (TEST_CONTACT, 'email', 'James Rowe <jnrowe@gmail.com>'),
     (TEST_CONTACT2, 'email', 'James Rowe <jnrowe@gmail.com>'),
 ])
-def test_Contact__format__(contact, spec, expected):
+def test_Contact__format__(contact: Contact, spec: str, expected: str):
     assert format(contact, spec) == expected
 
 
@@ -246,7 +255,7 @@ def test_trigger():
     ([], 'James Rowe'),
     (['body-hyperlinks'], "<a href='mailto:jnrowe@gmail.com'>James Rowe</a>"),
 ])
-def test_notify_str(server_caps, expected, monkeypatch):
+def test_notify_str(server_caps: List[str], expected: str, monkeypatch):
     monkeypatch.setattr(
         notify2, 'get_server_caps', lambda: server_caps, raising=False)
     assert TEST_CONTACT.notify_str() == expected
