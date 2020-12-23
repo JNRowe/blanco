@@ -59,7 +59,7 @@ except ImportError:
 
     notify2 = _Fake_Notify2  # NOQA
 
-from jnrbase import (colourise, xdg_basedir)
+from jnrbase import (colourise, human_time, xdg_basedir)
 
 
 def parse_sent(path: pathlib.Path,
@@ -158,27 +158,6 @@ def parse_msmtp(log: pathlib.Path,
     # Sorting prior to making the dictionary means we only use the latest
     # entry.
     return dict(sorted(contacts, key=operator.itemgetter(1)))
-
-
-def parse_duration(duration: str) -> int:
-    """Parse human readable duration.
-
-    Args:
-        duration: Duration definition
-
-    Returns:
-        Number of days in ``duration``
-
-    Raises:
-        ValueError: Invalid value for ``duration``
-    """
-    match = parse.parse('{value:g}{units:^w}', duration)
-    if not match or not match['units'].lower() in ('dwmy'):
-        raise ValueError(f'Invalid duration value ‘{duration}’')
-    units = 'dwmy'.index(match['units'].lower())
-    # days per day/week/month/year
-    multiplier = (1, 7, 28, 365)
-    return int(match['value'] * multiplier[units])
 
 
 def process_config() -> Dict[str, Union[bool, str]]:
@@ -355,7 +334,8 @@ class Contacts(list):
                 continue
             self.append(
                 Contact(entry.get('name'), entry.get('email'),
-                        parse_duration(entry.get(field)), entry.get('image')))
+                        human_time.parse_timedelta(entry.get(field)).days,
+                        entry.get('image')))
 
 
 CONFIG_DATA: Dict[str, Union[bool, str]] = process_config()

@@ -24,8 +24,8 @@ from typing import Dict, List, Optional
 from hiro import Timeline
 from pytest import (mark, raises)
 
-from blanco import (Contact, Contacts, notify2, parse_duration, parse_msmtp,
-                    parse_sent, process_config, show_note)
+from blanco import (Contact, Contacts, notify2, parse_msmtp, parse_sent,
+                    process_config, show_note)
 
 TEST_CONTACT = Contact('James Rowe', 'jnrowe@gmail.com', 200)
 TEST_CONTACT2 = Contact(
@@ -132,22 +132,6 @@ def test_parse_msmtp_invalid_gmail():
         with raises(ValueError) as err:
             parse_msmtp(Path('tests/data/sent.msmtp'), False, None, True)
         assert 'not in gmail format' in str(err.value)
-
-
-def test_invalid_duration():
-    with raises(ValueError) as err:
-        parse_duration('1 k')
-    assert str(err.value) == 'Invalid duration value ‘1 k’'
-
-
-@mark.parametrize('duration, result', [
-    ('1d', 1),
-    ('1 d', 1),
-    ('0.5 y', 182),
-    ('0.5 Y', 182),
-])
-def test_parse_duration(duration: str, result: int):
-    assert parse_duration(duration) == result
 
 
 def test_process_config(monkeypatch):
