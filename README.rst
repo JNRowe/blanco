@@ -1,7 +1,7 @@
 ``blanco`` - *“Hey, remember me?”*
 ==================================
 
-|status| |travis| |coveralls| |readthedocs| |develop|
+|status| |coveralls| |readthedocs| |develop|
 
 Introduction
 ------------
@@ -108,10 +108,6 @@ reproduce the problem, or even better a patch!
 
 .. |status| image:: https://img.shields.io/pypi/status/blanco.png
    :alt: Development status
-
-.. |travis| image:: https://img.shields.io/travis/JNRowe/blanco.png
-   :target: https://travis-ci.org/JNRowe/blanco
-   :alt: Test state on master
 
 .. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/blanco/master.png
    :target: https://coveralls.io/repos/JNRowe/blanco
